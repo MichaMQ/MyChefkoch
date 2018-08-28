@@ -1,0 +1,118 @@
+module Pages.EditorTabs.Tab1 exposing(showTab)
+
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (onClick, onInput, on)
+import List exposing (..)
+import Json.Decode as Json
+
+import Html.Events.Extra exposing (targetValueIntParse)
+
+import Devs.Objects as Objects exposing (..)
+import Pages.Utils as PU exposing (getSelectOption)
+-- View
+
+showTab: Model -> Html Msg
+showTab model =
+  let
+    tab1Class = if model.selectedTab == "Tab1" then "showTabContent" else "hideTabContent"
+    rec = case model.recipeForEdit of
+      Just rec -> rec
+      Nothing -> Objects.getEmptyRecipe
+    initialSrcList = case model.kl.sourceList of
+      Just src -> src
+      Nothing -> []
+    translateValue = case rec.translate of
+      Just val -> val
+      Nothing -> ""
+    numberValue = case rec.number of
+      Just val -> toString val
+      Nothing -> ""
+    sourcePageValue = case rec.source_page of
+      Just val -> toString val
+      Nothing -> ""
+    numberCommentValue = case rec.number_comment of
+      Just val -> val
+      Nothing -> ""
+    idValue = case rec.id of
+      Just val -> toString val
+      Nothing -> ""
+    sourceValue = case rec.source of
+      Just val -> val
+      Nothing -> Objects.getEmptySource
+    imgValue = case rec.image of
+      Just val -> val
+      Nothing -> ""
+  in
+        Html.div[ class tab1Class ][
+          Html.div[ style [("float","left")] ][
+            Html.div[][
+              Html.label [ for "id" ][ Html.text "ID" ],
+              Html.input [ type_ "text", id "id", value idValue, disabled True ][]
+            ],
+            Html.div[][
+              Html.label [ for "name" ][ Html.text "Name *" ],
+              Html.input [ type_ "text", autofocus True, onInput SetName, id "name", value rec.name ][]
+            ],
+            Html.div[][
+              Html.label [ for "translate" ][ Html.text "Übersetzung" ],
+              Html.input [ type_ "text", onInput SetTranslate, id "translate", value translateValue ][]
+            ],
+            Html.div[][
+              Html.label [ for "number" ][ Html.text "Portionen" ],
+              Html.input [ type_ "number", onInput SetNumber, id "number", value numberValue ][]
+            ],
+            Html.div[][
+              Html.label [ for "number_comment" ][ Html.text "Port.-Kom." ],
+              Html.input [ type_ "text", onInput SetNumberComment, id "number_comment", value numberCommentValue ][]
+            ],
+            Html.div[][
+              Html.label [ for "source" ][ Html.text "Quelle *" ],
+              Html.select [ id "source", on "change" (Json.map SetSource targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (showSourceOption sourceValue) (sortBy .name initialSrcList))),
+              Html.button [ onClick AddNewSource ][ Html.text "+" ]
+            ],
+            Html.div[][
+              Html.label [ for "source_page" ][ Html.text "Seitenangabe" ],
+              Html.input [ type_ "number", onInput SetSourcePage, id "source_page", value sourcePageValue ][]
+            ],
+            Html.div[](
+              List.append
+                [Html.label [ for "image" ][ Html.text "Bild" ]]
+                (getImageField model rec)
+              )
+          ],
+          (viewImagePreview model.recImage)
+        ]
+
+viewImagePreview : Maybe ImagePortData -> Html Msg
+viewImagePreview image =
+  case image of
+    Just img -> Html.figure [][ Html.img[ src img.contents, title img.filename ][] ]
+    Nothing -> Html.text ""
+
+getImageField: Model -> Recipe -> List (Html Msg)
+getImageField model rec =
+  let
+    field = case rec.image of
+      Just imgValue -> [
+        Html.input [ type_ "text", id "image", value imgValue, disabled True ][],
+        Html.button [ onClick RemoveImageFromRecipe ][ Html.text "-" ]
+      ]
+      Nothing -> [Html.input [ class "fileUploadInput", on "change" (Json.succeed ImageSelected), type_ "file", id "recImage", accept "image/*" ][]]
+  in
+    field
+
+showSourceOption: Source -> Source -> Html Msg
+showSourceOption selectedValue src =
+  let
+    year = case src.year of
+      Just year -> " (" ++ year ++ ")"
+      Nothing -> ""
+    selectedVal = if src.id == selectedValue.id
+      then True
+      else False
+    srcId = case src.id of
+      Just id -> toString id
+      Nothing -> ""
+  in
+    Html.option[ value (srcId), selected selectedVal ][ Html.text (src.name ++ year) ]

@@ -1,0 +1,678 @@
+/**
+	10px; -> 0.8
+	12px; -> 1.2
+	14px; -> 1.5
+	16px; -> 1.7
+	18px; -> 1.9
+*/
+
+/*  I M P O R T   S T Y L E S
+--------------------------------------------------------------------------------------------------- */
+/*@import "jquery-ui.css";*/
+@import "reset.css";
+
+@media  (max-width: 600px) {
+	.TabContentDiv {
+		max-height: 300px !important;
+	}
+	.editFormDiv {
+		margin: 0px !important;
+	}
+	.srcFormDiv {
+		margin-left: 10%  !important;
+	}
+	.loginBtn {
+		display: none;
+	}
+}
+
+
+/*  G L O B A L   S E T T I N G S
+--------------------------------------------------------------------------------------------------- */
+silbentrennung {
+	-webkit-hyphens:auto;
+	-moz-hyphens:auto;
+	hyphens:auto;
+}
+
+body {
+	font: 1.5em/1.5 Helvetica, Arial, sans-serif;
+	FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif;
+	color: #2f3333;
+	text-align: center;
+	background-color: #cccccc;
+	FONT-WEIGHT: normal;
+	FONT-SIZE: 0.8em;
+	LINE-HEIGHT: 1em;
+	TEXT-DECORATION: none
+}
+/*
+header, footer, content {
+	width: 930px;
+}
+Kann, wenn alle Kindelemente des Bodys gemeint sind, abgekürzt werden durch:
+*/
+body > * {
+	text-align: left;
+	margin: 15px 5px;
+	padding: 0 15px;
+}
+
+/* Typo ------------------- */
+/*
+Standardabstände definieren (http://fw.zitrusfrisch.de/ test test)
+h1, h2, h3, h4, h5, h6, p, blockquote, ul, ol, dl, pre, address, hr, table, form, audio, video { margin-bottom: 10px; }
+*/
+h1, h2, h3, h4, h5, h6, p, blockquote, ul, ol, dl, pre, address, hr, table, form, audio, video { margin-bottom: 10px; }
+
+h1, h2, h3, p {
+	margin-bottom: 15px;
+}
+h1 {
+	/*font-size: 18px;*/
+	font-size: 1.9em;
+	text-align: center;
+	margin-bottom: 25px;
+	color: #244566;
+}
+h1 span {
+	font-weight: normal;
+}
+h2 {
+	font-size: 1.9em;
+	line-height: 1.3;
+	border-bottom: 3px solid #a6b3b3;
+	margin-bottom: 20px;
+	padding: 10px 0px;
+}
+h3 {
+	font-size: 1.7em;
+	line-height: 1.4;
+}
+h4 {
+	font-size: 1.2em;
+	line-height: 2;
+}
+h5 {
+	font-size: 1em;
+	line-height: 2;
+}
+
+a {
+  background-color: #369;
+  background-image: -webkit-linear-gradient(top, #599BDC, #244566);
+  background-image: -moz-linear-gradient(top, #599BDC, #244566);
+  background-image: -ms-linear-gradient(top, #599BDC, #244566);
+  background-image: -o-linear-gradient(top, #599BDC, #244566);
+  background-image: linear-gradient(top, #599BDC, #244566);
+  font-weight: bold;
+  font-size: 1.5em;
+  color: #fff;
+  text-align: center;
+  text-shadow: 0px -1px 0px rgba(0,0,0,1);
+  display: inline-block;
+  cursor: pointer;
+  padding: 4px 10px 5px;
+  margin-right: 5px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+  border: 1px solid #244566;
+  -webkit-box-shadow: inset 0px 1px 0px rgba(255,255,255,0.5), inset 0px -1px 0px rgba(0,0,0,0.2);
+  -moz-box-shadow: inset 0px 1px 0px rgba(255,255,255,0.5), inset 0px -1px 0px rgba(0,0,0,0.2);
+  -ms-box-shadow: inset 0px 1px 0px rgba(255,255,255,0.5), inset 0px -1px 0px rgba(0,0,0,0.2);
+  -o-box-shadow: inset 0px 1px 0px rgba(255,255,255,0.5), inset 0px -1px 0px rgba(0,0,0,0.2);
+  box-shadow: inset 0px 1px 0px rgba(255,255,255,0.5), inset 0px -1px 0px rgba(0,0,0,0.2);
+  height: 18px;
+  vertical-align: middle;
+  padding-top: 8px;
+	text-decoration: none;
+}
+a:VISITED {
+	color: #fff;
+	text-decoration: none;
+}
+a:HOVER {
+	color: #fff;
+	text-decoration: none;
+	-webkit-transition: all .4s;
+	-moz-transition: all .4s;
+	-ms-transition: all .4s;
+	-o-transition: all .4s;
+	transition: all .4s;
+}
+a:ACTIVE {
+	color: #fff;
+	text-decoration: none;
+}
+
+.alert {
+  color: #797B74;
+  padding: 10px;
+  text-align: center;
+  background:  #fbdddd;
+  border: 1px solid #f8c1c1;
+  font-weight: bold;
+}
+
+.close {
+  margin-left: 15px;
+  color: #797B74;
+  font-weight: bold;
+  float: right;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 1em;
+}
+
+.editIcon {
+  width: 15px;
+}
+
+.amazonLink {
+  margin-left: 10px;
+	background-color: #909090;
+  background-image: -webkit-linear-gradient(top, #e2e2e2, #7b7979);
+  background-image: -moz-linear-gradient(top, #e2e2e2, #7b7979);
+  background-image: -ms-linear-gradient(top, #e2e2e2, #7b7979);
+  background-image: -o-linear-gradient(top, #e2e2e2, #7b7979);
+  background-image: linear-gradient(top, #e2e2e2, #7b7979);
+}
+
+
+#recipeTags {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.searchField {
+  vertical-align: baseline;
+  font-size: 1.7em;
+  float: left;
+  width: 50%;
+  border: 1px solid rgba(0,0,0,0.5);
+  border-color: rgba(0,0,0,0.5) rgba(0,0,0,0.35) rgba(0,0,0,0.2);
+  margin-right: 10px;
+  padding: 5px;
+  height: 18px;
+}
+
+.srcFormBG {
+	z-index: 1010;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.srcFormDiv {
+	background-color: #fff;
+  margin-bottom: 30px;
+  padding: 15px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  border-radius: 8px;
+  -webkit-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  -ms-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  -o-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  margin-top: 20%;
+  margin-left: 30%;
+  margin-right: 40%;
+  min-width: 300px;
+  border: 2px solid #a6b3b3;
+}
+
+.srcFormDivRow Div {
+	padding-bottom: 5px;
+}
+
+.srcFormDiv label {
+  display: inline-block;
+  padding: 5px;
+  text-align: right;
+  width: 50px;
+}
+
+.srcFormDiv input {
+  border: 1px solid rgba(0,0,0,0.5);
+  border-color: rgba(0,0,0,0.5) rgba(0,0,0,0.35) rgba(0,0,0,0.2);
+  margin-right: 10px;
+  padding: 5px;
+  height: 10px;
+}
+
+.srcFormDiv div {
+  clear: both;
+}
+
+.editFormBG {
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /*background-color: #cccccc9c;*/
+}
+
+.editFormDiv {
+	background-color: #fff;
+	margin-bottom: 30px;
+	padding: 15px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  border-radius: 8px;
+  -webkit-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  -ms-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  -o-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  margin-top: 50px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.editFormDiv label {
+  display: inline-block;
+  padding: 5px;
+  text-align: right;
+  width: 100px;
+}
+
+.editFormDiv input {
+  border: 1px solid rgba(0,0,0,0.5);
+  border-color: rgba(0,0,0,0.5) rgba(0,0,0,0.35) rgba(0,0,0,0.2);
+  margin-right: 10px;
+  padding: 5px;
+  height: 10px;
+}
+
+.editFormDiv .fileUploadInput {
+	border: 0px;
+  margin-right: 10px;
+  padding: 0px;
+  height: 21px;
+}
+
+.editFormDiv textarea {
+  margin-right: 10px;
+}
+
+.editFormDiv div {
+  /*clear: both;*/
+}
+
+.editFormActionDiv {
+  border-top: 3px solid #a6b3b3;
+  margin-top: 10px;
+	clear: both;
+  padding-top: 10px;
+}
+
+.confirmFormDiv {
+  background-color: #fff;
+  margin-bottom: 30px;
+  padding: 15px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  border-radius: 8px;
+  -webkit-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  -ms-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  -o-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  margin-top: 20%;
+  margin-left: 30%;
+  margin-right: 40%;
+  min-width: 300px;
+  border: 2px solid #a6b3b3;
+}
+
+.confirmMsgDiv {
+  font-size: 1.25em;
+  font-weight: bold;
+  line-height: normal;
+}
+
+.confirmFormActionDiv {
+  border-top: 3px solid #a6b3b3;
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.TabDiv {
+  -webkit-border-top-left-radius: 8px;
+  -moz-border-top-left-radius: 8px;
+  -ms-border-top-left-radius: 8px;
+  -o-border-top-left-radius: 8px;
+  border-top-left-radius: 8px;
+  -webkit-border-top-right-radius: 8px;
+  -moz-border-top-right-radius: 8px;
+  -ms-border-top-right-radius: 8px;
+  -o-border-top-right-radius: 8px;
+  border-top-right-radius: 8px;
+  background: #ccc;
+  margin-left: -15px;
+  margin-right: -15px;
+  margin-top: -15px;
+  height: 20px;
+	clear: both;
+  padding-top: 10px;
+}
+
+.TabContentDiv {
+  overflow-y: auto;
+  max-height: 500px;
+	clear: both;
+  padding-top: 10px;
+}
+
+.TabActive {
+  -webkit-border-top-left-radius: 8px;
+  -moz-border-top-left-radius: 8px;
+  -ms-border-top-left-radius: 8px;
+  -o-border-top-left-radius: 8px;
+  border-top-left-radius: 8px;
+  -webkit-border-top-right-radius: 8px;
+  -moz-border-top-right-radius: 8px;
+  -ms-border-top-right-radius: 8px;
+  -o-border-top-right-radius: 8px;
+  border-top-right-radius: 8px;
+  background: white;
+  height: 15px;
+  display: block;
+  float: left;
+  padding: 9px;
+  margin-top: -10px;
+  font-weight: bold;
+  margin-right: 3px;
+}
+
+.TabInactive {
+  -webkit-border-top-left-radius: 8px;
+  -moz-border-top-left-radius: 8px;
+  -ms-border-top-left-radius: 8px;
+  -o-border-top-left-radius: 8px;
+  border-top-left-radius: 8px;
+  -webkit-border-top-right-radius: 8px;
+  -moz-border-top-right-radius: 8px;
+  -ms-border-top-right-radius: 8px;
+  -o-border-top-right-radius: 8px;
+  border-top-right-radius: 8px;
+  background: #ddd;
+  height: 10px;
+  display: block;
+  float: left;
+  padding: 9px;
+  cursor: pointer;
+  margin-top: -10px;
+  font-weight: bold;
+  margin-right: 3px;
+  border: 1px solid #aaaaaa;
+}
+
+.showTabContent {
+  display: block
+}
+
+.showTabContent div {
+	padding-bottom: 5px;
+}
+
+.hideTabContent {
+  display: none
+}
+
+.ingreRow input {
+  border: 1px solid rgba(0,0,0,0.5);
+  border-color: rgba(0,0,0,0.5) rgba(0,0,0,0.35) rgba(0,0,0,0.2);
+  margin-right: 10px;
+  padding: 5px;
+  height: 18px;
+}
+
+.ingreRow button {
+	display: none;
+}
+
+.showTabContent div:nth-last-child( 2 ) button {
+	display: inline-block;
+}
+
+.labelRow label {
+	margin-right: 10px;
+	text-align: left !important;
+	font-weight: bold;
+}
+
+.ingrInput {
+  width: 200px;
+}
+.ingrLabel {
+  width: 200px !important;
+}
+
+.quantInput {
+  width: 50px;
+}
+.quantLabel {
+  width: 50px !important;
+}
+.unitLabel {
+  width: 140px !important;
+}
+
+.orderInput {
+  width: 50px;
+}
+.orderLabel {
+  width: 50px !important;
+}
+
+.partInput {
+  width: 50px;
+}
+.partLabel {
+  width: 50px !important;
+}
+
+.todoRow {
+	display: flex
+}
+
+.todoRow button {
+	display: none;
+}
+
+.numberLabel{ width: 50px !important; }
+.numberInput{ width: 50px; }
+
+.textLabel{ width: 410px !important; }
+.textInput{}
+
+.imageLabel{ width: 170px !important; }
+.imageInput{}
+
+/* Forms ------------------- */
+form {
+	background-color: #eee;
+	border: 1px solid #a6b3b3;
+	border-width: 1px 0px;
+	margin: 0px -15px 20px;
+	padding: 15px 25px;
+}
+
+#searchForm {
+	background-color: #eee;
+	border: 1px solid #a6b3b3;
+	border-width: 1px 0px;
+	margin: 0px -15px 20px;
+	padding: 15px 25px;
+}
+
+select {
+	height: 30px;
+  margin-right: 10px;
+}
+button {
+	background-color: #369;
+	background-image: -webkit-linear-gradient(top, #599BDC, #244566);
+	background-image: -moz-linear-gradient(top, #599BDC, #244566);
+	background-image: -ms-linear-gradient(top, #599BDC, #244566);
+	background-image: -o-linear-gradient(top, #599BDC, #244566);
+	background-image: linear-gradient(top, #599BDC, #244566);
+
+	font-weight: bold;
+	font-size: 1.5em;
+	color: #fff;
+	text-align: center;
+	text-shadow: 0px -1px 0px rgba(0,0,0,1);
+
+	display: inline-block;
+	cursor: pointer;
+	padding: 4px 10px 5px;
+  margin-right: 5px;
+	height: 33px;
+
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+	border: 1px solid #244566;
+	-webkit-box-shadow: inset 0px 1px 0px rgba(255,255,255,0.5), inset 0px -1px 0px rgba(0,0,0,0.2);
+	-moz-box-shadow: inset 0px 1px 0px rgba(255,255,255,0.5), inset 0px -1px 0px rgba(0,0,0,0.2);
+	-ms-box-shadow: inset 0px 1px 0px rgba(255,255,255,0.5), inset 0px -1px 0px rgba(0,0,0,0.2);
+	-o-box-shadow: inset 0px 1px 0px rgba(255,255,255,0.5), inset 0px -1px 0px rgba(0,0,0,0.2);
+	box-shadow: inset 0px 1px 0px rgba(255,255,255,0.5), inset 0px -1px 0px rgba(0,0,0,0.2);
+}
+button:active {
+	position: relative;
+	top: 1px;
+}
+
+/*  H E A D E R
+--------------------------------------------------------------------------------------------------- */
+
+/*  M A I N
+--------------------------------------------------------------------------------------------------- */
+#content {
+	background-color: #fff;
+	background-color: rgba(255,255,255,0.85);
+	margin-bottom: 30px;
+	padding: 25px 15px 40px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  border-radius: 8px;
+  -webkit-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  -ms-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  -o-box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+  box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+}
+
+#categoryTypeDiv {
+	float: left;
+	width: 300px;
+	margin: 5px;
+	border: 1px solid #a6b3b3;
+	background-color: #eee;
+}
+
+#categoryTypeDiv h3 {
+  margin-left: 5px;
+}
+
+#categoryDiv {
+	padding: 5px;
+}
+
+.tagLink {
+  margin-right: 5px;
+  display: inline-block;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+#recipeList {
+	float: left;
+	margin: 5px;
+	min-width: 50%;
+	border: 1px solid #a6b3b3;
+	background-color: #eee;
+}
+#recipeList > li {
+	margin: 5px;
+}
+#recipeDiv {
+	margin: 5px;
+	border: 1px solid #a6b3b3;
+	background-color: #eee;
+	padding: 10px;
+}
+
+.incredientsTable {
+	border-top: 1px solid #ddd;
+	width: 100%;
+}
+.incredientsRow td {
+	border-bottom: 1px solid #ddd;
+	padding: 5px;
+}
+.amount {
+	font-weight: bold;
+	text-align: right;
+	width: 100px;
+}
+#todo {
+	padding: 5px 0px;
+	line-height: 1.5;
+}
+.todoNr {
+	float: left;
+	font-size: 1.5em;
+	font-weight: bold;
+	padding-right: 5px;
+	line-height: 1;
+}
+figure {
+	margin: 0px 15px 5px 0px;
+/*	width: 210px;*/
+}
+figure img {
+	background: #fff;
+	padding: 4px;
+	border: 1px solid #cbd0d0;
+	margin-bottom: 10px;
+}
+figcaption {
+	font-size: 1em;
+	font-style: italic;
+	color: #555;
+}
+.part {
+	color: #999;
+}
+.recipeImg {
+	max-height: 300px;
+	max-width: 100%;
+}
+.todoImg {
+	width: 150px;
+}
+/*  F O O T E R
+--------------------------------------------------------------------------------------------------- */
