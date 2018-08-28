@@ -18013,7 +18013,7 @@ var _user$project$Pages_OverViewPage$viewOverview = F2(
 										},
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html$text('Micha\'s Rezeptesammlung'),
+											_0: _elm_lang$html$Html$text('Meine Rezeptesammlung'),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
