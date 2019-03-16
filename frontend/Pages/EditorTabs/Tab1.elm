@@ -16,43 +16,43 @@ showTab: Model -> Html Msg
 showTab model =
   let
     tab1Class = if model.selectedTab == "Tab1" then "showTabContent" else "hideTabContent"
-    rec = case model.recipeForEdit of
+    mod_rec = case model.recipeForEdit of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
     initialSrcList = case model.kl.sourceList of
       Just src -> src
       Nothing -> []
-    translateValue = case rec.translate of
+    translateValue = case mod_rec.translate of
       Just val -> val
       Nothing -> ""
-    numberValue = case rec.number of
-      Just val -> toString val
+    numberValue = case mod_rec.number of
+      Just val -> String.fromInt val
       Nothing -> ""
-    sourcePageValue = case rec.source_page of
-      Just val -> toString val
+    sourcePageValue = case mod_rec.source_page of
+      Just val -> String.fromInt val
       Nothing -> ""
-    numberCommentValue = case rec.number_comment of
+    numberCommentValue = case mod_rec.number_comment of
       Just val -> val
       Nothing -> ""
-    idValue = case rec.id of
-      Just val -> toString val
+    idValue = case mod_rec.id of
+      Just val -> String.fromInt val
       Nothing -> ""
-    sourceValue = case rec.source of
+    sourceValue = case mod_rec.source of
       Just val -> val
       Nothing -> Objects.getEmptySource
-    imgValue = case rec.image of
+    imgValue = case mod_rec.image of
       Just val -> val
       Nothing -> ""
   in
         Html.div[ class tab1Class ][
-          Html.div[ style [("float","left")] ][
+          Html.div[ style "float" "left" ][
             Html.div[][
               Html.label [ for "id" ][ Html.text "ID" ],
               Html.input [ type_ "text", id "id", value idValue, disabled True ][]
             ],
             Html.div[][
               Html.label [ for "name" ][ Html.text "Name *" ],
-              Html.input [ type_ "text", autofocus True, onInput SetName, id "name", value rec.name ][]
+              Html.input [ type_ "text", autofocus True, onInput SetName, id "name", value mod_rec.name ][]
             ],
             Html.div[][
               Html.label [ for "translate" ][ Html.text "Übersetzung" ],
@@ -78,7 +78,7 @@ showTab model =
             Html.div[](
               List.append
                 [Html.label [ for "image" ][ Html.text "Bild" ]]
-                (getImageField model rec)
+                (getImageField model mod_rec)
               )
           ],
           (viewImagePreview model.recImage)
@@ -96,8 +96,7 @@ getImageField model rec =
     field = case rec.image of
       Just imgValue -> [
         Html.input [ type_ "text", id "image", value imgValue, disabled True ][],
-        Html.button [ onClick RemoveImageFromRecipe ][ Html.text "-" ]
-      ]
+        Html.button [ onClick RemoveImageFromRecipe ][ Html.text "-" ]]
       Nothing -> [Html.input [ class "fileUploadInput", on "change" (Json.succeed ImageSelected), type_ "file", id "recImage", accept "image/*" ][]]
   in
     field
@@ -105,14 +104,14 @@ getImageField model rec =
 showSourceOption: Source -> Source -> Html Msg
 showSourceOption selectedValue src =
   let
-    year = case src.year of
+    src_year = case src.year of
       Just year -> " (" ++ year ++ ")"
       Nothing -> ""
     selectedVal = if src.id == selectedValue.id
       then True
       else False
     srcId = case src.id of
-      Just id -> toString id
+      Just id -> String.fromInt id
       Nothing -> ""
   in
-    Html.option[ value (srcId), selected selectedVal ][ Html.text (src.name ++ year) ]
+    Html.option[ value (srcId), selected selectedVal ][ Html.text (src.name ++ src_year) ]

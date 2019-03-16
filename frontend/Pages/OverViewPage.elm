@@ -34,7 +34,7 @@ viewOverview model alertMsg =
       Just tag -> EW.viewAddTagForm model
       Nothing -> Html.text ""
     loginForm = case model.loggedIn of
-      Just isLoggedIn -> if isLoggedIn == False
+      Just isLoggedInTmp -> if isLoggedInTmp == False
         then LW.getLoginForm model
         else Html.text ""
       Nothing -> Html.text ""

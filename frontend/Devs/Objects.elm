@@ -32,8 +32,7 @@ type alias Recipe = {
   source: Maybe Source,
   source_page: Maybe Int,
   tags: Maybe (List Tag),
-  todos: Maybe (List Todo)
-}
+  todos: Maybe (List Todo)}
 type alias ImagePortData = { contents : String, filename : String }
 
 -- Types
@@ -111,7 +110,7 @@ type Msg =
   SetSearchInput String |
   SearchRecipe |
   UploadImage (Result Http.Error Bool)
-
+  
 type alias Model = {
     sp: ServerParams,
     alertMessage: Maybe String,

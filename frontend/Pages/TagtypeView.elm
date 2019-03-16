@@ -27,9 +27,13 @@ viewInitialTagtype tagtype =
 
 viewInitialTag: Tag -> Html Msg
 viewInitialTag tag =
-  Html.button [
-    id (toString tag.id),
-    class "tagLink",
-    onClick (ShowRecipesOfTag (Just tag))
-  ][ Html.text tag.name ]
-
+  let
+    tag_id = case tag.id of
+        Just id -> id
+        Nothing -> -1
+  in
+    Html.button [
+      id (String.fromInt tag_id),
+      class "tagLink",
+      onClick (ShowRecipesOfTag (Just tag))
+    ][ Html.text tag.name ]

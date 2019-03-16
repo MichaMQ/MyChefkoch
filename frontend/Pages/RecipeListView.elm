@@ -23,7 +23,7 @@ showRecipeList: List RecipeLight -> String -> Html Msg
 showRecipeList recipeList divHeader =
     Html.div [ id "contentDiv", class "cf" ] [
       Html.div[][ Html.button [ onClick RemoveSelectedTag ][ Html.text "zur Startseite" ] ],
-      Html.div [ id "categoryTypeDiv", style [("width","99%")] ][
+      Html.div [ id "categoryTypeDiv", style "width" "99%" ][
         Html.h3 [][ Html.text divHeader ],
         Html.div [ id "categoryDiv" ] (List.map showRecipeView recipeList)
       ]
@@ -32,7 +32,7 @@ showRecipeList recipeList divHeader =
 showRecipeView: RecipeLight -> Html Msg
 showRecipeView rec =
   Html.button [
-    id (toString rec.id),
+    id (String.fromInt rec.id),
     class "tagLink",
     onClick (ShowRecipe (Just rec))
   ][ Html.text rec.name ]

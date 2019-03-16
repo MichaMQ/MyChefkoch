@@ -7,7 +7,7 @@ import List exposing (..)
 import List.Extra as ListE
 import Json.Decode as Json
 
-import Html.Events.Extra exposing (targetValueIntParse)
+--import Html.Events.Extra exposing (targetValueIntParse)
 
 import Devs.Objects as Objects exposing (..)
 import Pages.Utils as PU exposing (getSelectOption)
@@ -17,23 +17,23 @@ showTab: Model -> Html Msg
 showTab model =
   let
     tabClass = if model.selectedTab == "Tab5" then "showTabContent" else "hideTabContent"
-    rec = case model.recipeForEdit of
+    recForEdit = case model.recipeForEdit of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
-    carboValue = case rec.nv_carbohydrates of
-      Just val -> toString val
+    carboValue = case recForEdit.nv_carbohydrates of
+      Just val -> String.fromFloat val
       Nothing -> ""
-    energyValue = case rec.nv_energy of
-      Just val -> toString val
+    energyValue = case recForEdit.nv_energy of
+      Just val -> String.fromFloat val
       Nothing -> ""
-    fatValue = case rec.nv_fat of
-      Just val -> toString val
+    fatValue = case recForEdit.nv_fat of
+      Just val -> String.fromFloat val
       Nothing -> ""
-    protValue = case rec.nv_protein of
-      Just val -> toString val
+    protValue = case recForEdit.nv_protein of
+      Just val -> String.fromFloat val
       Nothing -> ""
-    sizeValue = case rec.nv_size of
-      Just val -> toString val
+    sizeValue = case recForEdit.nv_size of
+      Just val -> String.fromInt val
       Nothing -> ""
   in
         Html.div[ class tabClass ] [

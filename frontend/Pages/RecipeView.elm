@@ -20,7 +20,7 @@ viewRecipe loggedIn rec sp =
     header = case rec.translate of
       Just translate -> rec.name ++ " (" ++ translate ++ ")"
       Nothing -> rec.name
-    source = case rec.source of
+    rec_source = case rec.source of
       Just source -> "Quelle: " ++ source.name
       Nothing -> ""
     sourceYear = case rec.source of
@@ -29,7 +29,7 @@ viewRecipe loggedIn rec sp =
         Nothing -> ""
       Nothing -> ""
     sourcePage = case rec.source_page of
-      Just page -> "; Seite: " ++ toString page
+      Just page -> "; Seite: " ++ String.fromInt page
       Nothing -> ""
     sourceIsbn = case rec.source of
       Just source -> case source.isbn of
@@ -47,16 +47,16 @@ viewRecipe loggedIn rec sp =
     number_comment = case rec.number_comment of
       Just comment -> comment
       Nothing -> "Portionen"
-    number = case rec.number of
-      Just number -> (toString number) ++ " " ++ number_comment
+    rec_number = case rec.number of
+      Just number -> (String.fromInt number) ++ " " ++ number_comment
       Nothing -> ""
     recImage = case rec.image of
       Just img -> Html.img [ class "recipeImg", src (sp.imagePath ++ img) ][]
       Nothing -> Html.text ""
-    ingredients = case rec.ingredients of
+    rec_ingredients = case rec.ingredients of
       Just ingredients -> ingredients
       Nothing -> []
-    todos = case rec.todos of
+    rec_todos = case rec.todos of
       Just todos -> todos
       Nothing -> []
   in
@@ -65,16 +65,16 @@ viewRecipe loggedIn rec sp =
         Html.button [ onClick RemoveSelectedRecipe ][ Html.text "zur Liste zurück" ], actionButton ],
       Html.div [ id "recipeDiv" ][
         Html.h2 [][ Html.text header ],
-        Html.div [ id "recipeSource" ][ Html.text (source ++ sourcePage ++ sourceYear ++ sourceIsbn), amazonLink ],
+        Html.div [ id "recipeSource" ][ Html.text (rec_source ++ sourcePage ++ sourceYear ++ sourceIsbn), amazonLink ],
         Html.div [ id "recipeTags" ][ Html.text ("Tags: " ++ (String.join ", " (List.map getTagName (sortBy .name tagList)))) ],
-        Html.figure [][ recImage, Html.figcaption [][ Html.text number ] ],
+        Html.figure [][ recImage, Html.figcaption [][ Html.text rec_number ] ],
         Html.div [ id "ingredientsDiv" ][
           Html.h4 [][ Html.text "Zutaten" ],
-          Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showIngrRow (sortBy .sortorder ingredients) ) ]
+          Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showIngrRow (sortBy .sortorder rec_ingredients) ) ]
         ],
         Html.div [ id "todosDiv" ][
           Html.h4 [][ Html.text "Zubereitung" ],
-          Html.div [] (List.map (showTodoRow sp) (sortBy .number todos))
+          Html.div [] (List.map (showTodoRow sp) (sortBy .number rec_todos))
         ]
       ]
     ]
@@ -88,7 +88,7 @@ showTodoRow sp todo =
   in
     Html.div [][
       Html.div [ id "todo" ][
-        Html.div [ class "todoNr" ][ Html.text (toString todo.number) ],
+        Html.div [ class "todoNr" ][ Html.text (String.fromInt todo.number) ],
         Html.span [][ Html.text todo.text ]
       ],
       Html.figure [][ image ]
@@ -97,21 +97,20 @@ showTodoRow sp todo =
 showIngrRow: Ingredient -> Html Msg
 showIngrRow ingr =
   let
-    comment = case ingr.comment of
+    ingr_comment = case ingr.comment of
       Just comment -> ", " ++ comment
       Nothing -> ""
-    unit = case ingr.unit of
+    ingr_unit = case ingr.unit of
       Just unit -> " " ++ unit.name
       Nothing -> ""
-    quantity = case ingr.quantity of
-      Just quantity -> (toString quantity) ++ unit
+    ingr_quantity = case ingr.quantity of
+      Just quantity -> (String.fromFloat quantity) ++ ingr_unit
       Nothing -> ""
   in
     Html.tr[ class "incredientsRow" ][
-      Html.td [ class "amount" ][ Html.text quantity ],
-      Html.td [][ Html.text (ingr.name ++ comment) ]
+      Html.td [ class "amount" ][ Html.text ingr_quantity ],
+      Html.td [][ Html.text (ingr.name ++ ingr_comment) ]
     ]
 
 getTagName: Tag -> String
 getTagName tag = tag.name ++ " (" ++  tag.tagType.name ++ ")"
-

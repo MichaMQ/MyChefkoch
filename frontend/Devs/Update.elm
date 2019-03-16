@@ -54,7 +54,7 @@ update msg model =
               Nothing -> Nothing
           in
             case errorMsg of
-              Just msg -> ( { model | recAlertMessage = Just msg }, Cmd.none )
+              Just msg1 -> ( { model | recAlertMessage = Just msg1 }, Cmd.none )
               Nothing -> case model.recipeForEdit of
                 Just newRecipe -> ( model, saveRecipe model newRecipe )
                 Nothing -> ( model, Cmd.none )
@@ -110,7 +110,7 @@ update msg model =
               else Nothing
           in
             case alertMsg of
-              Just msg -> ( { model | subAlertMessage = Just msg }, Cmd.none)
+              Just msg2 -> ( { model | subAlertMessage = Just msg2 }, Cmd.none)
               Nothing -> ( model, saveSource model newSource)
         SavedSource (Ok savedSource) ->
           let
@@ -126,7 +126,7 @@ update msg model =
         SetChoosenTag idVal ->
           let
             tagList = case model.kl.tagList of
-              Just tagList -> tagList
+              Just tagListTmp -> tagListTmp
               Nothing -> []
             selectedTag = case (
                 ListE.find (
@@ -184,7 +184,7 @@ update msg model =
         SetIngreOrder idx val ->
           let
 --            _ = Debug.log "idx: " idx
-            newOrder = Result.withDefault 0 (String.toInt val)
+            newOrder = Maybe.withDefault 0 <| String.toInt val
             ingreList = case model.recipeForEdit of
               Just rec -> case rec.ingredients of
                 Just list -> list
@@ -220,7 +220,7 @@ update msg model =
             ( { model | recipeForEdit = (RecipeObj.setIngredients model.recipeForEdit newIngreList) } , Cmd.none)
         SetIngreQuant idx val ->
           let
-            newQuant = Result.withDefault 0 (String.toFloat val)
+            newQuant = Maybe.withDefault 0 <| String.toFloat val
             ingreList = case model.recipeForEdit of
               Just rec -> case rec.ingredients of
                 Just list -> list
@@ -233,7 +233,7 @@ update msg model =
         SetIngrePart idx val ->
           let
 --            _ = Debug.log "idx: " idx
-            newPart = Result.withDefault 0 (String.toInt val)
+            newPart = Maybe.withDefault 0 <| String.toInt val
             ingreList = case model.recipeForEdit of
               Just rec -> case rec.ingredients of
                 Just list -> list
@@ -293,7 +293,7 @@ update msg model =
         SetTodoNr idx val ->
           let
 --            _ = Debug.log "idx: " idx
-            newNr = Result.withDefault 0 (String.toInt val)
+            newNr = Maybe.withDefault 0 <| String.toInt val
             todoList = case model.recipeForEdit of
               Just rec -> case rec.todos of
                 Just list -> list
@@ -482,7 +482,7 @@ searchRecipe: Model -> Cmd Msg
 searchRecipe model = RecipeObj.searchRecipe ListRecipesForTag (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/findRecipeByName/?name=" ++ String.trim model.searchValue)
 
 getRecipe: Model -> RecipeLight -> Cmd Msg
-getRecipe model rec = RecipeObj.getRecipe SetRecipe (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getRecipeById/?id=" ++ toString rec.id)
+getRecipe model rec = RecipeObj.getRecipe SetRecipe (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getRecipeById/?id=" ++ String.fromInt rec.id)
 
 getRecipeListForTag: Model -> Maybe Tag -> Cmd Msg
 getRecipeListForTag model selectedTag =
@@ -500,14 +500,15 @@ getRecipeListForTag model selectedTag =
             Nothing -> -3
         Nothing -> -4
   in
-    RecipeObj.getRecipeListForTag ListRecipesForTag (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllRecipeByTagWithoutMeta/?id=" ++ (toString tagId))
+    RecipeObj.getRecipeListForTag ListRecipesForTag (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllRecipeByTagWithoutMeta/?id=" ++ (String.fromInt tagId))
 
 httpErrorToMessage: Http.Error -> String
 httpErrorToMessage error =
   case error of
     Http.NetworkError -> "Is the server running?"
-    Http.BadStatus response -> (toString response.status)
-    Http.BadPayload message _ -> "Decoding Failed: " ++ message
+    Http.BadStatus response -> String.fromInt response
+    Http.BadBody response -> response
+--    Http.BadPayload message _ -> "Decoding Failed: " ++ message
     Http.BadUrl url -> "You defindes a wrong URL! " ++ url
     Http.Timeout -> "The time for request is out!"
 
@@ -515,7 +516,7 @@ isNotMember : ( List a, a ) -> Bool
 isNotMember a =
   let
     --_ = Debug.log "isNotMember: " a
-    isNotMember = ListE.notMember (Tuple.second a) (Tuple.first a)
-    _ = Debug.log "isNotMember: " isNotMember
+    isNotMemberVal = ListE.notMember (Tuple.second a) (Tuple.first a)
+    _ = Debug.log "isNotMember: " isNotMemberVal
   in
-    isNotMember
+    isNotMemberVal

@@ -18,20 +18,20 @@ showTab: Model -> Html Msg
 showTab model =
   let
     tab3Class = if model.selectedTab == "Tab3" then "showTabContent" else "hideTabContent"
-    rec = case model.recipeForEdit of
+    recForEdit = case model.recipeForEdit of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
     initialUnitList = case model.kl.unitList of
       Just src -> src
       Nothing -> []
-    ingrListOfRec = case rec.ingredients of
+    ingrListOfRec = case recForEdit.ingredients of
       Just ingre -> ingre
       Nothing -> []
   in
         Html.div[ class tab3Class ] (
           List.concat [
             [getLabelRow],
-            ( List.map (showIngreList initialUnitList) (indexedMap (,) (sortBy .sortorder ingrListOfRec)) ),
+            ( List.map (showIngreList initialUnitList) (indexedMap Tuple.pair (sortBy .sortorder ingrListOfRec)) ),
             [Html.div[][
               Html.button [ onClick AddIngreToRecipe ][ Html.text "Zutat hinzufügen" ]
             ]]
@@ -55,25 +55,25 @@ showIngreList unitList ingreObj =
     idx = first ingreObj
     ingre = second ingreObj
     quant = case ingre.quantity of
-      Just quant -> (toString quant)
+      Just quantTmp -> (String.fromFloat quantTmp)
       Nothing -> ""
     part = case ingre.part of
-      Just part -> part
+      Just partTmp -> partTmp
       Nothing -> 0
     unit = case ingre.unit of
-      Just unit -> unit
+      Just unitTmp -> unitTmp
       Nothing -> Objects.getEmptyUnit
     commentVal = case ingre.comment of
       Just val -> val
       Nothing -> ""
   in
     Html.div[ class "ingreRow" ][
-      Html.input[ id "order", onInput (SetIngreOrder idx), type_ "number", class "orderInput", value (toString ingre.sortorder) ][],
+      Html.input[ id "order", onInput (SetIngreOrder idx), type_ "number", class "orderInput", value (String.fromInt ingre.sortorder) ][],
       Html.input[ id "ingre", onInput (SetIngreName idx), class "ingrInput", value ingre.name ][],
       Html.input[ id "quant", onInput (SetIngreQuant idx), type_ "number", step "0.1", class "quantInput", value quant ][],
       Html.select [ id "unit", on "change" (Json.map (SetIngreUnit idx) targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (showUnitOption unit) unitList)),
       Html.input[ id "comment", onInput (SetIngreComment idx), class "ingrInput", value commentVal ][],
-      Html.input[ id "part", onInput (SetIngrePart idx), type_ "number", class "partInput", value (toString part) ][],
+      Html.input[ id "part", onInput (SetIngrePart idx), type_ "number", class "partInput", value (String.fromInt part) ][],
       Html.button [ onClick RemoveIngreFromRecipe ][ Html.text "-" ]
     ]
 
@@ -82,4 +82,4 @@ showUnitOption unitListValue unit =
   let
     selectedVal = if unitListValue.id == unit.id then True else False
   in
-    Html.option[ value (toString unit.id), selected selectedVal ][ Html.text (unit.name ++ " (" ++ unit.unitCategory.name ++ ")") ]
+    Html.option[ value (String.fromInt unit.id), selected selectedVal ][ Html.text (unit.name ++ " (" ++ unit.unitCategory.name ++ ")") ]

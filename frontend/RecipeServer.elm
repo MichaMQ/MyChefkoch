@@ -2,6 +2,7 @@ port module RecipeServer exposing (..)
 
 import Devs.Ports as Ports exposing (fileContentRead)
 
+import Browser exposing (..)
 import Html exposing (..)
 import Devs.Objects as Objects exposing (..)
 import Devs.Update as Update exposing (..)
@@ -25,13 +26,12 @@ view model =
     in
       OVP.viewOverview model alertMsg
 
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-    Html.program
-        { init = init
+    Browser.element
+        { init = \() -> init
         , view = view
         , update = update
---        , subscriptions = (\_ -> Sub.none)
         , subscriptions = subscriptions
         }
 

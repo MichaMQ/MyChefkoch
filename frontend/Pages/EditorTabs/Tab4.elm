@@ -8,7 +8,7 @@ import List.Extra as ListE
 import Json.Decode as Json
 import Tuple exposing (..)
 
-import Html.Events.Extra exposing (targetValueIntParse)
+--import Html.Events.Extra exposing (targetValueIntParse)
 
 import Devs.Objects as Objects exposing (..)
 import Pages.Utils as PU exposing (getSelectOption)
@@ -18,17 +18,17 @@ showTab: Model -> Html Msg
 showTab model =
   let
     tabClass = if model.selectedTab == "Tab4" then "showTabContent" else "hideTabContent"
-    rec = case model.recipeForEdit of
+    recForEdit = case model.recipeForEdit of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
-    todoListOfRec = case rec.todos of
+    todoListOfRec = case recForEdit.todos of
       Just td -> td
       Nothing -> []
   in
         Html.div[ class tabClass ] (
           List.concat [
             [getLabelRow],
-            ( List.map showTodoList (indexedMap (,) (sortBy .number todoListOfRec)) ),
+            ( List.map showTodoList (indexedMap Tuple.pair (sortBy .number todoListOfRec)) ),
             [Html.div[][
               Html.button [ onClick AddTodoToRecipe ][ Html.text "Anweisung hinzufügen" ]
             ]]
@@ -57,7 +57,7 @@ showTodoList todoObj =
       Nothing -> ""
   in
     Html.div[ class "todoRow" ][
-      Html.input[ id "number", onInput (SetTodoNr idx), type_ "number", class "numberInput", value (toString todo.number) ][],
+      Html.input[ id "number", onInput (SetTodoNr idx), type_ "number", class "numberInput", value (String.fromInt todo.number) ][],
       Html.textarea[ id "text", onInput (SetTodoText idx), class "textInput", cols 50, rows 4 ][ Html.text todo.text ],
       Html.input [ id "image", onInput (SetTodoImg idx), type_ "text", class "imageInput", value imgValue ][],
       Html.input [ id "comment", onInput (SetTodoImgComment idx), type_ "text", class "imageInput", value commentValue ][],

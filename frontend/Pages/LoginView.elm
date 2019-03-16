@@ -26,11 +26,14 @@ getLoginForm model =
 showSourceOption: Source -> Html Msg
 showSourceOption src =
   let
-    year = case src.year of
+    src_year = case src.year of
       Just year -> " (" ++ year ++ ")"
       Nothing -> ""
+    src_id = case src.id of
+        Just id -> id
+        Nothing -> -1
   in
-    Html.option[ value (toString src.id) ][ Html.text (src.name ++ year) ]
+    Html.option[ value (String.fromInt src_id) ][ Html.text (src.name ++ src_year) ]
 
 getSelectOption: Html Msg
 getSelectOption = Html.option[ ][ Html.text "Bitte wählen" ]

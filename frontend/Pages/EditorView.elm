@@ -48,7 +48,7 @@ viewSourceForm model =
       Nothing -> Objects.getEmptySource
     {-}
     idValue = case newSrc.id of
-      Just val -> toString val
+      Just val -> String.fromInt val
       Nothing -> ""
     -}
     isbnValue = case newSrc.isbn of

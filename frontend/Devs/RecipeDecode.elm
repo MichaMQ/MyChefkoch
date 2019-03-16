@@ -1,9 +1,9 @@
 module Devs.RecipeDecode exposing ( sourceEncoder,recipeEncoder,imageEncoder,tagtypeDecoder,recipeLightDecoder,recipeDecoder,unitDecoder,sourceDecoder,tagDecoder )
 
 import Json.Decode as Decode exposing (Decoder, field, succeed)
-import Json.Decode.Extra exposing ((|:))
+import Json.Decode.Extra exposing (andMap)
 import Json.Encode as Encode exposing (..)
-import Json.Encode.Extra as JsonE exposing (..)
+--import Json.Encode.Extra as JsonE exposing (..)
 
 import Devs.Objects as Objects exposing (..)
 
@@ -52,13 +52,13 @@ recipeEncoder rec =
             Just val -> sourceEncoder val
             Nothing -> Encode.null )
           , ( "ingredients", case rec.ingredients of
-            Just list -> Encode.list (List.map ingreEncoder list)
+            Just list1 -> Encode.list ingreEncoder list1
             Nothing -> Encode.null )
           , ( "tags", case rec.tags of
-            Just list -> Encode.list (List.map tagEncoder list)
+            Just list2 -> Encode.list tagEncoder list2
             Nothing -> Encode.null )
           , ( "todos", case rec.todos of
-            Just list -> Encode.list (List.map todoEncoder list)
+            Just list3 -> Encode.list todoEncoder list3
             Nothing -> Encode.null )
           ]
     in
@@ -210,20 +210,20 @@ recipeLightDecoder = Decode.map2 RecipeLight
 recipeDecoder : Decode.Decoder Recipe
 recipeDecoder =
     Decode.succeed Recipe
-    |: (Decode.field "aikz" Decode.int)
-    |: Decode.maybe (Decode.field "id" Decode.int)
-    |: Decode.maybe (Decode.field "image" Decode.string)
-    |: Decode.maybe (Decode.field "ingredients" ingrListDecoder)
-    |: (Decode.field "name" Decode.string)
-    |: Decode.maybe (Decode.field "translate" Decode.string)
-    |: Decode.maybe (Decode.field "number" Decode.int)
-    |: Decode.maybe (Decode.field "number_comment" Decode.string)
-    |: Decode.maybe (Decode.field "nv_carbohydrates" Decode.float)
-    |: Decode.maybe (Decode.field "nv_energy" Decode.float)
-    |: Decode.maybe (Decode.field "nv_fat" Decode.float)
-    |: Decode.maybe (Decode.field "nv_protein" Decode.float)
-    |: Decode.maybe (Decode.field "nv_size" Decode.int)
-    |: Decode.maybe (Decode.field "source" sourceDecoder)
-    |: Decode.maybe (Decode.field "source_page" Decode.int)
-    |: Decode.maybe (Decode.field "tags" tagListDecoder)
-    |: Decode.maybe (Decode.field "todos" todoListDecoder)
+    |> andMap (Decode.field "aikz" Decode.int)
+    |> andMap (Decode.field "id" (Decode.maybe Decode.int))
+    |> andMap (Decode.field "image" (Decode.maybe Decode.string))
+    |> andMap (Decode.field "ingredients" (Decode.maybe ingrListDecoder))
+    |> andMap (Decode.field "name" Decode.string)
+    |> andMap (Decode.field "translate" (Decode.maybe Decode.string))
+    |> andMap (Decode.field "number" (Decode.maybe Decode.int))
+    |> andMap (Decode.field "number_comment" (Decode.maybe Decode.string))
+    |> andMap (Decode.field "nv_carbohydrates" (Decode.maybe Decode.float))
+    |> andMap (Decode.field "nv_energy" (Decode.maybe Decode.float))
+    |> andMap (Decode.field "nv_fat" (Decode.maybe Decode.float))
+    |> andMap (Decode.field "nv_protein" (Decode.maybe Decode.float))
+    |> andMap (Decode.field "nv_size" (Decode.maybe Decode.int))
+    |> andMap (Decode.field "source" (Decode.maybe sourceDecoder))
+    |> andMap (Decode.field "source_page" (Decode.maybe Decode.int))
+    |> andMap (Decode.field "tags" (Decode.maybe tagListDecoder))
+    |> andMap (Decode.field "todos" (Decode.maybe todoListDecoder))

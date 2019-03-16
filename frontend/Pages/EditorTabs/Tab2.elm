@@ -13,10 +13,10 @@ showTab: Model -> Html Msg
 showTab model =
   let
     tab2Class = if model.selectedTab == "Tab2" then "showTabContent" else "hideTabContent"
-    rec = case model.recipeForEdit of
+    recForEdit = case model.recipeForEdit of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
-    tagListValue = case rec.tags of
+    tagListValue = case recForEdit.tags of
       Just tagList -> tagList
       Nothing -> []
     initialTagList = case model.kl.tagList of
@@ -25,7 +25,7 @@ showTab model =
   in
         Html.div[ class tab2Class ] [
           Html.div[][
-            Html.table [ ]( List.map (showTagDiv initialTagList) (indexedMap (,) (sortBy .name tagListValue)) )
+            Html.table [ ]( List.map (showTagDiv initialTagList) (indexedMap Tuple.pair (sortBy .name tagListValue)) )
           ],
           Html.div[][
             Html.button [ onClick ChooseNewTag ][ Html.text "Tag hinzufügen" ]
@@ -49,7 +49,7 @@ showTagOption tagListValue tag =
   let
     selectedVal = if tagListValue.id == tag.id then True else False
     tagId = case tag.id of
-      Just id -> toString id
+      Just id -> String.fromInt id
       Nothing -> ""
   in
     Html.option[ value tagId, selected selectedVal ][ Html.text (tag.name ++ " (" ++ tag.tagType.name ++ ")") ]

@@ -17,7 +17,8 @@ uploadImage event url image =
     jsonValue = RD.imageEncoder image
     _ = Debug.log "src-url: " url
   in
-    Http.send event (Http.post url (Http.jsonBody jsonValue) Decode.bool)
+--    Http.send event (Http.post url (Http.jsonBody jsonValue) Decode.bool)
+    Http.post {url=url, body=(Http.jsonBody jsonValue), expect=Http.expectJson event Decode.bool}
 
 saveRecipe: (Result Http.Error (Recipe) -> Msg) -> String -> Recipe -> Cmd Msg
 saveRecipe event url newRecipe =
@@ -25,7 +26,8 @@ saveRecipe event url newRecipe =
     jsonValue = RD.recipeEncoder newRecipe
     _ = Debug.log "src-url: " url
   in
-    Http.send event (Http.post url (Http.jsonBody jsonValue) recipeDecoder)
+--    Http.send event (Http.post url (Http.jsonBody jsonValue) recipeDecoder)
+    Http.post {url=url, body=(Http.jsonBody jsonValue), expect=Http.expectJson event recipeDecoder}
 
 saveSource: (Result Http.Error (Source) -> Msg) -> String -> Source -> Cmd Msg
 saveSource event url newSource =
@@ -33,28 +35,36 @@ saveSource event url newSource =
     jsonValue = RD.sourceEncoder newSource
     _ = Debug.log "src-url: " url
   in
-    Http.send event (Http.post url (Http.jsonBody jsonValue) sourceDecoder)
+--    Http.send event (Http.post url (Http.jsonBody jsonValue) sourceDecoder)
+    Http.post {url=url, body=(Http.jsonBody jsonValue), expect=Http.expectJson event sourceDecoder}
 
 getAllUnits: (Result Http.Error (List Unit) -> Msg) -> String -> Cmd Msg
-getAllUnits event url = Http.send event (Http.get url (Decode.list RD.unitDecoder))
+--getAllUnits event url = Http.send event (Http.get url (Decode.list RD.unitDecoder))
+getAllUnits event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.unitDecoder)}
 
 getAllSources: (Result Http.Error (List Source) -> Msg) -> String -> Cmd Msg
-getAllSources event url = Http.send event (Http.get url (Decode.list RD.sourceDecoder))
+--getAllSources event url = Http.send event (Http.get url (Decode.list RD.sourceDecoder))
+getAllSources event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.sourceDecoder)}
 
 getAllTags: (Result Http.Error (List Tag) -> Msg) -> String -> Cmd Msg
-getAllTags event url = Http.send event (Http.get url (Decode.list RD.tagDecoder))
+--getAllTags event url = Http.send event (Http.get url (Decode.list RD.tagDecoder))
+getAllTags event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.tagDecoder)}
 
 getTagtypeListForOverview: (Result Http.Error (List Tagtype) -> Msg) -> String -> Cmd Msg
-getTagtypeListForOverview event url = Http.send event (Http.get url (Decode.list RD.tagtypeDecoder))
+--getTagtypeListForOverview event url = Http.send event (Http.get url (Decode.list RD.tagtypeDecoder))
+getTagtypeListForOverview event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.tagtypeDecoder)}
 
 getRecipeListForTag : (Result Http.Error (List RecipeLight) -> Msg) -> String -> Cmd Msg
-getRecipeListForTag event url = Http.send event (Http.get url (Decode.list RD.recipeLightDecoder))
+--getRecipeListForTag event url = Http.send event (Http.get url (Decode.list RD.recipeLightDecoder))
+getRecipeListForTag event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.recipeLightDecoder)}
 
 searchRecipe: (Result Http.Error (List RecipeLight) -> Msg) -> String -> Cmd Msg
-searchRecipe event url = Http.send event (Http.get url (Decode.list RD.recipeLightDecoder))
+--searchRecipe event url = Http.send event (Http.get url (Decode.list RD.recipeLightDecoder))
+searchRecipe event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.recipeLightDecoder)}
 
 getRecipe: (Result Http.Error (Recipe) -> Msg) -> String -> Cmd Msg
-getRecipe event url = Http.send event (Http.get url RD.recipeDecoder)
+--getRecipe event url = Http.send event (Http.get url RD.recipeDecoder)
+getRecipe event url = Http.get {url=url, expect=Http.expectJson event RD.recipeDecoder}
 
 setIngreOrder: Ingredient -> Int -> Ingredient
 setIngreOrder ingre newVal = {ingre | sortorder = newVal}
@@ -113,19 +123,22 @@ setAikz recipe newVal =
 setSize: Maybe Recipe -> String -> Maybe Recipe
 setSize recipe newVal =
   case recipe of
-    Just rec -> Just { rec | nv_size = Just (Result.withDefault 0 (String.toInt newVal)) }
+    Just rec -> Just { rec | nv_size = Just (Maybe.withDefault 0 <| String.toInt newVal)}
+--    Just rec -> Just { rec | nv_size = Just (Result.withDefault 0 (String.toInt newVal)) }
     Nothing -> Nothing
 
 setSourcePage: Maybe Recipe -> String -> Maybe Recipe
 setSourcePage recipe newVal =
   case recipe of
-    Just rec -> Just { rec | source_page = Just (Result.withDefault 0 (String.toInt newVal)) }
+    Just rec -> Just { rec | source_page = Just (Maybe.withDefault 0 <| String.toInt newVal) }
+--    Just rec -> Just { rec | source_page = Just (Result.withDefault 0 (String.toInt newVal)) }
     Nothing -> Nothing
 
 setNumber: Maybe Recipe -> String -> Maybe Recipe
 setNumber recipe newVal =
   case recipe of
-    Just rec -> Just { rec | number = Just (Result.withDefault 0 (String.toInt newVal)) }
+    Just rec -> Just { rec | number = Just (Maybe.withDefault 0 <| String.toInt newVal) }
+--    Just rec -> Just { rec | number = Just (Result.withDefault 0 (String.toInt newVal)) }
     Nothing -> Nothing
 
 setName: Maybe Recipe -> String -> Maybe Recipe
@@ -155,25 +168,29 @@ setNumberComment recipe newVal =
 setCarbo: Maybe Recipe -> String -> Maybe Recipe
 setCarbo recipe newVal =
   case recipe of
-    Just rec -> Just { rec | nv_carbohydrates = Just (Result.withDefault 0 (String.toFloat newVal)) }
+    Just rec -> Just { rec | nv_carbohydrates = Just (Maybe.withDefault 0 <| String.toFloat newVal) }
+--    Just rec -> Just { rec | nv_carbohydrates = Just (Result.withDefault 0 (String.toFloat newVal)) }
     Nothing -> Nothing
 
 setEnergy: Maybe Recipe -> String -> Maybe Recipe
 setEnergy recipe newVal =
   case recipe of
-    Just rec -> Just { rec | nv_energy = Just (Result.withDefault 0 (String.toFloat newVal)) }
+    Just rec -> Just { rec | nv_energy = Just (Maybe.withDefault 0 <| String.toFloat newVal) }
+--    Just rec -> Just { rec | nv_energy = Just (Result.withDefault 0 (String.toFloat newVal)) }
     Nothing -> Nothing
 
 setFat: Maybe Recipe -> String -> Maybe Recipe
 setFat recipe newVal =
   case recipe of
-    Just rec -> Just { rec | nv_fat = Just (Result.withDefault 0 (String.toFloat newVal)) }
+    Just rec -> Just { rec | nv_fat = Just (Maybe.withDefault 0 <| String.toFloat newVal) }
+--    Just rec -> Just { rec | nv_fat = Just (Result.withDefault 0 (String.toFloat newVal)) }
     Nothing -> Nothing
 
 setProt: Maybe Recipe -> String -> Maybe Recipe
 setProt recipe newVal =
   case recipe of
-    Just rec -> Just { rec | nv_protein = Just (Result.withDefault 0 (String.toFloat newVal)) }
+    Just rec -> Just { rec | nv_protein = Just (Maybe.withDefault 0 <| String.toFloat newVal) }
+--    Just rec -> Just { rec | nv_protein = Just (Result.withDefault 0 (String.toFloat newVal)) }
     Nothing -> Nothing
 
 setSource: Maybe Recipe -> Source -> Maybe Recipe
