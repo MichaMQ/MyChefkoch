@@ -4486,24 +4486,15 @@ function _Browser_load(url)
 	}));
 }
 var elm$core$Maybe$Nothing = {$: 'Nothing'};
-var author$project$Devs$Objects$getEmptyIngre = F2(
-	function (newOrder, newPart) {
-		return {comment: elm$core$Maybe$Nothing, id: elm$core$Maybe$Nothing, name: '', part: newPart, quantity: elm$core$Maybe$Nothing, sortorder: newOrder, unit: elm$core$Maybe$Nothing};
-	});
-var author$project$Devs$Objects$getEmptyRecipe = {aikz: 1, id: elm$core$Maybe$Nothing, image: elm$core$Maybe$Nothing, ingredients: elm$core$Maybe$Nothing, name: '', number: elm$core$Maybe$Nothing, number_comment: elm$core$Maybe$Nothing, nv_carbohydrates: elm$core$Maybe$Nothing, nv_energy: elm$core$Maybe$Nothing, nv_fat: elm$core$Maybe$Nothing, nv_protein: elm$core$Maybe$Nothing, nv_size: elm$core$Maybe$Nothing, source: elm$core$Maybe$Nothing, source_page: elm$core$Maybe$Nothing, tags: elm$core$Maybe$Nothing, todos: elm$core$Maybe$Nothing, translate: elm$core$Maybe$Nothing};
+var author$project$Devs$Objects$getEmptyRecipe = {aikz: 1, id: elm$core$Maybe$Nothing, image: elm$core$Maybe$Nothing, name: '', number: elm$core$Maybe$Nothing, number_comment: elm$core$Maybe$Nothing, nv_carbohydrates: elm$core$Maybe$Nothing, nv_energy: elm$core$Maybe$Nothing, nv_fat: elm$core$Maybe$Nothing, nv_protein: elm$core$Maybe$Nothing, nv_size: elm$core$Maybe$Nothing, parts: elm$core$Maybe$Nothing, source: elm$core$Maybe$Nothing, source_page: elm$core$Maybe$Nothing, tags: elm$core$Maybe$Nothing, todos: elm$core$Maybe$Nothing, translate: elm$core$Maybe$Nothing};
 var author$project$Devs$Objects$getEmptySource = {id: elm$core$Maybe$Nothing, isbn: elm$core$Maybe$Nothing, name: '', year: elm$core$Maybe$Nothing};
 var author$project$Devs$Objects$getEmptyTag = {
 	id: elm$core$Maybe$Nothing,
 	name: '',
-	tagType: {id: elm$core$Maybe$Nothing, name: ''}
+	tagtype: {id: elm$core$Maybe$Nothing, name: ''}
 };
 var author$project$Devs$Objects$getEmptyTodo = function (newNumber) {
 	return {id: 0, image: elm$core$Maybe$Nothing, image_comment: elm$core$Maybe$Nothing, number: newNumber, text: ''};
-};
-var author$project$Devs$Objects$getEmptyUnit = {
-	id: 0,
-	name: '',
-	unitCategory: {id: 0, name: ''}
 };
 var elm$core$Array$branchFactor = 32;
 var elm$core$Array$Array_elm_builtin = F4(
@@ -5047,36 +5038,6 @@ var elm$core$List$append = F2(
 var elm$core$List$concat = function (lists) {
 	return A3(elm$core$List$foldr, elm$core$List$append, _List_Nil, lists);
 };
-var author$project$Devs$Recipe$addToIngredients = F2(
-	function (recipe, newIngre) {
-		if (recipe.$ === 'Just') {
-			var rec = recipe.a;
-			var ingreList = function () {
-				var _n1 = rec.ingredients;
-				if (_n1.$ === 'Just') {
-					var ingre = _n1.a;
-					return ingre;
-				} else {
-					return _List_Nil;
-				}
-			}();
-			return elm$core$Maybe$Just(
-				_Utils_update(
-					rec,
-					{
-						ingredients: elm$core$Maybe$Just(
-							elm$core$List$concat(
-								_List_fromArray(
-									[
-										ingreList,
-										_List_fromArray(
-										[newIngre])
-									])))
-					}));
-		} else {
-			return elm$core$Maybe$Nothing;
-		}
-	});
 var author$project$Devs$Recipe$addToTags = F2(
 	function (recipe, newTag) {
 		if (recipe.$ === 'Just') {
@@ -5221,64 +5182,6 @@ var author$project$Devs$Recipe$setImage = F2(
 				_Utils_update(
 					rec,
 					{image: newVal}));
-		} else {
-			return elm$core$Maybe$Nothing;
-		}
-	});
-var author$project$Devs$Recipe$setIngreComment = F2(
-	function (ingre, newVal) {
-		return _Utils_update(
-			ingre,
-			{
-				comment: elm$core$Maybe$Just(newVal)
-			});
-	});
-var author$project$Devs$Recipe$setIngreName = F2(
-	function (ingre, newVal) {
-		return _Utils_update(
-			ingre,
-			{name: newVal});
-	});
-var author$project$Devs$Recipe$setIngreOrder = F2(
-	function (ingre, newVal) {
-		return _Utils_update(
-			ingre,
-			{sortorder: newVal});
-	});
-var author$project$Devs$Recipe$setIngrePart = F2(
-	function (ingre, newVal) {
-		return _Utils_update(
-			ingre,
-			{
-				part: elm$core$Maybe$Just(newVal)
-			});
-	});
-var author$project$Devs$Recipe$setIngreQuant = F2(
-	function (ingre, newVal) {
-		return _Utils_update(
-			ingre,
-			{
-				quantity: elm$core$Maybe$Just(newVal)
-			});
-	});
-var author$project$Devs$Recipe$setIngreUnit = F2(
-	function (ingre, newVal) {
-		return _Utils_update(
-			ingre,
-			{
-				unit: elm$core$Maybe$Just(newVal)
-			});
-	});
-var author$project$Devs$Recipe$setIngredients = F2(
-	function (recipe, newIngreList) {
-		if (recipe.$ === 'Just') {
-			var rec = recipe.a;
-			return elm$core$Maybe$Just(
-				_Utils_update(
-					rec,
-					{
-						ingredients: elm$core$Maybe$Just(newIngreList)
-					}));
 		} else {
 			return elm$core$Maybe$Nothing;
 		}
@@ -5506,70 +5409,13 @@ var author$project$Devs$Recipe$setTranslate = F2(
 			return elm$core$Maybe$Nothing;
 		}
 	});
-var elm$core$List$sortBy = _List_sortBy;
-var elm$core$List$drop = F2(
-	function (n, list) {
-		drop:
-		while (true) {
-			if (n <= 0) {
-				return list;
-			} else {
-				if (!list.b) {
-					return list;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs;
-					n = $temp$n;
-					list = $temp$list;
-					continue drop;
-				}
-			}
-		}
-	});
-var elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return elm$core$Maybe$Just(x);
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var elm_community$list_extra$List$Extra$getAt = F2(
-	function (idx, xs) {
-		return (idx < 0) ? elm$core$Maybe$Nothing : elm$core$List$head(
-			A2(elm$core$List$drop, idx, xs));
-	});
-var author$project$Devs$Update$getIngreForEdit = F2(
-	function (ingreList, idx) {
-		var _n0 = A2(
-			elm_community$list_extra$List$Extra$getAt,
-			idx,
-			A2(
-				elm$core$List$sortBy,
-				function ($) {
-					return $.sortorder;
-				},
-				ingreList));
-		if (_n0.$ === 'Just') {
-			var ingre = _n0.a;
-			return ingre;
-		} else {
-			return A2(
-				author$project$Devs$Objects$getEmptyIngre,
-				0,
-				elm$core$Maybe$Just(0));
-		}
-	});
 var author$project$Devs$Objects$SetRecipe = function (a) {
 	return {$: 'SetRecipe', a: a};
 };
 var author$project$Devs$Objects$Recipe = function (aikz) {
 	return function (id) {
 		return function (image) {
-			return function (ingredients) {
+			return function (parts) {
 				return function (name) {
 					return function (translate) {
 						return function (number) {
@@ -5583,7 +5429,7 @@ var author$project$Devs$Objects$Recipe = function (aikz) {
 														return function (source_page) {
 															return function (tags) {
 																return function (todos) {
-																	return {aikz: aikz, id: id, image: image, ingredients: ingredients, name: name, number: number, number_comment: number_comment, nv_carbohydrates: nv_carbohydrates, nv_energy: nv_energy, nv_fat: nv_fat, nv_protein: nv_protein, nv_size: nv_size, source: source, source_page: source_page, tags: tags, todos: todos, translate: translate};
+																	return {aikz: aikz, id: id, image: image, name: name, number: number, number_comment: number_comment, nv_carbohydrates: nv_carbohydrates, nv_energy: nv_energy, nv_fat: nv_fat, nv_protein: nv_protein, nv_size: nv_size, parts: parts, source: source, source_page: source_page, tags: tags, todos: todos, translate: translate};
 																};
 															};
 														};
@@ -5601,10 +5447,27 @@ var author$project$Devs$Objects$Recipe = function (aikz) {
 		};
 	};
 };
+var author$project$Devs$Objects$Part = F3(
+	function (id, name, ingredients) {
+		return {id: id, ingredients: ingredients, name: name};
+	});
 var author$project$Devs$Objects$Ingredient = F7(
 	function (id, name, comment, part, quantity, sortorder, unit) {
 		return {comment: comment, id: id, name: name, part: part, quantity: quantity, sortorder: sortorder, unit: unit};
 	});
+var author$project$Devs$Objects$PartLight = F2(
+	function (id, name) {
+		return {id: id, name: name};
+	});
+var elm$json$Json$Decode$field = _Json_decodeField;
+var elm$json$Json$Decode$int = _Json_decodeInt;
+var elm$json$Json$Decode$map2 = _Json_map2;
+var elm$json$Json$Decode$string = _Json_decodeString;
+var author$project$Devs$RecipeDecode$partLightDecoder = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Devs$Objects$PartLight,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string));
 var author$project$Devs$Objects$Unit = F3(
 	function (id, name, unitCategory) {
 		return {id: id, name: name, unitCategory: unitCategory};
@@ -5613,10 +5476,6 @@ var author$project$Devs$Objects$UnitCategory = F2(
 	function (id, name) {
 		return {id: id, name: name};
 	});
-var elm$json$Json$Decode$field = _Json_decodeField;
-var elm$json$Json$Decode$int = _Json_decodeInt;
-var elm$json$Json$Decode$map2 = _Json_map2;
-var elm$json$Json$Decode$string = _Json_decodeString;
 var author$project$Devs$RecipeDecode$unitCategoryDecoder = A3(
 	elm$json$Json$Decode$map2,
 	author$project$Devs$Objects$UnitCategory,
@@ -5651,7 +5510,7 @@ var author$project$Devs$RecipeDecode$ingrDecoder = A8(
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'comment', elm$json$Json$Decode$string)),
 	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'part', elm$json$Json$Decode$int)),
+		A2(elm$json$Json$Decode$field, 'part', author$project$Devs$RecipeDecode$partLightDecoder)),
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'quantity', elm$json$Json$Decode$float)),
 	A2(elm$json$Json$Decode$field, 'sortorder', elm$json$Json$Decode$int),
@@ -5659,6 +5518,13 @@ var author$project$Devs$RecipeDecode$ingrDecoder = A8(
 		A2(elm$json$Json$Decode$field, 'unit', author$project$Devs$RecipeDecode$unitDecoder)));
 var elm$json$Json$Decode$list = _Json_decodeList;
 var author$project$Devs$RecipeDecode$ingrListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$ingrDecoder);
+var author$project$Devs$RecipeDecode$partDecoder = A4(
+	elm$json$Json$Decode$map3,
+	author$project$Devs$Objects$Part,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'ingredients', author$project$Devs$RecipeDecode$ingrListDecoder));
+var author$project$Devs$RecipeDecode$partListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$partDecoder);
 var author$project$Devs$Objects$Source = F4(
 	function (id, isbn, name, year) {
 		return {id: id, isbn: isbn, name: name, year: year};
@@ -5675,8 +5541,8 @@ var author$project$Devs$RecipeDecode$sourceDecoder = A5(
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'year', elm$json$Json$Decode$string)));
 var author$project$Devs$Objects$Tag = F3(
-	function (id, name, tagType) {
-		return {id: id, name: name, tagType: tagType};
+	function (id, name, tagtype) {
+		return {id: id, name: name, tagtype: tagtype};
 	});
 var author$project$Devs$Objects$TagtypeShort = F2(
 	function (id, name) {
@@ -5694,7 +5560,7 @@ var author$project$Devs$RecipeDecode$tagDecoder = A4(
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
 	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'tagType', author$project$Devs$RecipeDecode$tagtypeShortDecoder));
+	A2(elm$json$Json$Decode$field, 'tagtype', author$project$Devs$RecipeDecode$tagtypeShortDecoder));
 var author$project$Devs$RecipeDecode$tagListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$tagDecoder);
 var author$project$Devs$Objects$Todo = F5(
 	function (id, image, image_comment, number, text) {
@@ -5792,8 +5658,8 @@ var author$project$Devs$RecipeDecode$recipeDecoder = A2(
 														elm_community$json_extra$Json$Decode$Extra$andMap,
 														A2(
 															elm$json$Json$Decode$field,
-															'ingredients',
-															elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$ingrListDecoder)),
+															'parts',
+															elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$partListDecoder)),
 														A2(
 															elm_community$json_extra$Json$Decode$Extra$andMap,
 															A2(
@@ -6710,6 +6576,42 @@ var author$project$Devs$Update$getRecipeListForTag = F2(
 			author$project$Devs$Objects$ListRecipesForTag,
 			model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + ('/getAllRecipeByTagWithoutMeta/?id=' + elm$core$String$fromInt(tagId))))));
 	});
+var elm$core$List$sortBy = _List_sortBy;
+var elm$core$List$drop = F2(
+	function (n, list) {
+		drop:
+		while (true) {
+			if (n <= 0) {
+				return list;
+			} else {
+				if (!list.b) {
+					return list;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs;
+					n = $temp$n;
+					list = $temp$list;
+					continue drop;
+				}
+			}
+		}
+	});
+var elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return elm$core$Maybe$Just(x);
+	} else {
+		return elm$core$Maybe$Nothing;
+	}
+};
+var elm_community$list_extra$List$Extra$getAt = F2(
+	function (idx, xs) {
+		return (idx < 0) ? elm$core$Maybe$Nothing : elm$core$List$head(
+			A2(elm$core$List$drop, idx, xs));
+	});
 var author$project$Devs$Update$getTodoForEdit = F2(
 	function (list, idx) {
 		var _n0 = A2(
@@ -6791,6 +6693,18 @@ var elm$json$Json$Encode$object = function (pairs) {
 			_Json_emptyObject(_Utils_Tuple0),
 			pairs));
 };
+var author$project$Devs$RecipeDecode$partLightEncoder = function (part) {
+	return elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'id',
+				elm$json$Json$Encode$int(part.id)),
+				_Utils_Tuple2(
+				'name',
+				elm$json$Json$Encode$string(part.name))
+			]));
+};
 var author$project$Devs$RecipeDecode$unitCatEncoder = function (uc) {
 	var list = _List_fromArray(
 		[
@@ -6835,21 +6749,53 @@ var author$project$Devs$RecipeDecode$ingreEncoder = function (ingre) {
 			author$project$Devs$RecipeDecode$encodeString(ingre.comment)),
 			_Utils_Tuple2(
 			'part',
-			author$project$Devs$RecipeDecode$encodeInt(ingre.part)),
+			function () {
+				var _n0 = ingre.part;
+				if (_n0.$ === 'Just') {
+					var val = _n0.a;
+					return author$project$Devs$RecipeDecode$partLightEncoder(val);
+				} else {
+					return elm$json$Json$Encode$null;
+				}
+			}()),
 			_Utils_Tuple2(
 			'quantity',
 			author$project$Devs$RecipeDecode$encodeFloat(ingre.quantity)),
 			_Utils_Tuple2(
 			'unit',
 			function () {
-				var _n0 = ingre.unit;
-				if (_n0.$ === 'Just') {
-					var val = _n0.a;
+				var _n1 = ingre.unit;
+				if (_n1.$ === 'Just') {
+					var val = _n1.a;
 					return author$project$Devs$RecipeDecode$unitEncoder(val);
 				} else {
 					return elm$json$Json$Encode$null;
 				}
 			}())
+		]);
+	return elm$json$Json$Encode$object(list);
+};
+var elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(_Utils_Tuple0),
+				entries));
+	});
+var author$project$Devs$RecipeDecode$partEncoder = function (part) {
+	var list = _List_fromArray(
+		[
+			_Utils_Tuple2(
+			'id',
+			elm$json$Json$Encode$int(part.id)),
+			_Utils_Tuple2(
+			'name',
+			elm$json$Json$Encode$string(part.name)),
+			_Utils_Tuple2(
+			'ingredients',
+			A2(elm$json$Json$Encode$list, author$project$Devs$RecipeDecode$ingreEncoder, part.ingredients))
 		]);
 	return elm$json$Json$Encode$object(list);
 };
@@ -6893,8 +6839,8 @@ var author$project$Devs$RecipeDecode$tagEncoder = function (tag) {
 			'name',
 			elm$json$Json$Encode$string(tag.name)),
 			_Utils_Tuple2(
-			'tagType',
-			author$project$Devs$RecipeDecode$tagtypeEncoder(tag.tagType))
+			'tagtype',
+			author$project$Devs$RecipeDecode$tagtypeEncoder(tag.tagtype))
 		]);
 	return elm$json$Json$Encode$object(list);
 };
@@ -6919,15 +6865,6 @@ var author$project$Devs$RecipeDecode$todoEncoder = function (td) {
 				author$project$Devs$RecipeDecode$encodeString(td.image_comment))
 			]));
 };
-var elm$json$Json$Encode$list = F2(
-	function (func, entries) {
-		return _Json_wrap(
-			A3(
-				elm$core$List$foldl,
-				_Json_addEntry(func),
-				_Json_emptyArray(_Utils_Tuple0),
-				entries));
-	});
 var author$project$Devs$RecipeDecode$recipeEncoder = function (rec) {
 	var list = _List_fromArray(
 		[
@@ -6990,12 +6927,12 @@ var author$project$Devs$RecipeDecode$recipeEncoder = function (rec) {
 				}
 			}()),
 			_Utils_Tuple2(
-			'ingredients',
+			'parts',
 			function () {
-				var _n2 = rec.ingredients;
+				var _n2 = rec.parts;
 				if (_n2.$ === 'Just') {
 					var list1 = _n2.a;
-					return A2(elm$json$Json$Encode$list, author$project$Devs$RecipeDecode$ingreEncoder, list1);
+					return A2(elm$json$Json$Encode$list, author$project$Devs$RecipeDecode$partEncoder, list1);
 				} else {
 					return elm$json$Json$Encode$null;
 				}
@@ -7168,8 +7105,8 @@ var author$project$Devs$Update$validateRecipe = function (rec) {
 			return _List_Nil;
 		}
 	}();
-	var ingreList = function () {
-		var _n1 = rec.ingredients;
+	var partList = function () {
+		var _n1 = rec.parts;
 		if (_n1.$ === 'Just') {
 			var list = _n1.a;
 			return list;
@@ -7183,7 +7120,7 @@ var author$project$Devs$Update$validateRecipe = function (rec) {
 		var _n0 = rec.source;
 		if (_n0.$ === 'Just') {
 			var src = _n0.a;
-			return elm$core$List$isEmpty(ingreList) ? elm$core$Maybe$Just('Es muss mindestens eine Zutat eingegeben werden.') : (elm$core$List$isEmpty(todoList) ? elm$core$Maybe$Just('Es muss mindestens eine Anweisung eingegeben werden.') : (elm$core$List$isEmpty(tagList) ? elm$core$Maybe$Just('Es muss mindestens ein Tag eingegeben werden.') : elm$core$Maybe$Nothing));
+			return elm$core$List$isEmpty(partList) ? elm$core$Maybe$Just('Es muss mindestens eine Zutat eingegeben werden.') : (elm$core$List$isEmpty(todoList) ? elm$core$Maybe$Just('Es muss mindestens eine Anweisung eingegeben werden.') : (elm$core$List$isEmpty(tagList) ? elm$core$Maybe$Just('Es muss mindestens ein Tag eingegeben werden.') : elm$core$Maybe$Nothing));
 		} else {
 			return elm$core$Maybe$Just('Es muss eine Quelle angegeben werden.');
 		}
@@ -7915,362 +7852,14 @@ var author$project$Devs$Update$update = F2(
 						model,
 						{addTag: elm$core$Maybe$Nothing, subAlertMessage: elm$core$Maybe$Nothing}),
 					elm$core$Platform$Cmd$none);
-			case 'AddIngreToRecipe':
-				var ingreList = function () {
-					var _n21 = model.recipeForEdit;
-					if (_n21.$ === 'Just') {
-						var rec = _n21.a;
-						var _n22 = rec.ingredients;
-						if (_n22.$ === 'Just') {
-							var ingre = _n22.a;
-							return A2(
-								elm$core$List$sortBy,
-								function ($) {
-									return $.sortorder;
-								},
-								ingre);
-						} else {
-							return _List_Nil;
-						}
-					} else {
-						return _List_Nil;
-					}
-				}();
-				var lastIdx = elm$core$List$length(ingreList) - 1;
-				var newOrder = function () {
-					if (_Utils_cmp(lastIdx, -1) > 0) {
-						var _n20 = A2(elm_community$list_extra$List$Extra$getAt, lastIdx, ingreList);
-						if (_n20.$ === 'Just') {
-							var ingre = _n20.a;
-							return ingre.sortorder + 1;
-						} else {
-							return 0;
-						}
-					} else {
-						return 0;
-					}
-				}();
-				var newPart = function () {
-					if (_Utils_cmp(lastIdx, -1) > 0) {
-						var _n18 = A2(elm_community$list_extra$List$Extra$getAt, lastIdx, ingreList);
-						if (_n18.$ === 'Just') {
-							var ingre = _n18.a;
-							var _n19 = ingre.part;
-							if (_n19.$ === 'Just') {
-								var part = _n19.a;
-								return part;
-							} else {
-								return 0;
-							}
-						} else {
-							return 0;
-						}
-					} else {
-						return 0;
-					}
-				}();
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							recipeForEdit: A2(
-								author$project$Devs$Recipe$addToIngredients,
-								model.recipeForEdit,
-								A2(
-									author$project$Devs$Objects$getEmptyIngre,
-									newOrder,
-									elm$core$Maybe$Just(newPart)))
-						}),
-					elm$core$Platform$Cmd$none);
-			case 'SetIngreOrder':
-				var idx = msg.a;
-				var val = msg.b;
-				var newOrder = A2(
-					elm$core$Maybe$withDefault,
-					0,
-					elm$core$String$toInt(val));
-				var ingreList = function () {
-					var _n23 = model.recipeForEdit;
-					if (_n23.$ === 'Just') {
-						var rec = _n23.a;
-						var _n24 = rec.ingredients;
-						if (_n24.$ === 'Just') {
-							var list = _n24.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
-					} else {
-						return _List_Nil;
-					}
-				}();
-				var ingreForEdit = A2(
-					author$project$Devs$Recipe$setIngreOrder,
-					A2(author$project$Devs$Update$getIngreForEdit, ingreList, idx),
-					newOrder);
-				var newIngreList = A3(
-					elm_community$list_extra$List$Extra$updateAt,
-					idx,
-					function (ingre) {
-						return ingreForEdit;
-					},
-					ingreList);
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setIngredients, model.recipeForEdit, newIngreList)
-						}),
-					elm$core$Platform$Cmd$none);
-			case 'SetIngreName':
-				var idx = msg.a;
-				var val = msg.b;
-				var ingreList = function () {
-					var _n25 = model.recipeForEdit;
-					if (_n25.$ === 'Just') {
-						var rec = _n25.a;
-						var _n26 = rec.ingredients;
-						if (_n26.$ === 'Just') {
-							var list = _n26.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
-					} else {
-						return _List_Nil;
-					}
-				}();
-				var ingreForEdit = A2(
-					author$project$Devs$Recipe$setIngreName,
-					A2(author$project$Devs$Update$getIngreForEdit, ingreList, idx),
-					val);
-				var newIngreList = A3(
-					elm_community$list_extra$List$Extra$updateAt,
-					idx,
-					function (ingre) {
-						return ingreForEdit;
-					},
-					ingreList);
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setIngredients, model.recipeForEdit, newIngreList)
-						}),
-					elm$core$Platform$Cmd$none);
-			case 'SetIngreComment':
-				var idx = msg.a;
-				var val = msg.b;
-				var ingreList = function () {
-					var _n27 = model.recipeForEdit;
-					if (_n27.$ === 'Just') {
-						var rec = _n27.a;
-						var _n28 = rec.ingredients;
-						if (_n28.$ === 'Just') {
-							var list = _n28.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
-					} else {
-						return _List_Nil;
-					}
-				}();
-				var ingreForEdit = A2(
-					author$project$Devs$Recipe$setIngreComment,
-					A2(author$project$Devs$Update$getIngreForEdit, ingreList, idx),
-					val);
-				var newIngreList = A3(
-					elm_community$list_extra$List$Extra$updateAt,
-					idx,
-					function (ingre) {
-						return ingreForEdit;
-					},
-					ingreList);
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setIngredients, model.recipeForEdit, newIngreList)
-						}),
-					elm$core$Platform$Cmd$none);
-			case 'SetIngreQuant':
-				var idx = msg.a;
-				var val = msg.b;
-				var newQuant = A2(
-					elm$core$Maybe$withDefault,
-					0,
-					elm$core$String$toFloat(val));
-				var ingreList = function () {
-					var _n29 = model.recipeForEdit;
-					if (_n29.$ === 'Just') {
-						var rec = _n29.a;
-						var _n30 = rec.ingredients;
-						if (_n30.$ === 'Just') {
-							var list = _n30.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
-					} else {
-						return _List_Nil;
-					}
-				}();
-				var ingreForEdit = A2(
-					author$project$Devs$Recipe$setIngreQuant,
-					A2(author$project$Devs$Update$getIngreForEdit, ingreList, idx),
-					newQuant);
-				var newIngreList = A3(
-					elm_community$list_extra$List$Extra$updateAt,
-					idx,
-					function (ingre) {
-						return ingreForEdit;
-					},
-					ingreList);
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setIngredients, model.recipeForEdit, newIngreList)
-						}),
-					elm$core$Platform$Cmd$none);
-			case 'SetIngrePart':
-				var idx = msg.a;
-				var val = msg.b;
-				var newPart = A2(
-					elm$core$Maybe$withDefault,
-					0,
-					elm$core$String$toInt(val));
-				var ingreList = function () {
-					var _n31 = model.recipeForEdit;
-					if (_n31.$ === 'Just') {
-						var rec = _n31.a;
-						var _n32 = rec.ingredients;
-						if (_n32.$ === 'Just') {
-							var list = _n32.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
-					} else {
-						return _List_Nil;
-					}
-				}();
-				var ingreForEdit = A2(
-					author$project$Devs$Recipe$setIngrePart,
-					A2(author$project$Devs$Update$getIngreForEdit, ingreList, idx),
-					newPart);
-				var newIngreList = A3(
-					elm_community$list_extra$List$Extra$updateAt,
-					idx,
-					function (ingre) {
-						return ingreForEdit;
-					},
-					ingreList);
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setIngredients, model.recipeForEdit, newIngreList)
-						}),
-					elm$core$Platform$Cmd$none);
-			case 'SetIngreUnit':
-				var idx = msg.a;
-				var unitId = msg.b;
-				var unitList = function () {
-					var _n36 = model.kl.unitList;
-					if (_n36.$ === 'Just') {
-						var list = _n36.a;
-						return list;
-					} else {
-						return _List_Nil;
-					}
-				}();
-				var selectedUnit = function () {
-					var _n35 = A2(
-						elm_community$list_extra$List$Extra$find,
-						function (unit) {
-							return _Utils_eq(unit.id, unitId);
-						},
-						unitList);
-					if (_n35.$ === 'Just') {
-						var tag = _n35.a;
-						return tag;
-					} else {
-						return author$project$Devs$Objects$getEmptyUnit;
-					}
-				}();
-				var ingreList = function () {
-					var _n33 = model.recipeForEdit;
-					if (_n33.$ === 'Just') {
-						var rec = _n33.a;
-						var _n34 = rec.ingredients;
-						if (_n34.$ === 'Just') {
-							var list = _n34.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
-					} else {
-						return _List_Nil;
-					}
-				}();
-				var ingreForEdit = A2(
-					author$project$Devs$Recipe$setIngreUnit,
-					A2(author$project$Devs$Update$getIngreForEdit, ingreList, idx),
-					selectedUnit);
-				var newIngreList = A3(
-					elm_community$list_extra$List$Extra$updateAt,
-					idx,
-					function (ingre) {
-						return ingreForEdit;
-					},
-					ingreList);
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setIngredients, model.recipeForEdit, newIngreList)
-						}),
-					elm$core$Platform$Cmd$none);
-			case 'RemoveIngreFromRecipe':
-				var ingreList = function () {
-					var _n37 = model.recipeForEdit;
-					if (_n37.$ === 'Just') {
-						var rec = _n37.a;
-						var _n38 = rec.ingredients;
-						if (_n38.$ === 'Just') {
-							var ingre = _n38.a;
-							return A2(
-								elm$core$List$sortBy,
-								function ($) {
-									return $.sortorder;
-								},
-								ingre);
-						} else {
-							return _List_Nil;
-						}
-					} else {
-						return _List_Nil;
-					}
-				}();
-				var lastIdx = elm$core$List$length(ingreList) - 1;
-				var newIngreList = (elm$core$List$length(ingreList) > 0) ? A2(elm_community$list_extra$List$Extra$removeAt, lastIdx, ingreList) : _List_Nil;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setIngredients, model.recipeForEdit, newIngreList)
-						}),
-					elm$core$Platform$Cmd$none);
 			case 'AddTodoToRecipe':
 				var todoList = function () {
-					var _n40 = model.recipeForEdit;
-					if (_n40.$ === 'Just') {
-						var rec = _n40.a;
-						var _n41 = rec.todos;
-						if (_n41.$ === 'Just') {
-							var todos = _n41.a;
+					var _n19 = model.recipeForEdit;
+					if (_n19.$ === 'Just') {
+						var rec = _n19.a;
+						var _n20 = rec.todos;
+						if (_n20.$ === 'Just') {
+							var todos = _n20.a;
 							return A2(
 								elm$core$List$sortBy,
 								function ($) {
@@ -8287,9 +7876,9 @@ var author$project$Devs$Update$update = F2(
 				var lastIdx = elm$core$List$length(todoList) - 1;
 				var newNumber = function () {
 					if (_Utils_cmp(lastIdx, -1) > 0) {
-						var _n39 = A2(elm_community$list_extra$List$Extra$getAt, lastIdx, todoList);
-						if (_n39.$ === 'Just') {
-							var todo = _n39.a;
+						var _n18 = A2(elm_community$list_extra$List$Extra$getAt, lastIdx, todoList);
+						if (_n18.$ === 'Just') {
+							var todo = _n18.a;
 							return todo.number + 1;
 						} else {
 							return 0;
@@ -8312,12 +7901,12 @@ var author$project$Devs$Update$update = F2(
 				var idx = msg.a;
 				var val = msg.b;
 				var todoList = function () {
-					var _n42 = model.recipeForEdit;
-					if (_n42.$ === 'Just') {
-						var rec = _n42.a;
-						var _n43 = rec.todos;
-						if (_n43.$ === 'Just') {
-							var list = _n43.a;
+					var _n21 = model.recipeForEdit;
+					if (_n21.$ === 'Just') {
+						var rec = _n21.a;
+						var _n22 = rec.todos;
+						if (_n22.$ === 'Just') {
+							var list = _n22.a;
 							return list;
 						} else {
 							return _List_Nil;
@@ -8352,12 +7941,12 @@ var author$project$Devs$Update$update = F2(
 				var idx = msg.a;
 				var val = msg.b;
 				var todoList = function () {
-					var _n44 = model.recipeForEdit;
-					if (_n44.$ === 'Just') {
-						var rec = _n44.a;
-						var _n45 = rec.todos;
-						if (_n45.$ === 'Just') {
-							var list = _n45.a;
+					var _n23 = model.recipeForEdit;
+					if (_n23.$ === 'Just') {
+						var rec = _n23.a;
+						var _n24 = rec.todos;
+						if (_n24.$ === 'Just') {
+							var list = _n24.a;
 							return list;
 						} else {
 							return _List_Nil;
@@ -8388,12 +7977,12 @@ var author$project$Devs$Update$update = F2(
 				var idx = msg.a;
 				var val = msg.b;
 				var todoList = function () {
-					var _n46 = model.recipeForEdit;
-					if (_n46.$ === 'Just') {
-						var rec = _n46.a;
-						var _n47 = rec.todos;
-						if (_n47.$ === 'Just') {
-							var list = _n47.a;
+					var _n25 = model.recipeForEdit;
+					if (_n25.$ === 'Just') {
+						var rec = _n25.a;
+						var _n26 = rec.todos;
+						if (_n26.$ === 'Just') {
+							var list = _n26.a;
 							return list;
 						} else {
 							return _List_Nil;
@@ -8424,12 +8013,12 @@ var author$project$Devs$Update$update = F2(
 				var idx = msg.a;
 				var val = msg.b;
 				var todoList = function () {
-					var _n48 = model.recipeForEdit;
-					if (_n48.$ === 'Just') {
-						var rec = _n48.a;
-						var _n49 = rec.todos;
-						if (_n49.$ === 'Just') {
-							var list = _n49.a;
+					var _n27 = model.recipeForEdit;
+					if (_n27.$ === 'Just') {
+						var rec = _n27.a;
+						var _n28 = rec.todos;
+						if (_n28.$ === 'Just') {
+							var list = _n28.a;
 							return list;
 						} else {
 							return _List_Nil;
@@ -8458,12 +8047,12 @@ var author$project$Devs$Update$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'RemoveTodoFromRecipe':
 				var todoList = function () {
-					var _n50 = model.recipeForEdit;
-					if (_n50.$ === 'Just') {
-						var rec = _n50.a;
-						var _n51 = rec.todos;
-						if (_n51.$ === 'Just') {
-							var todos = _n51.a;
+					var _n29 = model.recipeForEdit;
+					if (_n29.$ === 'Just') {
+						var rec = _n29.a;
+						var _n30 = rec.todos;
+						if (_n30.$ === 'Just') {
+							var todos = _n30.a;
 							return A2(
 								elm$core$List$sortBy,
 								function ($) {
@@ -8711,7 +8300,7 @@ var author$project$Devs$Update$update = F2(
 		}
 	});
 var author$project$Devs$Objects$keyLists = {sourceList: elm$core$Maybe$Nothing, tagList: elm$core$Maybe$Nothing, unitList: elm$core$Maybe$Nothing};
-var author$project$Devs$Objects$serverParams = {apiUrlPrefix: '/api/recipeRestService/v1', iconPath: 'pub/icons/', imagePath: 'pub/images/', password: 'xxx', serverHost: 'localhost:8080', serverProtokoll: 'http://', serverUrlPrefix: '/RecipeServer'};
+var author$project$Devs$Objects$serverParams = {apiUrlPrefix: '/api/v1', iconPath: 'icons/', imagePath: 'images/', password: 'xxx', serverHost: 'horst:8085', serverProtokoll: 'http://', serverUrlPrefix: '/RecipeServer'};
 var author$project$Devs$Objects$initialModel = {addTag: elm$core$Maybe$Nothing, alertMessage: elm$core$Maybe$Nothing, deleteRecipe: false, kl: author$project$Devs$Objects$keyLists, loggedIn: elm$core$Maybe$Nothing, newSource: elm$core$Maybe$Nothing, passwordForCheck: '', recAlertMessage: elm$core$Maybe$Nothing, recImage: elm$core$Maybe$Nothing, recipeForEdit: elm$core$Maybe$Nothing, recipesOfSelectedTag: elm$core$Maybe$Nothing, searchValue: '', selectedRecipe: elm$core$Maybe$Nothing, selectedTab: 'Tab1', selectedTag: elm$core$Maybe$Nothing, sp: author$project$Devs$Objects$serverParams, subAlertMessage: elm$core$Maybe$Nothing, tagtypeList: elm$core$Maybe$Nothing};
 var author$project$Devs$Objects$SetSourceList = function (a) {
 	return {$: 'SetSourceList', a: a};
@@ -8890,7 +8479,7 @@ var author$project$Pages$EditorTabs$Tab2$showTagOption = F2(
 				]),
 			_List_fromArray(
 				[
-					elm$html$Html$text(tag.name + (' (' + (tag.tagType.name + ')')))
+					elm$html$Html$text(tag.name + (' (' + (tag.tagtype.name + ')')))
 				]));
 	});
 var elm$html$Html$div = _VirtualDom_node('div');
@@ -9637,7 +9226,7 @@ var author$project$Pages$EditorTabs$Tab2$showTagDiv = F2(
 					_List_Nil,
 					_List_fromArray(
 						[
-							elm$html$Html$text(tag.name + (' (' + (tag.tagType.name + ')')))
+							elm$html$Html$text(tag.name + (' (' + (tag.tagtype.name + ')')))
 						])),
 					A2(
 					elm$html$Html$td,
@@ -9739,7 +9328,6 @@ var author$project$Pages$EditorTabs$Tab2$showTab = function (model) {
 					]))
 			]));
 };
-var author$project$Devs$Objects$AddIngreToRecipe = {$: 'AddIngreToRecipe'};
 var author$project$Pages$EditorTabs$Tab3$getLabelRow = A2(
 	elm$html$Html$div,
 	_List_fromArray(
@@ -9815,192 +9403,17 @@ var author$project$Pages$EditorTabs$Tab3$getLabelRow = A2(
 					elm$html$Html$text('Teil')
 				]))
 		]));
-var author$project$Devs$Objects$RemoveIngreFromRecipe = {$: 'RemoveIngreFromRecipe'};
-var author$project$Devs$Objects$SetIngreComment = F2(
-	function (a, b) {
-		return {$: 'SetIngreComment', a: a, b: b};
-	});
-var author$project$Devs$Objects$SetIngreName = F2(
-	function (a, b) {
-		return {$: 'SetIngreName', a: a, b: b};
-	});
-var author$project$Devs$Objects$SetIngreOrder = F2(
-	function (a, b) {
-		return {$: 'SetIngreOrder', a: a, b: b};
-	});
-var author$project$Devs$Objects$SetIngrePart = F2(
-	function (a, b) {
-		return {$: 'SetIngrePart', a: a, b: b};
-	});
-var author$project$Devs$Objects$SetIngreQuant = F2(
-	function (a, b) {
-		return {$: 'SetIngreQuant', a: a, b: b};
-	});
-var author$project$Devs$Objects$SetIngreUnit = F2(
-	function (a, b) {
-		return {$: 'SetIngreUnit', a: a, b: b};
-	});
-var author$project$Pages$EditorTabs$Tab3$showUnitOption = F2(
-	function (unitListValue, unit) {
-		var selectedVal = _Utils_eq(unitListValue.id, unit.id) ? true : false;
-		return A2(
-			elm$html$Html$option,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$value(
-					elm$core$String$fromInt(unit.id)),
-					elm$html$Html$Attributes$selected(selectedVal)
-				]),
-			_List_fromArray(
-				[
-					elm$html$Html$text(unit.name + (' (' + (unit.unitCategory.name + ')')))
-				]));
-	});
-var elm$core$String$fromFloat = _String_fromNumber;
-var elm$html$Html$Attributes$step = function (n) {
-	return A2(elm$html$Html$Attributes$stringProperty, 'step', n);
-};
 var author$project$Pages$EditorTabs$Tab3$showIngreList = F2(
-	function (unitList, ingreObj) {
-		var ingre = ingreObj.b;
-		var part = function () {
-			var _n3 = ingre.part;
-			if (_n3.$ === 'Just') {
-				var partTmp = _n3.a;
-				return partTmp;
-			} else {
-				return 0;
-			}
-		}();
-		var quant = function () {
-			var _n2 = ingre.quantity;
-			if (_n2.$ === 'Just') {
-				var quantTmp = _n2.a;
-				return elm$core$String$fromFloat(quantTmp);
-			} else {
-				return '';
-			}
-		}();
-		var unit = function () {
-			var _n1 = ingre.unit;
-			if (_n1.$ === 'Just') {
-				var unitTmp = _n1.a;
-				return unitTmp;
-			} else {
-				return author$project$Devs$Objects$getEmptyUnit;
-			}
-		}();
-		var idx = ingreObj.a;
-		var commentVal = function () {
-			var _n0 = ingre.comment;
-			if (_n0.$ === 'Just') {
-				var val = _n0.a;
-				return val;
-			} else {
-				return '';
-			}
-		}();
+	function (unitList, partObj) {
+		var part = partObj.b;
+		var idx = partObj.a;
 		return A2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$class('ingreRow')
 				]),
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$input,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$id('order'),
-							elm$html$Html$Events$onInput(
-							author$project$Devs$Objects$SetIngreOrder(idx)),
-							elm$html$Html$Attributes$type_('number'),
-							elm$html$Html$Attributes$class('orderInput'),
-							elm$html$Html$Attributes$value(
-							elm$core$String$fromInt(ingre.sortorder))
-						]),
-					_List_Nil),
-					A2(
-					elm$html$Html$input,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$id('ingre'),
-							elm$html$Html$Events$onInput(
-							author$project$Devs$Objects$SetIngreName(idx)),
-							elm$html$Html$Attributes$class('ingrInput'),
-							elm$html$Html$Attributes$value(ingre.name)
-						]),
-					_List_Nil),
-					A2(
-					elm$html$Html$input,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$id('quant'),
-							elm$html$Html$Events$onInput(
-							author$project$Devs$Objects$SetIngreQuant(idx)),
-							elm$html$Html$Attributes$type_('number'),
-							elm$html$Html$Attributes$step('0.1'),
-							elm$html$Html$Attributes$class('quantInput'),
-							elm$html$Html$Attributes$value(quant)
-						]),
-					_List_Nil),
-					A2(
-					elm$html$Html$select,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$id('unit'),
-							A2(
-							elm$html$Html$Events$on,
-							'change',
-							A2(
-								elm$json$Json$Decode$map,
-								author$project$Devs$Objects$SetIngreUnit(idx),
-								elm_community$html_extra$Html$Events$Extra$targetValueIntParse))
-						]),
-					A2(
-						elm$core$List$append,
-						_List_fromArray(
-							[author$project$Pages$Utils$getSelectOption]),
-						A2(
-							elm$core$List$map,
-							author$project$Pages$EditorTabs$Tab3$showUnitOption(unit),
-							unitList))),
-					A2(
-					elm$html$Html$input,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$id('comment'),
-							elm$html$Html$Events$onInput(
-							author$project$Devs$Objects$SetIngreComment(idx)),
-							elm$html$Html$Attributes$class('ingrInput'),
-							elm$html$Html$Attributes$value(commentVal)
-						]),
-					_List_Nil),
-					A2(
-					elm$html$Html$input,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$id('part'),
-							elm$html$Html$Events$onInput(
-							author$project$Devs$Objects$SetIngrePart(idx)),
-							elm$html$Html$Attributes$type_('number'),
-							elm$html$Html$Attributes$class('partInput'),
-							elm$html$Html$Attributes$value(
-							elm$core$String$fromInt(part))
-						]),
-					_List_Nil),
-					A2(
-					elm$html$Html$button,
-					_List_fromArray(
-						[
-							elm$html$Html$Events$onClick(author$project$Devs$Objects$RemoveIngreFromRecipe)
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('-')
-						]))
-				]));
+			_List_Nil);
 	});
 var author$project$Pages$EditorTabs$Tab3$showTab = function (model) {
 	var tab3Class = (model.selectedTab === 'Tab3') ? 'showTabContent' : 'hideTabContent';
@@ -10013,20 +9426,20 @@ var author$project$Pages$EditorTabs$Tab3$showTab = function (model) {
 			return author$project$Devs$Objects$getEmptyRecipe;
 		}
 	}();
-	var initialUnitList = function () {
-		var _n1 = model.kl.unitList;
+	var partListOfRec = function () {
+		var _n1 = recForEdit.parts;
 		if (_n1.$ === 'Just') {
-			var src = _n1.a;
-			return src;
+			var parts = _n1.a;
+			return parts;
 		} else {
 			return _List_Nil;
 		}
 	}();
-	var ingrListOfRec = function () {
-		var _n0 = recForEdit.ingredients;
+	var initialUnitList = function () {
+		var _n0 = model.kl.unitList;
 		if (_n0.$ === 'Just') {
-			var ingre = _n0.a;
-			return ingre;
+			var src = _n0.a;
+			return src;
 		} else {
 			return _List_Nil;
 		}
@@ -10051,27 +9464,12 @@ var author$project$Pages$EditorTabs$Tab3$showTab = function (model) {
 						A2(
 							elm$core$List$sortBy,
 							function ($) {
-								return $.sortorder;
+								return $.name;
 							},
-							ingrListOfRec))),
+							partListOfRec))),
 					_List_fromArray(
 					[
-						A2(
-						elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$button,
-								_List_fromArray(
-									[
-										elm$html$Html$Events$onClick(author$project$Devs$Objects$AddIngreToRecipe)
-									]),
-								_List_fromArray(
-									[
-										elm$html$Html$text('Zutat hinzufügen')
-									]))
-							]))
+						A2(elm$html$Html$div, _List_Nil, _List_Nil)
 					])
 				])));
 };
@@ -10330,6 +9728,10 @@ var author$project$Devs$Objects$SetProt = function (a) {
 };
 var author$project$Devs$Objects$SetSize = function (a) {
 	return {$: 'SetSize', a: a};
+};
+var elm$core$String$fromFloat = _String_fromNumber;
+var elm$html$Html$Attributes$step = function (n) {
+	return A2(elm$html$Html$Attributes$stringProperty, 'step', n);
 };
 var author$project$Pages$EditorTabs$Tab5$showTab = function (model) {
 	var tabClass = (model.selectedTab === 'Tab5') ? 'showTabContent' : 'hideTabContent';
@@ -11055,7 +10457,7 @@ var author$project$Pages$RecipeListView$viewRecipesOfTag = function (model) {
 var author$project$Devs$Objects$EditRecipe = {$: 'EditRecipe'};
 var author$project$Devs$Objects$RemoveSelectedRecipe = {$: 'RemoveSelectedRecipe'};
 var author$project$Pages$RecipeView$getTagName = function (tag) {
-	return tag.name + (' (' + (tag.tagType.name + ')'));
+	return tag.name + (' (' + (tag.tagtype.name + ')'));
 };
 var author$project$Pages$RecipeView$showIngrRow = function (ingr) {
 	var ingr_unit = function () {
@@ -11112,6 +10514,68 @@ var author$project$Pages$RecipeView$showIngrRow = function (ingr) {
 					[
 						elm$html$Html$text(
 						_Utils_ap(ingr.name, ingr_comment))
+					]))
+			]));
+};
+var elm$html$Html$tbody = _VirtualDom_node('tbody');
+var elm$html$Html$Attributes$colspan = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'colspan',
+		elm$core$String$fromInt(n));
+};
+var author$project$Pages$RecipeView$showPartRow = function (part) {
+	var partRow = A2(
+		elm$html$Html$tr,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('incredientsRow')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$td,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$colspan(2)
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text(part.name)
+					]))
+			]));
+	var ingreRows = A2(
+		elm$core$List$map,
+		author$project$Pages$RecipeView$showIngrRow,
+		A2(
+			elm$core$List$sortBy,
+			function ($) {
+				return $.sortorder;
+			},
+			part.ingredients));
+	return A2(
+		elm$html$Html$tr,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$td,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$table,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$tbody,
+								_List_Nil,
+								_Utils_ap(
+									_List_fromArray(
+										[partRow]),
+									ingreRows))
+							]))
 					]))
 			]));
 };
@@ -11177,7 +10641,6 @@ var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$figcaption = _VirtualDom_node('figcaption');
 var elm$html$Html$h2 = _VirtualDom_node('h2');
 var elm$html$Html$h4 = _VirtualDom_node('h4');
-var elm$html$Html$tbody = _VirtualDom_node('tbody');
 var elm$html$Html$Attributes$height = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -11259,11 +10722,11 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 				return '';
 			}
 		}();
-		var rec_ingredients = function () {
-			var _n7 = rec.ingredients;
+		var rec_parts = function () {
+			var _n7 = rec.parts;
 			if (_n7.$ === 'Just') {
-				var ingredients = _n7.a;
-				return ingredients;
+				var parts = _n7.a;
+				return parts;
 			} else {
 				return _List_Nil;
 			}
@@ -11487,13 +10950,13 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 											_List_Nil,
 											A2(
 												elm$core$List$map,
-												author$project$Pages$RecipeView$showIngrRow,
+												author$project$Pages$RecipeView$showPartRow,
 												A2(
 													elm$core$List$sortBy,
 													function ($) {
-														return $.sortorder;
+														return $.name;
 													},
-													rec_ingredients)))
+													rec_parts)))
 										]))
 								])),
 							A2(

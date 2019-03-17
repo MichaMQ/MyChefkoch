@@ -51,8 +51,11 @@ recipeEncoder rec =
           , ( "source", case rec.source of
             Just val -> sourceEncoder val
             Nothing -> Encode.null )
-          , ( "ingredients", case rec.ingredients of
-            Just list1 -> Encode.list ingreEncoder list1
+--          , ( "ingredients", case rec.ingredients of
+--            Just list1 -> Encode.list ingreEncoder list1
+--            Nothing -> Encode.null )
+          , ( "parts", case rec.parts of
+            Just list1 -> Encode.list partEncoder list1
             Nothing -> Encode.null )
           , ( "tags", case rec.tags of
             Just list2 -> Encode.list tagEncoder list2
@@ -79,7 +82,7 @@ tagEncoder tag =
       list =
           [ ( "id", encodeInt tag.id )
           , ( "name", Encode.string tag.name )
-          , ( "tagType", tagtypeEncoder tag.tagType )
+          , ( "tagtype", tagtypeEncoder tag.tagtype )
           ]
     in
       Encode.object list
@@ -98,11 +101,30 @@ ingreEncoder ingre =
           , ( "name", Encode.string ingre.name )
           , ( "sortorder", Encode.int ingre.sortorder )
           , ( "comment", encodeString ingre.comment )
-          , ( "part", encodeInt ingre.part )
+          , ( "part", case ingre.part of
+            Just val -> partLightEncoder val
+            Nothing -> Encode.null )
           , ( "quantity", encodeFloat ingre.quantity )
           , ( "unit", case ingre.unit of
             Just val -> unitEncoder val
             Nothing -> Encode.null )
+          ]
+    in
+      Encode.object list
+
+partLightEncoder: PartLight -> Encode.Value
+partLightEncoder part =
+    Encode.object [ ( "id", Encode.int part.id )
+    , ( "name", Encode.string part.name )
+    ]
+
+partEncoder: Part -> Encode.Value
+partEncoder part =
+    let
+      list =
+          [ ( "id", Encode.int part.id )
+          , ( "name", Encode.string part.name )
+          , ( "ingredients", Encode.list ingreEncoder part.ingredients )
           ]
     in
       Encode.object list
@@ -145,7 +167,7 @@ tagDecoder : Decoder Tag
 tagDecoder = Decode.map3 Tag
   (Decode.maybe <| field "id" Decode.int)
   (field "name" Decode.string)
-  (field "tagType" tagtypeShortDecoder)
+  (field "tagtype" tagtypeShortDecoder)
 
 tagListDecoder : Decoder (List Tag)
 tagListDecoder =
@@ -163,7 +185,7 @@ ingrDecoder = Decode.map7 Ingredient
   (Decode.maybe <| field "id" Decode.int)
   (field "name" Decode.string)
   (Decode.maybe <| field "comment" Decode.string)
-  (Decode.maybe <| field "part" Decode.int)
+  (Decode.maybe <| field "part" partLightDecoder)
   (Decode.maybe <| field "quantity" Decode.float)
   (field "sortorder" Decode.int)
   (Decode.maybe <| field "unit" unitDecoder)
@@ -171,6 +193,21 @@ ingrDecoder = Decode.map7 Ingredient
 ingrListDecoder : Decoder (List Ingredient)
 ingrListDecoder =
   Decode.list ingrDecoder
+
+partLightDecoder : Decoder PartLight
+partLightDecoder = Decode.map2 PartLight
+  (field "id" Decode.int)
+  (field "name" Decode.string)
+
+partDecoder : Decoder Part
+partDecoder = Decode.map3 Part
+  (field "id" Decode.int)
+  (field "name" Decode.string)
+  (field "ingredients" ingrListDecoder)
+
+partListDecoder : Decoder (List Part)
+partListDecoder =
+  Decode.list partDecoder
 
 unitDecoder : Decoder Unit
 unitDecoder = Decode.map3 Unit
@@ -206,14 +243,14 @@ recipeLightDecoder = Decode.map2 RecipeLight
   (field "id" Decode.int)
   (field "name" Decode.string)
 
-
 recipeDecoder : Decode.Decoder Recipe
 recipeDecoder =
     Decode.succeed Recipe
     |> andMap (Decode.field "aikz" Decode.int)
     |> andMap (Decode.field "id" (Decode.maybe Decode.int))
     |> andMap (Decode.field "image" (Decode.maybe Decode.string))
-    |> andMap (Decode.field "ingredients" (Decode.maybe ingrListDecoder))
+--    |> andMap (Decode.field "ingredients" (Decode.maybe ingrListDecoder))
+    |> andMap (Decode.field "parts" (Decode.maybe partListDecoder))
     |> andMap (Decode.field "name" Decode.string)
     |> andMap (Decode.field "translate" (Decode.maybe Decode.string))
     |> andMap (Decode.field "number" (Decode.maybe Decode.int))

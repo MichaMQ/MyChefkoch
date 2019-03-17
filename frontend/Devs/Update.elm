@@ -10,7 +10,6 @@ import Debug exposing (log)
 import Devs.Objects as Objects exposing (..)
 import Devs.Recipe as RecipeObj
 
-
 -- Update
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -159,6 +158,7 @@ update msg model =
             Nothing -> ( { model | subAlertMessage = Just "Bitte einen Tag auswählen." }, Cmd.none)
         CancelAddTag ->
           ( { model | addTag = Nothing, subAlertMessage = Nothing } , Cmd.none)
+{-
         AddIngreToRecipe ->
           let
             ingreList = case model.recipeForEdit of
@@ -275,6 +275,7 @@ update msg model =
             --_ = Debug.log "lastIdx: " lastIdx
           in
             ( { model | recipeForEdit = (RecipeObj.setIngredients model.recipeForEdit newIngreList) } , Cmd.none)
+-}
         AddTodoToRecipe ->
           let
             todoList = case model.recipeForEdit of
@@ -413,7 +414,7 @@ update msg model =
 validateRecipe: Recipe -> Maybe String
 validateRecipe rec =
   let
-    ingreList = case rec.ingredients of
+    partList = case rec.parts of
       Just list -> list
       Nothing -> []
     todoList = case rec.todos of
@@ -426,7 +427,7 @@ validateRecipe rec =
     if String.isEmpty rec.name
       then Just "Es muss ein Namen eingegeben werden."
       else case rec.source of
-        Just src -> if List.isEmpty ingreList
+        Just src -> if List.isEmpty partList
           then Just "Es muss mindestens eine Zutat eingegeben werden."
           else if List.isEmpty todoList
             then Just "Es muss mindestens eine Anweisung eingegeben werden."

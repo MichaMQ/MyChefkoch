@@ -78,8 +78,8 @@ setIngreName ingre newVal = {ingre | name = newVal}
 setIngreQuant: Ingredient -> Float -> Ingredient
 setIngreQuant ingre newVal = {ingre | quantity = Just newVal}
 
-setIngrePart: Ingredient -> Int -> Ingredient
-setIngrePart ingre newVal = {ingre | part = Just newVal}
+--setIngrePart: Ingredient -> Int -> Ingredient
+--setIngrePart ingre newVal = {ingre | part = Just newVal}
 
 setIngreUnit: Ingredient -> Unit -> Ingredient
 setIngreUnit ingre newVal = {ingre | unit = Just newVal}
@@ -199,6 +199,7 @@ setSource recipe newSource =
     Just rec -> Just { rec | source = Just newSource }
     Nothing -> Nothing
 
+{-
 setIngredients: Maybe Recipe -> List Ingredient -> Maybe Recipe
 setIngredients recipe newIngreList =
   case recipe of
@@ -216,6 +217,7 @@ addToIngredients recipe newIngre =
       in
         Just { rec | ingredients = Just (List.concat [ ingreList, [newIngre] ]) }
     Nothing -> Nothing
+-}
 
 setTodos: Maybe Recipe -> List Todo -> Maybe Recipe
 setTodos recipe newTodoList =
