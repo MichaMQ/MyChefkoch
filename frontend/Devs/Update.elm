@@ -176,9 +176,9 @@ update msg model =
               then case (ListE.getAt lastIdx ingreList) of
                 Just ingre -> case ingre.part of
                   Just part -> part
-                  Nothing -> 0
-                Nothing -> 0
-              else 0
+                  Nothing -> Objects.getEmptyPart
+                Nothing -> Objects.getEmptyPart
+              else Objects.getEmptyPart
           in
             ( { model | recipeForEdit = (RecipeObj.addToIngredients model.recipeForEdit (Objects.getEmptyIngre newOrder (Just newPart))) } , Cmd.none)
         SetIngreOrder idx val ->
@@ -230,16 +230,22 @@ update msg model =
             newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
           in
             ( { model | recipeForEdit = (RecipeObj.setIngredients model.recipeForEdit newIngreList) } , Cmd.none)
-        SetIngrePart idx val ->
+        SetIngrePart idx partId ->
           let
 --            _ = Debug.log "idx: " idx
-            newPart = Maybe.withDefault 0 <| String.toInt val
+            partList = case model.kl.partList of
+              Just list -> list
+              Nothing -> []
+            selectedPart = case ( ListE.find ( \part -> part.id == partId ) partList ) of
+              Just part -> part
+              Nothing -> Objects.getEmptyPart
+--            newPart = Maybe.withDefault 0 <| String.toInt val
             ingreList = case model.recipeForEdit of
               Just rec -> case rec.ingredients of
                 Just list -> list
                 Nothing -> []
               Nothing -> []
-            ingreForEdit = RecipeObj.setIngrePart (getIngreForEdit ingreList idx) newPart
+            ingreForEdit = RecipeObj.setIngrePart (getIngreForEdit ingreList idx) selectedPart
             newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
           in
             ( { model | recipeForEdit = (RecipeObj.setIngredients model.recipeForEdit newIngreList) } , Cmd.none)
@@ -404,6 +410,10 @@ update msg model =
           ( { model | kl = (setInitialTag model.kl list) } , Cmd.none)
         SetTagList (Err error) ->
           ( { model | alertMessage = Just (httpErrorToMessage error) }, Cmd.none)
+        SetPartList (Ok list) ->
+          ( { model | kl = (setInitialPart model.kl list) } , Cmd.none)
+        SetPartList (Err error) ->
+          ( { model | alertMessage = Just (httpErrorToMessage error) }, Cmd.none)
         UploadImage (Ok value) ->
           ( model, Cmd.none)
         UploadImage (Err error) ->
@@ -439,7 +449,7 @@ getIngreForEdit: List Ingredient -> Int -> Ingredient
 getIngreForEdit ingreList idx =
     case ListE.getAt idx (sortBy .sortorder ingreList) of
       Just ingre -> ingre
-      Nothing -> Objects.getEmptyIngre 0 (Just 0)
+      Nothing -> Objects.getEmptyIngre 0 Nothing
 
 getTodoForEdit: List Todo -> Int -> Todo
 getTodoForEdit list idx =
@@ -456,6 +466,9 @@ setInitialSource keyList newList = { keyList | sourceList = Just newList }
 setInitialTag: KeyLists -> List Tag -> KeyLists
 setInitialTag keyList newList = { keyList | tagList = Just newList }
 
+setInitialPart: KeyLists -> List PartLight -> KeyLists
+setInitialPart keyList newList = { keyList | partList = Just newList }
+
 getAllUnits: Model -> Cmd Msg
 getAllUnits model = RecipeObj.getAllUnits SetUnitList (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllUnits")
 
@@ -465,6 +478,8 @@ getAllSources model = RecipeObj.getAllSources SetSourceList (model.sp.serverProt
 getAllTags: Model -> Cmd Msg
 getAllTags model = RecipeObj.getAllTags SetTagList (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllTags")
 
+getAllParts: Model -> Cmd Msg
+getAllParts model = RecipeObj.getAllParts SetPartList (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllParts")
 
 uploadImage: Model -> ImagePortData -> Cmd Msg
 uploadImage model image = RecipeObj.uploadImage UploadImage (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/uploadImage") image

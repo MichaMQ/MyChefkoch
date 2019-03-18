@@ -1,4 +1,4 @@
-module Devs.RecipeDecode exposing ( sourceEncoder,recipeEncoder,imageEncoder,tagtypeDecoder,recipeLightDecoder,recipeDecoder,unitDecoder,sourceDecoder,tagDecoder )
+module Devs.RecipeDecode exposing ( sourceEncoder,recipeEncoder,imageEncoder,tagtypeDecoder,recipeLightDecoder,recipeDecoder,unitDecoder,sourceDecoder,tagDecoder,partLightDecoder )
 
 import Json.Decode as Decode exposing (Decoder, field, succeed)
 import Json.Decode.Extra exposing (andMap)
@@ -79,7 +79,7 @@ tagEncoder tag =
       list =
           [ ( "id", encodeInt tag.id )
           , ( "name", Encode.string tag.name )
-          , ( "tagType", tagtypeEncoder tag.tagType )
+          , ( "tagtype", tagtypeEncoder tag.tagType )
           ]
     in
       Encode.object list
@@ -98,7 +98,9 @@ ingreEncoder ingre =
           , ( "name", Encode.string ingre.name )
           , ( "sortorder", Encode.int ingre.sortorder )
           , ( "comment", encodeString ingre.comment )
-          , ( "part", encodeInt ingre.part )
+          , ( "part", case ingre.part of
+            Just val -> partLightEncoder val
+            Nothing -> Encode.null )
           , ( "quantity", encodeFloat ingre.quantity )
           , ( "unit", case ingre.unit of
             Just val -> unitEncoder val
@@ -106,6 +108,19 @@ ingreEncoder ingre =
           ]
     in
       Encode.object list
+
+partEncoder: Part -> Encode.Value
+partEncoder p =
+    Encode.object [ ( "id", Encode.int p.id )
+    , ( "name", Encode.string p.name )
+    , ( "ingredients", Encode.list ingreEncoder p.ingredients)
+    ]
+
+partLightEncoder: PartLight -> Encode.Value
+partLightEncoder p =
+    Encode.object [ ( "id", Encode.int p.id )
+    , ( "name", Encode.string p.name )
+    ]
 
 unitEncoder: Unit -> Encode.Value
 unitEncoder unit =
@@ -145,7 +160,7 @@ tagDecoder : Decoder Tag
 tagDecoder = Decode.map3 Tag
   (Decode.maybe <| field "id" Decode.int)
   (field "name" Decode.string)
-  (field "tagType" tagtypeShortDecoder)
+  (field "tagtype" tagtypeShortDecoder)
 
 tagListDecoder : Decoder (List Tag)
 tagListDecoder =
@@ -163,7 +178,7 @@ ingrDecoder = Decode.map7 Ingredient
   (Decode.maybe <| field "id" Decode.int)
   (field "name" Decode.string)
   (Decode.maybe <| field "comment" Decode.string)
-  (Decode.maybe <| field "part" Decode.int)
+  (Decode.maybe <| field "part" partLightDecoder)
   (Decode.maybe <| field "quantity" Decode.float)
   (field "sortorder" Decode.int)
   (Decode.maybe <| field "unit" unitDecoder)
@@ -171,6 +186,23 @@ ingrDecoder = Decode.map7 Ingredient
 ingrListDecoder : Decoder (List Ingredient)
 ingrListDecoder =
   Decode.list ingrDecoder
+
+partListDecoder : Decoder (List Part)
+partListDecoder =
+  Decode.list partDecoder
+
+partDecoder : Decoder Part
+partDecoder =
+  Decode.map3 Part
+    (field "id" Decode.int)
+    (field "name" Decode.string)
+    (field "ingredients" ingrListDecoder)
+
+partLightDecoder : Decoder PartLight
+partLightDecoder =
+  Decode.map2 PartLight
+    (field "id" Decode.int)
+    (field "name" Decode.string)
 
 unitDecoder : Decoder Unit
 unitDecoder = Decode.map3 Unit
@@ -206,7 +238,6 @@ recipeLightDecoder = Decode.map2 RecipeLight
   (field "id" Decode.int)
   (field "name" Decode.string)
 
-
 recipeDecoder : Decode.Decoder Recipe
 recipeDecoder =
     Decode.succeed Recipe
@@ -214,6 +245,7 @@ recipeDecoder =
     |> andMap (Decode.field "id" (Decode.maybe Decode.int))
     |> andMap (Decode.field "image" (Decode.maybe Decode.string))
     |> andMap (Decode.field "ingredients" (Decode.maybe ingrListDecoder))
+    |> andMap (Decode.field "parts" (Decode.maybe partListDecoder))
     |> andMap (Decode.field "name" Decode.string)
     |> andMap (Decode.field "translate" (Decode.maybe Decode.string))
     |> andMap (Decode.field "number" (Decode.maybe Decode.int))

@@ -53,9 +53,12 @@ viewRecipe loggedIn rec sp =
     recImage = case rec.image of
       Just img -> Html.img [ class "recipeImg", src (sp.imagePath ++ img) ][]
       Nothing -> Html.text ""
-    rec_ingredients = case rec.ingredients of
-      Just ingredients -> ingredients
+    rec_parts = case rec.parts of
+      Just parts -> parts
       Nothing -> []
+--    rec_ingredients = case rec.ingredients of
+--      Just ingredients -> ingredients
+--      Nothing -> []
     rec_todos = case rec.todos of
       Just todos -> todos
       Nothing -> []
@@ -70,7 +73,8 @@ viewRecipe loggedIn rec sp =
         Html.figure [][ recImage, Html.figcaption [][ Html.text rec_number ] ],
         Html.div [ id "ingredientsDiv" ][
           Html.h4 [][ Html.text "Zutaten" ],
-          Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showIngrRow (sortBy .sortorder rec_ingredients) ) ]
+--          Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showIngrRow (sortBy .sortorder rec_ingredients) ) ]
+          Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showPartRow (sortBy .name rec_parts) ) ]
         ],
         Html.div [ id "todosDiv" ][
           Html.h4 [][ Html.text "Zubereitung" ],
@@ -93,6 +97,18 @@ showTodoRow sp todo =
       ],
       Html.figure [][ image ]
     ]
+
+showPartRow: Part -> Html Msg
+showPartRow part =
+  let
+    ingreRows = (List.map showIngrRow (sortBy .sortorder part.ingredients))
+    partRow = Html.tr[ class "partsRow" ][
+      Html.td [ colspan 2 ][ Html.text part.name ]
+      ]
+  in
+    Html.tr[ ][ Html.td [][
+      Html.table [ ][ Html.tbody [] ([partRow] ++ ingreRows) ]
+    ]]
 
 showIngrRow: Ingredient -> Html Msg
 showIngrRow ingr =
