@@ -26,14 +26,22 @@ update msg model =
           in
             ( { model | recImage = Just newImage, recipeForEdit = (RecipeObj.setImage model.recipeForEdit (Just imagePortData.filename)) }, uploadImage model newImage )
         GetLoginForm -> ( { model | loggedIn = Just False } , Cmd.none)
+        SetUsernameForCheck val -> ( { model | usernameForCheck = val } , Cmd.none)
         SetPasswortForCheck val -> ( { model | passwordForCheck = val } , Cmd.none)
         Login ->
             if String.isEmpty model.passwordForCheck then
                 ( { model | subAlertMessage = Just "Bitte gib einen Passwort ein!" }, Cmd.none )
             else
-              if String.trim model.passwordForCheck == model.sp.password then
-                ( { model | subAlertMessage = Nothing, loggedIn = Just True } , Cmd.none )
-              else ( { model | subAlertMessage = Just "Das eingegbene Passwort ist falsch!" }, Cmd.none )
+              if String.isEmpty model.usernameForCheck then
+                ( { model | subAlertMessage = Just "Bitte gib einen Benutzername ein!" }, Cmd.none )
+              else
+                ( model, login model )
+        HandleLogin (Ok isLoggedIn) ->
+                if isLoggedIn then
+                  ( { model | subAlertMessage = Nothing, loggedIn = Just True } , Cmd.none )
+                else ( { model | subAlertMessage = Just "Das eingegbene Passwort ist falsch!" }, Cmd.none )
+        HandleLogin (Err error) ->
+          ( { model | recAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
         ShowOverView ->
           ( { model | selectedRecipe = Nothing, selectedTag = Nothing }, Cmd.none )
         ShowRecipe rec ->
@@ -498,6 +506,9 @@ searchRecipe model = RecipeObj.searchRecipe ListRecipesForTag (model.sp.serverPr
 
 getRecipe: Model -> RecipeLight -> Cmd Msg
 getRecipe model rec = RecipeObj.getRecipe SetRecipe (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getRecipeById/?id=" ++ String.fromInt rec.id)
+
+login: Model -> Cmd Msg
+login model = RecipeObj.login HandleLogin (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/login/?username=" ++ model.usernameForCheck ++ "&password=" ++ model.passwordForCheck)
 
 getRecipeListForTag: Model -> Maybe Tag -> Cmd Msg
 getRecipeListForTag model selectedTag =

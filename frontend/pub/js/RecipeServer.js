@@ -6771,6 +6771,21 @@ var author$project$Devs$Update$httpErrorToMessage = function (error) {
 			return 'The time for request is out!';
 	}
 };
+var author$project$Devs$Objects$HandleLogin = function (a) {
+	return {$: 'HandleLogin', a: a};
+};
+var elm$json$Json$Decode$bool = _Json_decodeBool;
+var author$project$Devs$Recipe$login = F2(
+	function (event, url) {
+		return elm$http$Http$get(
+			{
+				expect: A2(elm$http$Http$expectJson, event, elm$json$Json$Decode$bool),
+				url: url
+			});
+	});
+var author$project$Devs$Update$login = function (model) {
+	return A2(author$project$Devs$Recipe$login, author$project$Devs$Objects$HandleLogin, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + ('/login/?username=' + (model.usernameForCheck + ('&password=' + model.passwordForCheck)))))));
+};
 var author$project$Devs$Objects$SavedRecipe = function (a) {
 	return {$: 'SavedRecipe', a: a};
 };
@@ -7180,7 +7195,6 @@ var author$project$Devs$RecipeEncode$imageEncoder = function (img) {
 				elm$json$Json$Encode$string(img.filename))
 			]));
 };
-var elm$json$Json$Decode$bool = _Json_decodeBool;
 var author$project$Devs$Recipe$uploadImage = F3(
 	function (event, url, image) {
 		var jsonValue = author$project$Devs$RecipeEncode$imageEncoder(image);
@@ -7469,6 +7483,13 @@ var author$project$Devs$Update$update = F2(
 							loggedIn: elm$core$Maybe$Just(false)
 						}),
 					elm$core$Platform$Cmd$none);
+			case 'SetUsernameForCheck':
+				var val = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{usernameForCheck: val}),
+					elm$core$Platform$Cmd$none);
 			case 'SetPasswortForCheck':
 				var val = msg.a;
 				return _Utils_Tuple2(
@@ -7483,22 +7504,43 @@ var author$project$Devs$Update$update = F2(
 						{
 							subAlertMessage: elm$core$Maybe$Just('Bitte gib einen Passwort ein!')
 						}),
-					elm$core$Platform$Cmd$none) : (_Utils_eq(
-					elm$core$String$trim(model.passwordForCheck),
-					model.sp.password) ? _Utils_Tuple2(
+					elm$core$Platform$Cmd$none) : (elm$core$String$isEmpty(model.usernameForCheck) ? _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
-							loggedIn: elm$core$Maybe$Just(true),
-							subAlertMessage: elm$core$Maybe$Nothing
+							subAlertMessage: elm$core$Maybe$Just('Bitte gib einen Benutzername ein!')
 						}),
 					elm$core$Platform$Cmd$none) : _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							subAlertMessage: elm$core$Maybe$Just('Das eingegbene Passwort ist falsch!')
-						}),
-					elm$core$Platform$Cmd$none));
+					model,
+					author$project$Devs$Update$login(model)));
+			case 'HandleLogin':
+				if (msg.a.$ === 'Ok') {
+					var isLoggedIn = msg.a.a;
+					return isLoggedIn ? _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								loggedIn: elm$core$Maybe$Just(true),
+								subAlertMessage: elm$core$Maybe$Nothing
+							}),
+						elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								subAlertMessage: elm$core$Maybe$Just('Das eingegbene Passwort ist falsch!')
+							}),
+						elm$core$Platform$Cmd$none);
+				} else {
+					var error = msg.a.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								recAlertMessage: elm$core$Maybe$Just(
+									author$project$Devs$Update$httpErrorToMessage(error))
+							}),
+						elm$core$Platform$Cmd$none);
+				}
 			case 'ShowOverView':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -8806,7 +8848,7 @@ var author$project$Devs$Update$update = F2(
 	});
 var author$project$Devs$Objects$keyLists = {partList: elm$core$Maybe$Nothing, sourceList: elm$core$Maybe$Nothing, tagList: elm$core$Maybe$Nothing, unitList: elm$core$Maybe$Nothing};
 var author$project$Devs$Objects$serverParams = {apiUrlPrefix: '/api/v1', iconPath: 'icons/', imagePath: 'images/', password: 'xxx', serverHost: 'horst:8085', serverProtokoll: 'http://', serverUrlPrefix: '/RecipeServer'};
-var author$project$Devs$Objects$initialModel = {addTag: elm$core$Maybe$Nothing, alertMessage: elm$core$Maybe$Nothing, deleteRecipe: false, kl: author$project$Devs$Objects$keyLists, loggedIn: elm$core$Maybe$Nothing, newSource: elm$core$Maybe$Nothing, passwordForCheck: '', recAlertMessage: elm$core$Maybe$Nothing, recImage: elm$core$Maybe$Nothing, recipeForEdit: elm$core$Maybe$Nothing, recipesOfSelectedTag: elm$core$Maybe$Nothing, searchValue: '', selectedRecipe: elm$core$Maybe$Nothing, selectedTab: 'Tab1', selectedTag: elm$core$Maybe$Nothing, sp: author$project$Devs$Objects$serverParams, subAlertMessage: elm$core$Maybe$Nothing, tagtypeList: elm$core$Maybe$Nothing};
+var author$project$Devs$Objects$initialModel = {addTag: elm$core$Maybe$Nothing, alertMessage: elm$core$Maybe$Nothing, deleteRecipe: false, kl: author$project$Devs$Objects$keyLists, loggedIn: elm$core$Maybe$Nothing, newSource: elm$core$Maybe$Nothing, passwordForCheck: '', recAlertMessage: elm$core$Maybe$Nothing, recImage: elm$core$Maybe$Nothing, recipeForEdit: elm$core$Maybe$Nothing, recipesOfSelectedTag: elm$core$Maybe$Nothing, searchValue: '', selectedRecipe: elm$core$Maybe$Nothing, selectedTab: 'Tab1', selectedTag: elm$core$Maybe$Nothing, sp: author$project$Devs$Objects$serverParams, subAlertMessage: elm$core$Maybe$Nothing, tagtypeList: elm$core$Maybe$Nothing, usernameForCheck: ''};
 var author$project$Devs$Objects$SetPartList = function (a) {
 	return {$: 'SetPartList', a: a};
 };
@@ -11015,6 +11057,9 @@ var author$project$Devs$Objects$Login = {$: 'Login'};
 var author$project$Devs$Objects$SetPasswortForCheck = function (a) {
 	return {$: 'SetPasswortForCheck', a: a};
 };
+var author$project$Devs$Objects$SetUsernameForCheck = function (a) {
+	return {$: 'SetUsernameForCheck', a: a};
+};
 var elm$html$Html$Events$keyCode = A2(elm$json$Json$Decode$field, 'keyCode', elm$json$Json$Decode$int);
 var author$project$Pages$Utils$onEnter = function (msg) {
 	var isEnter = function (code) {
@@ -11051,7 +11096,34 @@ var author$project$Pages$LoginView$getLoginForm = function (model) {
 								elm$html$Html$label,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$for('id')
+										elm$html$Html$Attributes$for('username')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('Benutzername')
+									])),
+								A2(
+								elm$html$Html$input,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$id('username'),
+										elm$html$Html$Attributes$type_('text'),
+										elm$html$Html$Attributes$autofocus(true),
+										elm$html$Html$Events$onInput(author$project$Devs$Objects$SetUsernameForCheck),
+										author$project$Pages$Utils$onEnter(author$project$Devs$Objects$Login)
+									]),
+								_List_Nil)
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$label,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$for('password')
 									]),
 								_List_fromArray(
 									[
@@ -11061,8 +11133,8 @@ var author$project$Pages$LoginView$getLoginForm = function (model) {
 								elm$html$Html$input,
 								_List_fromArray(
 									[
+										elm$html$Html$Attributes$id('password'),
 										elm$html$Html$Attributes$type_('password'),
-										elm$html$Html$Attributes$autofocus(true),
 										elm$html$Html$Events$onInput(author$project$Devs$Objects$SetPasswortForCheck),
 										author$project$Pages$Utils$onEnter(author$project$Devs$Objects$Login)
 									]),

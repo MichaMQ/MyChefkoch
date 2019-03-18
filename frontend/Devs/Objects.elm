@@ -45,8 +45,10 @@ type Msg =
   ImageRead ImagePortData |
   ShowOverView |
   GetLoginForm |
+  SetUsernameForCheck String |
   SetPasswortForCheck String |
   Login |
+  HandleLogin (Result Http.Error Bool) |
   ShowRecipesOfTag (Maybe Tag) |
   ShowRecipe (Maybe RecipeLight) |
   EditRecipe |
@@ -133,6 +135,7 @@ type alias Model = {
     kl: KeyLists,
     loggedIn: Maybe Bool,
     deleteRecipe: Bool,
+    usernameForCheck: String,
     passwordForCheck: String
   }
 
@@ -171,6 +174,7 @@ initialModel = {
   loggedIn = Nothing,
 --  loggedIn = Just True,
   deleteRecipe = False,
+  usernameForCheck = "",
   passwordForCheck = ""
   }
 

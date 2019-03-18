@@ -13,8 +13,12 @@ getLoginForm model =
   Html.div [ class "editFormBG" ][
     Html.div [ class "editFormDiv" ] [
       Html.div[][
-        Html.label [ for "id" ][ Html.text "Passwort" ],
-        Html.input [ type_ "password", autofocus True, onInput SetPasswortForCheck, PU.onEnter Login ][]
+        Html.label [ for "username" ][ Html.text "Benutzername" ],
+        Html.input [ id "username", type_ "text", autofocus True, onInput SetUsernameForCheck, PU.onEnter Login ][]
+      ],
+      Html.div[][
+        Html.label [ for "password" ][ Html.text "Passwort" ],
+        Html.input [ id "password", type_ "password", onInput SetPasswortForCheck, PU.onEnter Login ][]
       ], PU.alert CloseLoginAlert model.subAlertMessage model,
       Html.div [ class "editFormActionDiv" ][
         Html.button [ onClick Login ][ Html.text "login" ],

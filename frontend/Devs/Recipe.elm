@@ -70,6 +70,9 @@ getRecipe: (Result Http.Error (Recipe) -> Msg) -> String -> Cmd Msg
 --getRecipe event url = Http.send event (Http.get url RD.recipeDecoder)
 getRecipe event url = Http.get {url=url, expect=Http.expectJson event RD.recipeDecoder}
 
+login: (Result Http.Error (Bool) -> Msg) -> String -> Cmd Msg
+login event url = Http.get {url=url, expect=Http.expectJson event Decode.bool}
+
 setIngreOrder: Ingredient -> Int -> Ingredient
 setIngreOrder ingre newVal = {ingre | sortorder = newVal}
 
