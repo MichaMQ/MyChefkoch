@@ -1,4 +1,4 @@
-module Devs.RecipeDecode exposing ( sourceEncoder,recipeEncoder,imageEncoder,tagtypeDecoder,recipeLightDecoder,recipeDecoder,unitDecoder,sourceDecoder,tagDecoder )
+module Devs.RecipeDecode exposing ( sourceEncoder,recipeEncoder,imageEncoder,tagtypeDecoder,recipeLightDecoder,recipeDecoder,unitDecoder,sourceDecoder,tagDecoder,partLightDecoder )
 
 import Json.Decode as Decode exposing (Decoder, field, succeed)
 import Json.Decode.Extra exposing (andMap)
@@ -51,11 +51,8 @@ recipeEncoder rec =
           , ( "source", case rec.source of
             Just val -> sourceEncoder val
             Nothing -> Encode.null )
---          , ( "ingredients", case rec.ingredients of
---            Just list1 -> Encode.list ingreEncoder list1
---            Nothing -> Encode.null )
-          , ( "parts", case rec.parts of
-            Just list1 -> Encode.list partEncoder list1
+          , ( "ingredients", case rec.ingredients of
+            Just list1 -> Encode.list ingreEncoder list1
             Nothing -> Encode.null )
           , ( "tags", case rec.tags of
             Just list2 -> Encode.list tagEncoder list2
@@ -82,7 +79,7 @@ tagEncoder tag =
       list =
           [ ( "id", encodeInt tag.id )
           , ( "name", Encode.string tag.name )
-          , ( "tagtype", tagtypeEncoder tag.tagtype )
+          , ( "tagtype", tagtypeEncoder tag.tagType )
           ]
     in
       Encode.object list
@@ -112,22 +109,18 @@ ingreEncoder ingre =
     in
       Encode.object list
 
-partLightEncoder: PartLight -> Encode.Value
-partLightEncoder part =
-    Encode.object [ ( "id", Encode.int part.id )
-    , ( "name", Encode.string part.name )
+partEncoder: Part -> Encode.Value
+partEncoder p =
+    Encode.object [ ( "id", Encode.int p.id )
+    , ( "name", Encode.string p.name )
+    , ( "ingredients", Encode.list ingreEncoder p.ingredients)
     ]
 
-partEncoder: Part -> Encode.Value
-partEncoder part =
-    let
-      list =
-          [ ( "id", Encode.int part.id )
-          , ( "name", Encode.string part.name )
-          , ( "ingredients", Encode.list ingreEncoder part.ingredients )
-          ]
-    in
-      Encode.object list
+partLightEncoder: PartLight -> Encode.Value
+partLightEncoder p =
+    Encode.object [ ( "id", Encode.int p.id )
+    , ( "name", Encode.string p.name )
+    ]
 
 unitEncoder: Unit -> Encode.Value
 unitEncoder unit =
@@ -194,20 +187,22 @@ ingrListDecoder : Decoder (List Ingredient)
 ingrListDecoder =
   Decode.list ingrDecoder
 
-partLightDecoder : Decoder PartLight
-partLightDecoder = Decode.map2 PartLight
-  (field "id" Decode.int)
-  (field "name" Decode.string)
-
-partDecoder : Decoder Part
-partDecoder = Decode.map3 Part
-  (field "id" Decode.int)
-  (field "name" Decode.string)
-  (field "ingredients" ingrListDecoder)
-
 partListDecoder : Decoder (List Part)
 partListDecoder =
   Decode.list partDecoder
+
+partDecoder : Decoder Part
+partDecoder =
+  Decode.map3 Part
+    (field "id" Decode.int)
+    (field "name" Decode.string)
+    (field "ingredients" ingrListDecoder)
+
+partLightDecoder : Decoder PartLight
+partLightDecoder =
+  Decode.map2 PartLight
+    (field "id" Decode.int)
+    (field "name" Decode.string)
 
 unitDecoder : Decoder Unit
 unitDecoder = Decode.map3 Unit
@@ -249,7 +244,7 @@ recipeDecoder =
     |> andMap (Decode.field "aikz" Decode.int)
     |> andMap (Decode.field "id" (Decode.maybe Decode.int))
     |> andMap (Decode.field "image" (Decode.maybe Decode.string))
---    |> andMap (Decode.field "ingredients" (Decode.maybe ingrListDecoder))
+    |> andMap (Decode.field "ingredients" (Decode.maybe ingrListDecoder))
     |> andMap (Decode.field "parts" (Decode.maybe partListDecoder))
     |> andMap (Decode.field "name" Decode.string)
     |> andMap (Decode.field "translate" (Decode.maybe Decode.string))

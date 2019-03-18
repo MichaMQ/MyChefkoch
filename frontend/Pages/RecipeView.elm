@@ -102,7 +102,7 @@ showPartRow: Part -> Html Msg
 showPartRow part =
   let
     ingreRows = (List.map showIngrRow (sortBy .sortorder part.ingredients))
-    partRow = Html.tr[ class "incredientsRow" ][
+    partRow = Html.tr[ class "partsRow" ][
       Html.td [ colspan 2 ][ Html.text part.name ]
       ]
   in
@@ -129,4 +129,4 @@ showIngrRow ingr =
     ]
 
 getTagName: Tag -> String
-getTagName tag = tag.name ++ " (" ++  tag.tagtype.name ++ ")"
+getTagName tag = tag.name ++ " (" ++  tag.tagType.name ++ ")"

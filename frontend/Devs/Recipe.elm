@@ -9,7 +9,7 @@ import Debug exposing (log)
 
 import Devs.Objects as Objects exposing (..)
 
-import Devs.RecipeDecode as RD exposing (sourceEncoder,recipeEncoder,imageEncoder,tagtypeDecoder,recipeLightDecoder,recipeDecoder,unitDecoder,sourceDecoder,tagDecoder)
+import Devs.RecipeDecode as RD exposing (sourceEncoder,recipeEncoder,imageEncoder,tagtypeDecoder,recipeLightDecoder,recipeDecoder,unitDecoder,sourceDecoder,tagDecoder,partLightDecoder)
 
 uploadImage: (Result Http.Error (Bool) -> Msg) -> String -> ImagePortData -> Cmd Msg
 uploadImage event url image =
@@ -50,6 +50,9 @@ getAllTags: (Result Http.Error (List Tag) -> Msg) -> String -> Cmd Msg
 --getAllTags event url = Http.send event (Http.get url (Decode.list RD.tagDecoder))
 getAllTags event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.tagDecoder)}
 
+getAllParts: (Result Http.Error (List PartLight) -> Msg) -> String -> Cmd Msg
+getAllParts event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.partLightDecoder)}
+
 getTagtypeListForOverview: (Result Http.Error (List Tagtype) -> Msg) -> String -> Cmd Msg
 --getTagtypeListForOverview event url = Http.send event (Http.get url (Decode.list RD.tagtypeDecoder))
 getTagtypeListForOverview event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.tagtypeDecoder)}
@@ -78,8 +81,8 @@ setIngreName ingre newVal = {ingre | name = newVal}
 setIngreQuant: Ingredient -> Float -> Ingredient
 setIngreQuant ingre newVal = {ingre | quantity = Just newVal}
 
---setIngrePart: Ingredient -> Int -> Ingredient
---setIngrePart ingre newVal = {ingre | part = Just newVal}
+setIngrePart: Ingredient -> PartLight -> Ingredient
+setIngrePart ingre newVal = {ingre | part = Just newVal}
 
 setIngreUnit: Ingredient -> Unit -> Ingredient
 setIngreUnit ingre newVal = {ingre | unit = Just newVal}
@@ -199,7 +202,6 @@ setSource recipe newSource =
     Just rec -> Just { rec | source = Just newSource }
     Nothing -> Nothing
 
-{-
 setIngredients: Maybe Recipe -> List Ingredient -> Maybe Recipe
 setIngredients recipe newIngreList =
   case recipe of
@@ -217,7 +219,6 @@ addToIngredients recipe newIngre =
       in
         Just { rec | ingredients = Just (List.concat [ ingreList, [newIngre] ]) }
     Nothing -> Nothing
--}
 
 setTodos: Maybe Recipe -> List Todo -> Maybe Recipe
 setTodos recipe newTodoList =

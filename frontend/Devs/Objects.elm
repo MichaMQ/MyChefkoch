@@ -5,9 +5,9 @@ import Http
 
 -- Model
 type alias ServerParams = {serverProtokoll: String, serverHost: String, serverUrlPrefix: String, apiUrlPrefix: String, iconPath: String, imagePath: String, password: String}
-type alias KeyLists = {sourceList: Maybe (List Source), tagList: Maybe (List Tag), unitList: Maybe (List Unit)}
+type alias KeyLists = {sourceList: Maybe (List Source), tagList: Maybe (List Tag), unitList: Maybe (List Unit), partList: Maybe (List PartLight)}
 type alias TagtypeShort = {id: Maybe Int, name: String}
-type alias Tag = {id: Maybe Int, name: String, tagtype: TagtypeShort}
+type alias Tag = {id: Maybe Int, name: String, tagType: TagtypeShort}
 type alias Tagtype = {id: Int, name: String, tagList: List Tag}
 type alias UnitCategory = {id: Int, name: String}
 type alias Unit = {id: Int, name: String, unitCategory: UnitCategory}
@@ -21,7 +21,7 @@ type alias Recipe = {
   aikz: Int,
   id: Maybe Int,
   image: Maybe String,
---  ingredients: Maybe (List Ingredient),
+  ingredients: Maybe (List Ingredient),
   parts: Maybe (List Part),
   name: String,
   translate: Maybe String,
@@ -80,16 +80,14 @@ type Msg =
   RemoveTagFromRec Int |
   CancelAddTag |
   AddTagToRecipe |
-{-
   AddIngreToRecipe |
   SetIngreOrder Int String |
   SetIngreName Int String |
-  SetIngrePart Int String |
+  SetIngrePart Int Int |
   SetIngreUnit Int Int |
   SetIngreQuant Int String |
   SetIngreComment Int String |
   RemoveIngreFromRecipe |
--}
   AddTodoToRecipe |
   SetTodoNr Int String |
   SetTodoText Int String |
@@ -112,6 +110,7 @@ type Msg =
   SetUnitList (Result Http.Error (List Unit)) |
   SetSourceList (Result Http.Error (List Source)) |
   SetTagList (Result Http.Error (List Tag)) |
+  SetPartList (Result Http.Error (List PartLight)) |
   SetSearchInput String |
   SearchRecipe |
   UploadImage (Result Http.Error Bool)
@@ -140,9 +139,8 @@ type alias Model = {
 -- Model
 
 keyLists: KeyLists
-keyLists = {sourceList = Nothing, tagList = Nothing, unitList = Nothing}
+keyLists = {sourceList = Nothing, tagList = Nothing, unitList = Nothing, partList = Nothing}
 
---http://horst:8085/RecipeServer/api/v1/getAllTags
 serverParams: ServerParams
 serverParams = {serverProtokoll = "http://",
     serverHost = "horst:8085",
@@ -179,12 +177,12 @@ initialModel = {
 getEmptyTodo: Int -> Todo
 getEmptyTodo newNumber = {id=0, image=Nothing, image_comment=Nothing, number=newNumber, text=""}
 
-getEmptyIngre: Int -> Maybe Int -> Ingredient
+getEmptyIngre: Int -> Maybe PartLight -> Ingredient
 getEmptyIngre newOrder newPart = {
   id=Nothing,
   name="",
   comment=Nothing ,
-  part=Nothing,
+  part=newPart,
   quantity=Nothing,
   sortorder=newOrder,
   unit=Nothing}
@@ -198,15 +196,18 @@ getEmptySource = {id=Nothing, isbn=Nothing, name="", year=Nothing}
 getEmptyTagtype: Tagtype
 getEmptyTagtype = {id=0, name="", tagList=[]}
 
+getEmptyPart: PartLight
+getEmptyPart = {id=-2, name="Sonstige Zutaten"}
+
 getEmptyTag: Tag
-getEmptyTag = {id=Nothing, name="", tagtype={id=Nothing, name=""}}
+getEmptyTag = {id=Nothing, name="", tagType={id=Nothing, name=""}}
 
 getEmptyRecipe: Recipe
 getEmptyRecipe = {
     aikz=1,
     id=Nothing,
     image=Nothing,
---    ingredients=Nothing,
+    ingredients=Nothing,
     parts=Nothing,
     name="",
     translate = Nothing,

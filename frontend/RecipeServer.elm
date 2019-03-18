@@ -39,4 +39,4 @@ subscriptions : Model -> Sub Msg
 subscriptions model = Ports.fileContentRead ImageRead
 
 init : ( Model, Cmd Msg )
-init =  ( initialModel, Cmd.batch [ Update.getTagtypeListForOverview initialModel, Update.getAllUnits initialModel, Update.getAllSources initialModel, Update.getAllTags initialModel ] )
+init =  ( initialModel, Cmd.batch [ Update.getTagtypeListForOverview initialModel, Update.getAllUnits initialModel, Update.getAllSources initialModel, Update.getAllTags initialModel, Update.getAllParts initialModel ] )

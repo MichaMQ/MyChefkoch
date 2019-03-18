@@ -40,7 +40,7 @@ showTagDiv initialTagList tagObj =
     tag = second tagObj
   in
     Html.tr[][
-      Html.td[][ Html.text (tag.name ++ " (" ++ tag.tagtype.name ++ ")") ],
+      Html.td[][ Html.text (tag.name ++ " (" ++ tag.tagType.name ++ ")") ],
       Html.td[][ Html.button [ onClick (RemoveTagFromRec idx) ][ Html.text "-" ] ]
     ]
 
@@ -52,4 +52,4 @@ showTagOption tagListValue tag =
       Just id -> String.fromInt id
       Nothing -> ""
   in
-    Html.option[ value tagId, selected selectedVal ][ Html.text (tag.name ++ " (" ++ tag.tagtype.name ++ ")") ]
+    Html.option[ value tagId, selected selectedVal ][ Html.text (tag.name ++ " (" ++ tag.tagType.name ++ ")") ]
