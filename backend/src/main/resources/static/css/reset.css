@@ -1,0 +1,66 @@
+/*
+
+R E S E T . C S S
+
+*/
+
+
+/*  R E S E T   S E T T I N G S
+--------------------------------------------------------------------------------------------------- */
+
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video { background: transparent; font-size: 100%; vertical-align: baseline; border: 0; outline: 0; margin: 0; padding: 0; }
+
+html { height: 100%; overflow-y: scroll; }
+body { -webkit-text-size-adjust: none; }
+article, aside, dialog, figure, figcaption, footer, header, hgroup, nav, section { display: block; }
+
+h1, h2, h3, h4, h5, h6, strong, b { font-weight: bold; }
+
+a, :focus { outline: 0; }
+a img { border: 0 none; }
+
+small { font-size: 85%; }
+strike, del { text-decoration: line-through; }
+pre, code { font-family: Consolas, "Lucida Console", Monaco, monospace; font-size: 100%; }
+sub { vertical-align: sub; font-size: 90%; }
+sup { vertical-align: super; font-size: 90%; }
+hr { display: block; height: 1px; border: 0; border-top: 1px solid #ccc; padding: 0; }
+
+ul { list-style: none outside; }
+ul.bullets { list-style: square outside; margin-left: 2em; }
+ol { list-style: decimal outside; margin-left: 2em; }
+
+.ie7 img { -ms-interpolation-mode: bicubic; }
+
+.ie7 legend { margin-left: -7px; }
+input, select, button { vertical-align: middle; }
+input[type=checkbox], input[type=radio], input[type=text] { vertical-align: baseline; }
+input, select, textarea { font-size: inherit !important; font-family: inherit !important; color: inherit; }
+
+::-webkit-input-placeholder { color: #ccc }
+:-moz-placeholder { color: #ccc  }
+
+label, select, button, input[type=button], input[type=submit] { cursor: pointer; }
+textarea { overflow: auto; }
+button { width: auto; overflow: visible; }
+
+/* Disable Webkits Search Input Styling */
+input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-search-decoration, input[type=search]::-webkit-search-results-button, input[type=search]::-webkit-search-results-decoration { -webkit-appearance: none; }
+input[type=search] { -webkit-appearance: textfield; -webkit-box-sizing: content-box; }
+
+th, td, { font-size: inherit !important; font-family: inherit !important; color: inherit !important; }
+
+.hidden { position: absolute; left: -9999px }
+
+.normal { font-weight: normal !important; }
+.no-border { border: 0 !important; }
+.no-margin { margin: 0 !important; }
+
+.left { float: left !important; }
+.right { float: right !important; }
+
+.clear { clear: both; }
+
+.cf:before, .cf:after { content: ""; display: table; }
+.cf:after { clear: both; }
+.cf { zoom: 1; }

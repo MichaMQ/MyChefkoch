@@ -1,0 +1,52 @@
+<style>
+#slider {
+	width: 300px;
+	height: 250px;
+	overflow: hidden;
+	float: left;
+}
+
+#slider #slides {
+	display: block;
+	width: 3600px;
+	height: 250px;
+	margin: 0;
+	padding: 0;
+}
+
+#slider .slide {
+	float: left;
+	list-style: none;
+	height: 250px;
+	width: 300px;
+}
+
+#slider .slide img {
+	width: 100%;
+}
+</style>
+
+<div style="float: left; width: 500px; display: inline-block;">
+	<h2>RecipeService t</h2>
+	<a href="http://horst:8085/RecipeServer/api/v1/clearCache">clearCache</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/getAllUnits">getAllUnits</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/getAllUnitsSorted">getAllUnitsSorted</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/getAllParts">getAllParts</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/getAllSources">getAllSources</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/getAllSourcesSorted">getAllSourcesSorted</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/getAllTags">getAllTags</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/getAllTagsSorted">getAllTagsSorted</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/getAllTagTypes">getAllTagTypes</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/getAllTagTypesSorted">getAllTagTypesSorted</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/getAllRecipeByTagWithoutMeta/?id=3">getAllRecipeByTagWithoutMeta 3 (Torten)</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/getRecipeById/?id=2">getRecipeById 2 (New York Cheesecake)</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/findRecipeByName/?name=Käse">findRecipeByName 'K&auml;se'</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/printBookInline">printBookInline</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/printBookDownload">printBookDownload</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/savePassword/?username=Michael&password=xxx">savePassword</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/login/?username=Michael&password=xxx">login true</a><br/>
+	<a href="http://horst:8085/RecipeServer/api/v1/login/?username=Michael&password=xxxx">login false</a><br/>
+</div>
+<div style="float: left; width: 600px; display: inline-block;">
+
+</div>

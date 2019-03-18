@@ -1,6 +1,2 @@
-WEB-INF/classes/de
-WEB-INF/classes/spring
-pub/css
-pub/icons
-pub/images
-pub/js
+target/classes/chefkoch
+target/test-classes
