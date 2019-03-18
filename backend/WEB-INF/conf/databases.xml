@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dbConnection name="videoServer">
+	<protocol>jdbc:postgresql</protocol>
+	<driver>org.postgresql.Driver</driver>
+	<hibernateDialect>org.hibernate.dialect.PostgreSQLDialect</hibernateDialect>
+	<port>5432</port>
+	<dbName>chefkoch</dbName>
+	<username>postgres</username>
+	<!--host>dbserver.fritz.box</host-->
+	<host>localhost</host>
+	<password>eqe9dij4</password>
+</dbConnection>
