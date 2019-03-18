@@ -6776,7 +6776,7 @@ var author$project$Devs$Objects$SavedRecipe = function (a) {
 };
 var elm$json$Json$Encode$float = _Json_wrap;
 var elm$json$Json$Encode$null = _Json_encodeNull;
-var author$project$Devs$RecipeDecode$encodeFloat = function (str) {
+var author$project$Devs$RecipeEncode$encodeFloat = function (str) {
 	if (str.$ === 'Just') {
 		var val = str.a;
 		return elm$json$Json$Encode$float(val);
@@ -6785,7 +6785,7 @@ var author$project$Devs$RecipeDecode$encodeFloat = function (str) {
 	}
 };
 var elm$json$Json$Encode$int = _Json_wrap;
-var author$project$Devs$RecipeDecode$encodeInt = function (str) {
+var author$project$Devs$RecipeEncode$encodeInt = function (str) {
 	if (str.$ === 'Just') {
 		var val = str.a;
 		return elm$json$Json$Encode$int(val);
@@ -6796,7 +6796,7 @@ var author$project$Devs$RecipeDecode$encodeInt = function (str) {
 var elm$core$String$isEmpty = function (string) {
 	return string === '';
 };
-var author$project$Devs$RecipeDecode$encodeString = function (str) {
+var author$project$Devs$RecipeEncode$encodeString = function (str) {
 	if (str.$ === 'Just') {
 		var val = str.a;
 		return elm$core$String$isEmpty(val) ? elm$json$Json$Encode$null : elm$json$Json$Encode$string(val);
@@ -6817,7 +6817,7 @@ var elm$json$Json$Encode$object = function (pairs) {
 			_Json_emptyObject(_Utils_Tuple0),
 			pairs));
 };
-var author$project$Devs$RecipeDecode$partLightEncoder = function (p) {
+var author$project$Devs$RecipeEncode$partLightEncoder = function (p) {
 	return elm$json$Json$Encode$object(
 		_List_fromArray(
 			[
@@ -6829,7 +6829,7 @@ var author$project$Devs$RecipeDecode$partLightEncoder = function (p) {
 				elm$json$Json$Encode$string(p.name))
 			]));
 };
-var author$project$Devs$RecipeDecode$unitCatEncoder = function (uc) {
+var author$project$Devs$RecipeEncode$unitCatEncoder = function (uc) {
 	var list = _List_fromArray(
 		[
 			_Utils_Tuple2(
@@ -6841,7 +6841,7 @@ var author$project$Devs$RecipeDecode$unitCatEncoder = function (uc) {
 		]);
 	return elm$json$Json$Encode$object(list);
 };
-var author$project$Devs$RecipeDecode$unitEncoder = function (unit) {
+var author$project$Devs$RecipeEncode$unitEncoder = function (unit) {
 	return elm$json$Json$Encode$object(
 		_List_fromArray(
 			[
@@ -6853,15 +6853,15 @@ var author$project$Devs$RecipeDecode$unitEncoder = function (unit) {
 				elm$json$Json$Encode$string(unit.name)),
 				_Utils_Tuple2(
 				'unitCategory',
-				author$project$Devs$RecipeDecode$unitCatEncoder(unit.unitCategory))
+				author$project$Devs$RecipeEncode$unitCatEncoder(unit.unitCategory))
 			]));
 };
-var author$project$Devs$RecipeDecode$ingreEncoder = function (ingre) {
+var author$project$Devs$RecipeEncode$ingreEncoder = function (ingre) {
 	var list = _List_fromArray(
 		[
 			_Utils_Tuple2(
 			'id',
-			author$project$Devs$RecipeDecode$encodeInt(ingre.id)),
+			author$project$Devs$RecipeEncode$encodeInt(ingre.id)),
 			_Utils_Tuple2(
 			'name',
 			elm$json$Json$Encode$string(ingre.name)),
@@ -6870,28 +6870,28 @@ var author$project$Devs$RecipeDecode$ingreEncoder = function (ingre) {
 			elm$json$Json$Encode$int(ingre.sortorder)),
 			_Utils_Tuple2(
 			'comment',
-			author$project$Devs$RecipeDecode$encodeString(ingre.comment)),
+			author$project$Devs$RecipeEncode$encodeString(ingre.comment)),
 			_Utils_Tuple2(
 			'part',
 			function () {
 				var _n0 = ingre.part;
 				if (_n0.$ === 'Just') {
 					var val = _n0.a;
-					return author$project$Devs$RecipeDecode$partLightEncoder(val);
+					return author$project$Devs$RecipeEncode$partLightEncoder(val);
 				} else {
 					return elm$json$Json$Encode$null;
 				}
 			}()),
 			_Utils_Tuple2(
 			'quantity',
-			author$project$Devs$RecipeDecode$encodeFloat(ingre.quantity)),
+			author$project$Devs$RecipeEncode$encodeFloat(ingre.quantity)),
 			_Utils_Tuple2(
 			'unit',
 			function () {
 				var _n1 = ingre.unit;
 				if (_n1.$ === 'Just') {
 					var val = _n1.a;
-					return author$project$Devs$RecipeDecode$unitEncoder(val);
+					return author$project$Devs$RecipeEncode$unitEncoder(val);
 				} else {
 					return elm$json$Json$Encode$null;
 				}
@@ -6899,52 +6899,52 @@ var author$project$Devs$RecipeDecode$ingreEncoder = function (ingre) {
 		]);
 	return elm$json$Json$Encode$object(list);
 };
-var author$project$Devs$RecipeDecode$sourceEncoder = function (src) {
+var author$project$Devs$RecipeEncode$sourceEncoder = function (src) {
 	var list = _List_fromArray(
 		[
 			_Utils_Tuple2(
 			'id',
-			author$project$Devs$RecipeDecode$encodeInt(src.id)),
+			author$project$Devs$RecipeEncode$encodeInt(src.id)),
 			_Utils_Tuple2(
 			'name',
 			elm$json$Json$Encode$string(src.name)),
 			_Utils_Tuple2(
 			'isbn',
-			author$project$Devs$RecipeDecode$encodeString(src.isbn)),
+			author$project$Devs$RecipeEncode$encodeString(src.isbn)),
 			_Utils_Tuple2(
 			'year',
-			author$project$Devs$RecipeDecode$encodeString(src.year))
+			author$project$Devs$RecipeEncode$encodeString(src.year))
 		]);
 	return elm$json$Json$Encode$object(list);
 };
-var author$project$Devs$RecipeDecode$tagtypeEncoder = function (tt) {
+var author$project$Devs$RecipeEncode$tagtypeEncoder = function (tt) {
 	return elm$json$Json$Encode$object(
 		_List_fromArray(
 			[
 				_Utils_Tuple2(
 				'id',
-				author$project$Devs$RecipeDecode$encodeInt(tt.id)),
+				author$project$Devs$RecipeEncode$encodeInt(tt.id)),
 				_Utils_Tuple2(
 				'name',
 				elm$json$Json$Encode$string(tt.name))
 			]));
 };
-var author$project$Devs$RecipeDecode$tagEncoder = function (tag) {
+var author$project$Devs$RecipeEncode$tagEncoder = function (tag) {
 	var list = _List_fromArray(
 		[
 			_Utils_Tuple2(
 			'id',
-			author$project$Devs$RecipeDecode$encodeInt(tag.id)),
+			author$project$Devs$RecipeEncode$encodeInt(tag.id)),
 			_Utils_Tuple2(
 			'name',
 			elm$json$Json$Encode$string(tag.name)),
 			_Utils_Tuple2(
 			'tagtype',
-			author$project$Devs$RecipeDecode$tagtypeEncoder(tag.tagType))
+			author$project$Devs$RecipeEncode$tagtypeEncoder(tag.tagType))
 		]);
 	return elm$json$Json$Encode$object(list);
 };
-var author$project$Devs$RecipeDecode$todoEncoder = function (td) {
+var author$project$Devs$RecipeEncode$todoEncoder = function (td) {
 	return elm$json$Json$Encode$object(
 		_List_fromArray(
 			[
@@ -6959,10 +6959,10 @@ var author$project$Devs$RecipeDecode$todoEncoder = function (td) {
 				elm$json$Json$Encode$string(td.text)),
 				_Utils_Tuple2(
 				'image',
-				author$project$Devs$RecipeDecode$encodeString(td.image)),
+				author$project$Devs$RecipeEncode$encodeString(td.image)),
 				_Utils_Tuple2(
 				'image_comment',
-				author$project$Devs$RecipeDecode$encodeString(td.image_comment))
+				author$project$Devs$RecipeEncode$encodeString(td.image_comment))
 			]));
 };
 var elm$json$Json$Encode$list = F2(
@@ -6974,7 +6974,7 @@ var elm$json$Json$Encode$list = F2(
 				_Json_emptyArray(_Utils_Tuple0),
 				entries));
 	});
-var author$project$Devs$RecipeDecode$recipeEncoder = function (rec) {
+var author$project$Devs$RecipeEncode$recipeEncoder = function (rec) {
 	var list = _List_fromArray(
 		[
 			_Utils_Tuple2(
@@ -6996,41 +6996,41 @@ var author$project$Devs$RecipeDecode$recipeEncoder = function (rec) {
 			elm$json$Json$Encode$int(rec.aikz)),
 			_Utils_Tuple2(
 			'image',
-			author$project$Devs$RecipeDecode$encodeString(rec.image)),
+			author$project$Devs$RecipeEncode$encodeString(rec.image)),
 			_Utils_Tuple2(
 			'translate',
-			author$project$Devs$RecipeDecode$encodeString(rec.translate)),
+			author$project$Devs$RecipeEncode$encodeString(rec.translate)),
 			_Utils_Tuple2(
 			'number_comment',
-			author$project$Devs$RecipeDecode$encodeString(rec.number_comment)),
+			author$project$Devs$RecipeEncode$encodeString(rec.number_comment)),
 			_Utils_Tuple2(
 			'number',
-			author$project$Devs$RecipeDecode$encodeInt(rec.number)),
+			author$project$Devs$RecipeEncode$encodeInt(rec.number)),
 			_Utils_Tuple2(
 			'nv_size',
-			author$project$Devs$RecipeDecode$encodeInt(rec.nv_size)),
+			author$project$Devs$RecipeEncode$encodeInt(rec.nv_size)),
 			_Utils_Tuple2(
 			'source_page',
-			author$project$Devs$RecipeDecode$encodeInt(rec.source_page)),
+			author$project$Devs$RecipeEncode$encodeInt(rec.source_page)),
 			_Utils_Tuple2(
 			'nv_carbohydrates',
-			author$project$Devs$RecipeDecode$encodeFloat(rec.nv_carbohydrates)),
+			author$project$Devs$RecipeEncode$encodeFloat(rec.nv_carbohydrates)),
 			_Utils_Tuple2(
 			'nv_energy',
-			author$project$Devs$RecipeDecode$encodeFloat(rec.nv_energy)),
+			author$project$Devs$RecipeEncode$encodeFloat(rec.nv_energy)),
 			_Utils_Tuple2(
 			'nv_fat',
-			author$project$Devs$RecipeDecode$encodeFloat(rec.nv_fat)),
+			author$project$Devs$RecipeEncode$encodeFloat(rec.nv_fat)),
 			_Utils_Tuple2(
 			'nv_protein',
-			author$project$Devs$RecipeDecode$encodeFloat(rec.nv_protein)),
+			author$project$Devs$RecipeEncode$encodeFloat(rec.nv_protein)),
 			_Utils_Tuple2(
 			'source',
 			function () {
 				var _n1 = rec.source;
 				if (_n1.$ === 'Just') {
 					var val = _n1.a;
-					return author$project$Devs$RecipeDecode$sourceEncoder(val);
+					return author$project$Devs$RecipeEncode$sourceEncoder(val);
 				} else {
 					return elm$json$Json$Encode$null;
 				}
@@ -7041,7 +7041,7 @@ var author$project$Devs$RecipeDecode$recipeEncoder = function (rec) {
 				var _n2 = rec.ingredients;
 				if (_n2.$ === 'Just') {
 					var list1 = _n2.a;
-					return A2(elm$json$Json$Encode$list, author$project$Devs$RecipeDecode$ingreEncoder, list1);
+					return A2(elm$json$Json$Encode$list, author$project$Devs$RecipeEncode$ingreEncoder, list1);
 				} else {
 					return elm$json$Json$Encode$null;
 				}
@@ -7052,7 +7052,7 @@ var author$project$Devs$RecipeDecode$recipeEncoder = function (rec) {
 				var _n3 = rec.tags;
 				if (_n3.$ === 'Just') {
 					var list2 = _n3.a;
-					return A2(elm$json$Json$Encode$list, author$project$Devs$RecipeDecode$tagEncoder, list2);
+					return A2(elm$json$Json$Encode$list, author$project$Devs$RecipeEncode$tagEncoder, list2);
 				} else {
 					return elm$json$Json$Encode$null;
 				}
@@ -7063,7 +7063,7 @@ var author$project$Devs$RecipeDecode$recipeEncoder = function (rec) {
 				var _n4 = rec.todos;
 				if (_n4.$ === 'Just') {
 					var list3 = _n4.a;
-					return A2(elm$json$Json$Encode$list, author$project$Devs$RecipeDecode$todoEncoder, list3);
+					return A2(elm$json$Json$Encode$list, author$project$Devs$RecipeEncode$todoEncoder, list3);
 				} else {
 					return elm$json$Json$Encode$null;
 				}
@@ -7084,7 +7084,7 @@ var elm$http$Http$post = function (r) {
 };
 var author$project$Devs$Recipe$saveRecipe = F3(
 	function (event, url, newRecipe) {
-		var jsonValue = author$project$Devs$RecipeDecode$recipeEncoder(newRecipe);
+		var jsonValue = author$project$Devs$RecipeEncode$recipeEncoder(newRecipe);
 		var _n0 = A2(elm$core$Debug$log, 'src-url: ', url);
 		return elm$http$Http$post(
 			{
@@ -7102,7 +7102,7 @@ var author$project$Devs$Objects$SavedSource = function (a) {
 };
 var author$project$Devs$Recipe$saveSource = F3(
 	function (event, url, newSource) {
-		var jsonValue = author$project$Devs$RecipeDecode$sourceEncoder(newSource);
+		var jsonValue = author$project$Devs$RecipeEncode$sourceEncoder(newSource);
 		var _n0 = A2(elm$core$Debug$log, 'src-url: ', url);
 		return elm$http$Http$post(
 			{
@@ -7168,7 +7168,7 @@ var author$project$Devs$Update$setInitialUnit = F2(
 var author$project$Devs$Objects$UploadImage = function (a) {
 	return {$: 'UploadImage', a: a};
 };
-var author$project$Devs$RecipeDecode$imageEncoder = function (img) {
+var author$project$Devs$RecipeEncode$imageEncoder = function (img) {
 	return elm$json$Json$Encode$object(
 		_List_fromArray(
 			[
@@ -7183,7 +7183,7 @@ var author$project$Devs$RecipeDecode$imageEncoder = function (img) {
 var elm$json$Json$Decode$bool = _Json_decodeBool;
 var author$project$Devs$Recipe$uploadImage = F3(
 	function (event, url, image) {
-		var jsonValue = author$project$Devs$RecipeDecode$imageEncoder(image);
+		var jsonValue = author$project$Devs$RecipeEncode$imageEncoder(image);
 		var _n0 = A2(elm$core$Debug$log, 'src-url: ', url);
 		return elm$http$Http$post(
 			{

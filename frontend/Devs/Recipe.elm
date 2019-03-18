@@ -9,12 +9,13 @@ import Debug exposing (log)
 
 import Devs.Objects as Objects exposing (..)
 
-import Devs.RecipeDecode as RD exposing (sourceEncoder,recipeEncoder,imageEncoder,tagtypeDecoder,recipeLightDecoder,recipeDecoder,unitDecoder,sourceDecoder,tagDecoder,partLightDecoder)
+import Devs.RecipeDecode as RD exposing (tagtypeDecoder,recipeLightDecoder,recipeDecoder,unitDecoder,sourceDecoder,tagDecoder,partLightDecoder)
+import Devs.RecipeEncode as RE exposing (sourceEncoder,recipeEncoder,imageEncoder)
 
 uploadImage: (Result Http.Error (Bool) -> Msg) -> String -> ImagePortData -> Cmd Msg
 uploadImage event url image =
   let
-    jsonValue = RD.imageEncoder image
+    jsonValue = RE.imageEncoder image
     _ = Debug.log "src-url: " url
   in
 --    Http.send event (Http.post url (Http.jsonBody jsonValue) Decode.bool)
@@ -23,7 +24,7 @@ uploadImage event url image =
 saveRecipe: (Result Http.Error (Recipe) -> Msg) -> String -> Recipe -> Cmd Msg
 saveRecipe event url newRecipe =
   let
-    jsonValue = RD.recipeEncoder newRecipe
+    jsonValue = RE.recipeEncoder newRecipe
     _ = Debug.log "src-url: " url
   in
 --    Http.send event (Http.post url (Http.jsonBody jsonValue) recipeDecoder)
@@ -32,7 +33,7 @@ saveRecipe event url newRecipe =
 saveSource: (Result Http.Error (Source) -> Msg) -> String -> Source -> Cmd Msg
 saveSource event url newSource =
   let
-    jsonValue = RD.sourceEncoder newSource
+    jsonValue = RE.sourceEncoder newSource
     _ = Debug.log "src-url: " url
   in
 --    Http.send event (Http.post url (Http.jsonBody jsonValue) sourceDecoder)
