@@ -4,7 +4,7 @@ import Http
 --import Video as VideoObj
 
 -- Model
-type alias ServerParams = {serverProtokoll: String, serverHost: String, serverUrlPrefix: String, apiUrlPrefix: String, iconPath: String, imagePath: String, password: String}
+type alias ServerParams = {serverProtokoll: String, serverHost: String, serverUrlPrefix: String, apiUrlPrefix: String, iconPath: String, imagePath: String}
 type alias KeyLists = {sourceList: Maybe (List Source), tagList: Maybe (List Tag), unitList: Maybe (List Unit), partList: Maybe (List PartLight)}
 type alias TagtypeShort = {id: Maybe Int, name: String}
 type alias Tag = {id: Maybe Int, name: String, tagType: TagtypeShort}
@@ -150,8 +150,7 @@ serverParams = {serverProtokoll = "http://",
     serverUrlPrefix = "/RecipeServer",
     apiUrlPrefix = "/api/v1",
     iconPath = "icons/",
-    imagePath = "images/",
-    password = "xxx"
+    imagePath = "images/"
   }
 
 initialModel: Model

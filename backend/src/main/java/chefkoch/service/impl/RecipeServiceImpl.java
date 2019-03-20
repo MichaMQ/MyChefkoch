@@ -30,26 +30,32 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import chefkoch.dto.IngredientDto;
 import chefkoch.dto.PartDto;
 import chefkoch.dto.RecipeDto;
 import chefkoch.dto.SourceDto;
 import chefkoch.dto.TagDto;
 import chefkoch.dto.TagtypeDto;
+import chefkoch.dto.TodoDto;
 import chefkoch.dto.UnitDto;
 import chefkoch.entity.Account;
+import chefkoch.entity.Ingredient;
 import chefkoch.entity.Part;
 import chefkoch.entity.Recipe;
 import chefkoch.entity.Source;
 import chefkoch.entity.Tag;
 import chefkoch.entity.Tag_Type;
+import chefkoch.entity.Todo;
 import chefkoch.entity.Unit;
 import chefkoch.fop.FopInterface;
 import chefkoch.repo.iface.AccountRepository;
+import chefkoch.repo.iface.IngredientRepository;
 import chefkoch.repo.iface.PartRepository;
 import chefkoch.repo.iface.RecipeRepository;
 import chefkoch.repo.iface.SourceRepository;
 import chefkoch.repo.iface.TagRepository;
 import chefkoch.repo.iface.TagtypeRepository;
+import chefkoch.repo.iface.TodoRepository;
 import chefkoch.repo.iface.UnitRepository;
 import chefkoch.service.enums.AccountType;
 import chefkoch.service.enums.BookPrintType;
@@ -73,6 +79,10 @@ public class RecipeServiceImpl implements RecipeService {
 	private RecipeRepository recipeRepository;
 	@Autowired
 	private SourceRepository sourceRepository;
+	@Autowired
+	private TodoRepository todoRepository;
+	@Autowired
+	private IngredientRepository ingredientRepository;
 	@Autowired
 	private TagRepository tagRepository;
 	@Autowired
@@ -235,13 +245,106 @@ public class RecipeServiceImpl implements RecipeService {
 	}
 
 	@Override
-	public Boolean saveRecipe(Recipe recipe) throws IllegalArgumentException {
-		if (recipe == null) {
+	public SourceDto saveSource(SourceDto sourceDto) throws IllegalArgumentException {
+		if (sourceDto == null) {
 			throw new IllegalArgumentException("error.recipe");
 		} else {
-			recipeRepository.save(recipe);
+			Source source = new Source();
+			Optional<Source> srcOpt= this.sourceRepository.findById(sourceDto.getId());
+			if (srcOpt.isPresent()) {
+				source = srcOpt.get();
+			}
+			source.setName(sourceDto.getName());
+			source.setIsbn(sourceDto.getIsbn());
+			source.setYear(sourceDto.getYear());
+			return new SourceDto(sourceRepository.save(source));
+		}		
+	}
+
+	@Override
+	public RecipeDto saveRecipe(RecipeDto recipeDto) throws IllegalArgumentException {
+		if (recipeDto == null) {
+			throw new IllegalArgumentException("error.recipe");
+		} else {
+			Recipe recipe = new Recipe();
+			Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeDto.getId());
+			if (recipeOptional.isPresent()) {
+				recipe = recipeOptional.get();
+			}
+			recipe.setName(recipeDto.getName());
+			recipe.setAikz(recipeDto.getAikz());
+			recipe.setImage(recipeDto.getImage());
+			recipe.setNumber(recipeDto.getNumber());
+			recipe.setNumber_comment(recipeDto.getNumber_comment());
+			recipe.setNv_carbohydrates(recipeDto.getNv_carbohydrates());
+			recipe.setNv_energy(recipeDto.getNv_energy());
+			recipe.setNv_fat(recipeDto.getNv_fat());
+			recipe.setNv_protein(recipeDto.getNv_protein());
+			recipe.setNv_size(recipeDto.getNv_size());
+			recipe.setSource_page(recipeDto.getSource_page());
+			recipe.setTranslate(recipeDto.getTranslate());
+			
+			SourceDto srcDto = recipeDto.getSource();
+			Source src = new Source();
+			Optional<Source> srcOpt = sourceRepository.findById(srcDto.getId());
+			if (srcOpt.isPresent()) {
+				src = srcOpt.get();
+			}
+			src.setName(srcDto.getName());
+			src.setIsbn(srcDto.getIsbn());
+			src.setYear(srcDto.getYear());
+			recipe.setSource(src);
+			
+			for(TagDto tagDto : recipeDto.getTags()) {
+				Tag tag = new Tag();
+				Optional<Tag> tagOpt = tagRepository.findById(tagDto.getId());
+				Optional<Tag_Type> tagtypeOpt = tagtypeRepository.findById(tagDto.getTagtype().getId());
+				if (tagOpt.isPresent()) {
+					tag = tagOpt.get();
+				}
+				tag.setName(tagDto.getName());
+				tag.setTagType(tagtypeOpt.get());
+				recipe.getTags().add(tag);
+			}
+			
+			for(TodoDto todoDto : recipeDto.getTodos()) {
+				Todo todo = new Todo();
+				Optional<Todo> todoOpt = todoRepository.findById(todoDto.getId());
+				if (todoOpt.isPresent()) {
+					todo = todoOpt.get();
+				}
+				todo.setImage(todoDto.getImage());
+				todo.setImage_comment(todoDto.getImage_comment());
+				todo.setNumber(todoDto.getNumber());
+				todo.setRecipe(recipe);
+				todo.setText(todoDto.getText());
+				recipe.getTodos().add(todo);
+			}
+			
+			for(IngredientDto ingreDto : recipeDto.getIngredients()) {
+				Ingredient ingre = new Ingredient();
+				Optional<Ingredient> ingreOpt = ingredientRepository.findById(ingreDto.getId());
+				if (ingreOpt.isPresent()) {
+					ingre = ingreOpt.get();
+				}
+				ingre.setComment(ingreDto.getComment());
+				ingre.setName(ingreDto.getName());
+				ingre.setQuantity(ingreDto.getQuantity());
+				ingre.setSortorder(ingreDto.getSortorder());
+				ingre.setRecipe(recipe);
+				if(ingreDto.getPart() != null) {
+					Optional<Part> partOpt = partRepository.findById(ingreDto.getPart().getId());
+					ingre.setPart(partOpt.get());
+				}
+				if(ingreDto.getUnit() != null) {
+					Optional<Unit> unitOpt = unitRepository.findById(ingreDto.getUnit().getId());
+					ingre.setUnit(unitOpt.get());
+				}
+				recipe.getIngredients().add(ingre);
+			}
+			
+			return new RecipeDto(recipeRepository.save(recipe));
 		}
-		return Boolean.TRUE;
 	}
 
 	@Override
@@ -388,5 +491,21 @@ public class RecipeServiceImpl implements RecipeService {
 
 	public void setAccountRepository(AccountRepository accountRepository) {
 		this.accountRepository = accountRepository;
+	}
+
+	public TodoRepository getTodoRepository() {
+		return todoRepository;
+	}
+
+	public void setTodoRepository(TodoRepository todoRepository) {
+		this.todoRepository = todoRepository;
+	}
+
+	public IngredientRepository getIngredientRepository() {
+		return ingredientRepository;
+	}
+
+	public void setIngredientRepository(IngredientRepository ingredientRepository) {
+		this.ingredientRepository = ingredientRepository;
 	}
 }

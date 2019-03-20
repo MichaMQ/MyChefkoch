@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,6 +32,16 @@ import chefkoch.service.iface.RecipeService;
 public class MainController {
 	@Autowired
 	private RecipeService recipeService;
+	
+	@PostMapping("/saveSource")
+	SourceDto saveSource(@RequestBody SourceDto source) {
+		return this.recipeService.saveSource(source);
+	}
+	
+	@PostMapping("/saveRecipe")
+	RecipeDto saveRecipe(@RequestBody RecipeDto recipe) {
+		return this.recipeService.saveRecipe(recipe);
+	}
 	
 	@GetMapping(path = "/savePassword")
 	public @ResponseBody Boolean savePassword(@RequestParam String username, @RequestParam String password) {

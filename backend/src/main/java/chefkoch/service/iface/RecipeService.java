@@ -10,11 +10,13 @@ import chefkoch.dto.SourceDto;
 import chefkoch.dto.TagDto;
 import chefkoch.dto.TagtypeDto;
 import chefkoch.dto.UnitDto;
-import chefkoch.entity.Recipe;
 import chefkoch.service.enums.BookPrintType;
 
 public interface RecipeService {
-	public Boolean saveRecipe(Recipe recipe) throws IllegalArgumentException;
+
+	public SourceDto saveSource(SourceDto sourceDto) throws IllegalArgumentException;
+
+	public RecipeDto saveRecipe(RecipeDto recipe) throws IllegalArgumentException;
 
 	public Boolean deleteRecipe(Integer id) throws IllegalArgumentException;
 

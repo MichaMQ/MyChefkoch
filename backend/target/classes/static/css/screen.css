@@ -55,7 +55,6 @@ Kann, wenn alle Kindelemente des Bodys gemeint sind, abgekürzt werden durch:
 body > * {
 	text-align: left;
 	margin: 15px 5px;
-	padding: 0 15px;
 }
 
 /* Typo ------------------- */
@@ -587,8 +586,8 @@ button:active {
 
 #categoryTypeDiv {
 	float: left;
-	width: 300px;
-	margin: 5px;
+	min-width: 300px;
+	width: 16.5%;
 	border: 1px solid #a6b3b3;
 	background-color: #eee;
 }

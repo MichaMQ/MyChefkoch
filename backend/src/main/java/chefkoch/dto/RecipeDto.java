@@ -72,15 +72,14 @@ public class RecipeDto extends GenericDto {
 	}
 	
 	private PartDto getNewPartOrFromList(Part search) {
-		if(search != null) {
-			for(PartDto part : this.getParts()) {
-				if(part.getId().longValue() == search.getId().longValue()) {
-					this.getParts().remove(part);
-					return part;
-				}
+		PartDto partForSearch = new PartDto(search);
+		for(PartDto part : this.getParts()) {
+			if(part.getId().longValue() == partForSearch.getId().longValue()) {
+				this.getParts().remove(part);
+				return part;
 			}
 		}
-		return new PartDto(search);
+		return partForSearch;
 	}
 	
 	public Element toXml(ClassLoader classLoader) {

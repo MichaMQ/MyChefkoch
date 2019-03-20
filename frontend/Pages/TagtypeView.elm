@@ -15,7 +15,7 @@ viewInitialTagtypeList model = Html.div [ id "contentDiv", class "cf" ] (listIni
 listInitialTagtypeList : Model -> List (Html Msg)
 listInitialTagtypeList model =
     case model.tagtypeList of
-        Just tagtypeList -> List.map viewInitialTagtype tagtypeList
+        Just tagtypeList -> List.map viewInitialTagtype (List.sortBy .name tagtypeList)
         Nothing -> [Html.text ""]
 
 viewInitialTagtype: Tagtype -> Html Msg

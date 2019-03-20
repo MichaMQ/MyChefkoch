@@ -8847,7 +8847,7 @@ var author$project$Devs$Update$update = F2(
 		}
 	});
 var author$project$Devs$Objects$keyLists = {partList: elm$core$Maybe$Nothing, sourceList: elm$core$Maybe$Nothing, tagList: elm$core$Maybe$Nothing, unitList: elm$core$Maybe$Nothing};
-var author$project$Devs$Objects$serverParams = {apiUrlPrefix: '/api/v1', iconPath: 'icons/', imagePath: 'images/', password: 'xxx', serverHost: 'horst:8085', serverProtokoll: 'http://', serverUrlPrefix: '/RecipeServer'};
+var author$project$Devs$Objects$serverParams = {apiUrlPrefix: '/api/v1', iconPath: 'icons/', imagePath: 'images/', serverHost: 'horst:8085', serverProtokoll: 'http://', serverUrlPrefix: '/RecipeServer'};
 var author$project$Devs$Objects$initialModel = {addTag: elm$core$Maybe$Nothing, alertMessage: elm$core$Maybe$Nothing, deleteRecipe: false, kl: author$project$Devs$Objects$keyLists, loggedIn: elm$core$Maybe$Nothing, newSource: elm$core$Maybe$Nothing, passwordForCheck: '', recAlertMessage: elm$core$Maybe$Nothing, recImage: elm$core$Maybe$Nothing, recipeForEdit: elm$core$Maybe$Nothing, recipesOfSelectedTag: elm$core$Maybe$Nothing, searchValue: '', selectedRecipe: elm$core$Maybe$Nothing, selectedTab: 'Tab1', selectedTag: elm$core$Maybe$Nothing, sp: author$project$Devs$Objects$serverParams, subAlertMessage: elm$core$Maybe$Nothing, tagtypeList: elm$core$Maybe$Nothing, usernameForCheck: ''};
 var author$project$Devs$Objects$SetPartList = function (a) {
 	return {$: 'SetPartList', a: a};
@@ -11863,7 +11863,15 @@ var author$project$Pages$TagtypeView$listInitialTagtypeList = function (model) {
 	var _n0 = model.tagtypeList;
 	if (_n0.$ === 'Just') {
 		var tagtypeList = _n0.a;
-		return A2(elm$core$List$map, author$project$Pages$TagtypeView$viewInitialTagtype, tagtypeList);
+		return A2(
+			elm$core$List$map,
+			author$project$Pages$TagtypeView$viewInitialTagtype,
+			A2(
+				elm$core$List$sortBy,
+				function ($) {
+					return $.name;
+				},
+				tagtypeList));
 	} else {
 		return _List_fromArray(
 			[
