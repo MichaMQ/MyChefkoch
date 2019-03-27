@@ -2,6 +2,8 @@ package chefkoch.service.iface;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.http.ResponseEntity;
 
 import chefkoch.dto.PartDto;
@@ -40,5 +42,9 @@ public interface RecipeService {
 
 	public Boolean savePassword(String username, String password);
 
-	public Boolean login(String username, String password);
+	public String login(String username, String password);
+
+	public void refreshTokenExpiration(HttpServletRequest request);
+
+	public Boolean isTokenValid(HttpServletRequest request);
 }

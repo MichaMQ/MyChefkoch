@@ -3,7 +3,9 @@ package chefkoch.service.impl;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +17,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.jdom2.Element;
 import org.jdom2.output.Format;
@@ -61,6 +64,7 @@ import chefkoch.service.enums.AccountType;
 import chefkoch.service.enums.BookPrintType;
 import chefkoch.service.iface.RecipeService;
 import chefkoch.util.StringUtil;
+import chefkoch.util.TimeUtil;
 import chefkoch.util.XMLUtil;
 
 @Service
@@ -95,6 +99,35 @@ public class RecipeServiceImpl implements RecipeService {
 	private AccountRepository accountRepository;
 
 	@Override
+	public void refreshTokenExpiration(HttpServletRequest request) {
+		String token = request.getHeader("token");
+		if(token != null) {
+			Account acc = this.accountRepository.findAccountByToken(token);
+			if(acc != null && acc.getExpirationdate() != null && acc.getExpirationdate().getTime() >= (new Date()).getTime()) {
+				Date expirationdate = TimeUtil.addMinutesToDate(30, new Date());
+				acc.setExpirationdate(expirationdate);
+				this.accountRepository.save(acc);
+			}
+		}
+	}
+
+	@Override
+	public Boolean isTokenValid(HttpServletRequest request) {
+		Boolean tokenIsValid = Boolean.FALSE;
+		String token = request.getHeader("token");
+		if(token != null) {
+			Account acc = this.accountRepository.findAccountByToken(token);
+			if(acc != null && acc.getExpirationdate() != null && acc.getExpirationdate().getTime() >= (new Date()).getTime()) {
+				Date expirationdate = TimeUtil.addMinutesToDate(30, new Date());
+				acc.setExpirationdate(expirationdate);
+				this.accountRepository.save(acc);
+				tokenIsValid = true;
+			}
+		}
+		return tokenIsValid;
+	}
+
+	@Override
 	public Boolean savePassword(String username, String password) {
 		Account acc = this.accountRepository.findAccountByUsername(username);
 		if(acc == null) {
@@ -111,7 +144,8 @@ public class RecipeServiceImpl implements RecipeService {
 	}
 
 	@Override
-	public Boolean login(String username, String password) {
+	public String login(String username, String password) {
+		String token = null;
 		Boolean loggedIn = Boolean.FALSE;
 		Account acc = this.accountRepository.findAccountByUsername(username);
 		if(acc != null) {
@@ -126,7 +160,23 @@ public class RecipeServiceImpl implements RecipeService {
 				}
 			}
 		}
-		return loggedIn;
+		if(loggedIn.booleanValue()) {
+			String un = acc.getUsername();
+			Date expirationdate = TimeUtil.addMinutesToDate(30, new Date());
+
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			String expirationdateStr = simpleDateFormat.format(expirationdate);
+			System.out.println(expirationdateStr);
+			
+			token = StringUtil.hashPasswordWithSalt(un + "-" + expirationdateStr);
+			
+			acc.setExpirationdate(expirationdate);
+			acc.setToken(token);
+			
+			this.accountRepository.save(acc);
+			
+		}
+		return token;
 	}
 
 	@Override
