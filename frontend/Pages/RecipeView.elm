@@ -8,11 +8,13 @@ import List exposing (..)
 import Devs.Objects as Objects exposing (..)
 -- View
 
-viewRecipe: Maybe Bool -> Recipe -> ServerParams -> Html Msg
-viewRecipe loggedIn rec sp =
+viewRecipe: Maybe String -> Recipe -> ServerParams -> Html Msg
+viewRecipe loginToken rec sp =
   let
-    isLoggedIn = case loggedIn of
-      Just log -> log
+    isLoggedIn = case loginToken of
+      Just log -> if String.length log > 0
+        then True
+        else False
       Nothing -> False
     actionButton = if isLoggedIn == True
       then Html.button [ onClick EditRecipe ][ Html.text "bearbeiten" ]

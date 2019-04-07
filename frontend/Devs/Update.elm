@@ -25,7 +25,7 @@ update msg model =
               }
           in
             ( { model | recImage = Just newImage, recipeForEdit = (RecipeObj.setImage model.recipeForEdit (Just imagePortData.filename)) }, uploadImage model newImage )
-        GetLoginForm -> ( { model | loggedIn = Just False } , Cmd.none)
+        GetLoginForm -> ( { model | loginToken = Nothing } , Cmd.none)
         SetUsernameForCheck val -> ( { model | usernameForCheck = val } , Cmd.none)
         SetPasswortForCheck val -> ( { model | passwordForCheck = val } , Cmd.none)
         Login ->
@@ -36,10 +36,13 @@ update msg model =
                 ( { model | subAlertMessage = Just "Bitte gib einen Benutzername ein!" }, Cmd.none )
               else
                 ( model, login model )
-        HandleLogin (Ok isLoggedIn) ->
-                if isLoggedIn then
-                  ( { model | subAlertMessage = Nothing, loggedIn = Just True } , Cmd.none )
-                else ( { model | subAlertMessage = Just "Das eingegbene Passwort ist falsch!" }, Cmd.none )
+        HandleLogin (Ok loginToken) ->
+            let
+                _ = Debug.log "loginToken: " loginToken
+            in
+                if String.length loginToken > 0 then
+                  ( { model | subAlertMessage = Nothing, loginToken = Just loginToken } , Cmd.none )
+                else ( { model | subAlertMessage = Just "Mindestens eine der eingegeben Daten ist falsch!" }, Cmd.none )
         HandleLogin (Err error) ->
           ( { model | recAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
         ShowOverView ->
@@ -376,7 +379,7 @@ update msg model =
         CancelDelete ->
           ( { model | deleteRecipe = False }, Cmd.none )
         CancelLogin ->
-          ( { model | loggedIn = Nothing, subAlertMessage = Nothing }, Cmd.none )
+          ( { model | loginToken = Nothing, subAlertMessage = Nothing }, Cmd.none )
         ShowRecipesOfTag tag ->
           ( { model | selectedTag = tag }, getRecipeListForTag model tag )
         RemoveSelectedTag ->

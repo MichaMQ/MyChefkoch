@@ -48,7 +48,7 @@ type Msg =
   SetUsernameForCheck String |
   SetPasswortForCheck String |
   Login |
-  HandleLogin (Result Http.Error Bool) |
+  HandleLogin (Result Http.Error String) |
   ShowRecipesOfTag (Maybe Tag) |
   ShowRecipe (Maybe RecipeLight) |
   EditRecipe |
@@ -133,6 +133,7 @@ type alias Model = {
     newSource: Maybe Source,
     addTag: Maybe Tag,
     kl: KeyLists,
+    loginToken: Maybe String,
     loggedIn: Maybe Bool,
     deleteRecipe: Bool,
     usernameForCheck: String,
@@ -155,26 +156,26 @@ serverParams = {serverProtokoll = "http://",
 
 initialModel: Model
 initialModel = {
-  sp = serverParams,
-  alertMessage = Nothing,
-  subAlertMessage = Nothing,
-  recAlertMessage = Nothing,
-  searchValue = "",
-  tagtypeList = Nothing,
-  selectedTag = Nothing,
-  recipesOfSelectedTag = Nothing,
-  selectedRecipe = Nothing,
-  recipeForEdit = Nothing,
-  recImage = Nothing,
-  selectedTab = "Tab1",
-  newSource = Nothing,
-  addTag = Nothing,
-  kl = keyLists,
-  loggedIn = Nothing,
---  loggedIn = Just True,
-  deleteRecipe = False,
-  usernameForCheck = "",
-  passwordForCheck = ""
+    sp = serverParams,
+    alertMessage = Nothing,
+    subAlertMessage = Nothing,
+    recAlertMessage = Nothing,
+    searchValue = "",
+    tagtypeList = Nothing,
+    selectedTag = Nothing,
+    recipesOfSelectedTag = Nothing,
+    selectedRecipe = Nothing,
+    recipeForEdit = Nothing,
+    recImage = Nothing,
+    selectedTab = "Tab1",
+    newSource = Nothing,
+    addTag = Nothing,
+    kl = keyLists,
+    loginToken = Nothing,
+    loggedIn = Nothing,
+    deleteRecipe = False,
+    usernameForCheck = "",
+    passwordForCheck = ""
   }
 
 getEmptyTodo: Int -> Todo

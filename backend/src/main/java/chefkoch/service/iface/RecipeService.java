@@ -44,7 +44,5 @@ public interface RecipeService {
 
 	public String login(String username, String password);
 
-	public void refreshTokenExpiration(HttpServletRequest request);
-
 	public Boolean isTokenValid(HttpServletRequest request);
 }

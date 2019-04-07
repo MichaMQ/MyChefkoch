@@ -99,19 +99,6 @@ public class RecipeServiceImpl implements RecipeService {
 	private AccountRepository accountRepository;
 
 	@Override
-	public void refreshTokenExpiration(HttpServletRequest request) {
-		String token = request.getHeader("token");
-		if(token != null) {
-			Account acc = this.accountRepository.findAccountByToken(token);
-			if(acc != null && acc.getExpirationdate() != null && acc.getExpirationdate().getTime() >= (new Date()).getTime()) {
-				Date expirationdate = TimeUtil.addMinutesToDate(30, new Date());
-				acc.setExpirationdate(expirationdate);
-				this.accountRepository.save(acc);
-			}
-		}
-	}
-
-	@Override
 	public Boolean isTokenValid(HttpServletRequest request) {
 		Boolean tokenIsValid = Boolean.FALSE;
 		String token = request.getHeader("token");

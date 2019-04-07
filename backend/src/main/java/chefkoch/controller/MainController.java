@@ -34,136 +34,145 @@ public class MainController {
 	@Autowired
 	private RecipeService recipeService;
 	
+	private final String timeoutMsg = "Timeout der Authentifizierung!";
+	
 	@PostMapping("/saveSource")
-	SourceDto saveSource(HttpServletRequest request, HttpServletResponse response, @RequestBody SourceDto source) {
+	SourceDto saveSource(HttpServletRequest request, HttpServletResponse response, @RequestBody SourceDto source) throws IOException {
 		Boolean tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid.booleanValue()) {
 			return this.recipeService.saveSource(source);
 		} else {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
 			return null;
 		}
 	}
 	
 	@PostMapping("/saveRecipe")
-	RecipeDto saveRecipe(HttpServletRequest request, HttpServletResponse response, @RequestBody RecipeDto recipe) {
+	RecipeDto saveRecipe(HttpServletRequest request, HttpServletResponse response, @RequestBody RecipeDto recipe) throws IOException {
 		Boolean tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid.booleanValue()) {
 			return this.recipeService.saveRecipe(recipe);
 		} else {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
 			return null;
 		}
 	}
 	
 	@GetMapping(path = "/savePassword")
-	public @ResponseBody Boolean savePassword(HttpServletRequest request, @RequestParam String username, @RequestParam String password) {
-		return this.recipeService.savePassword(username, password);
+	public @ResponseBody Boolean savePassword(HttpServletRequest request, HttpServletResponse response, @RequestParam String username, @RequestParam String password) throws IOException {
+		Boolean tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid.booleanValue()) {
+			return this.recipeService.savePassword(username, password);
+		} else {
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
+			return Boolean.FALSE;
+		}
 	}
 
 	@GetMapping(path = "/login")
-	public @ResponseBody Boolean login(HttpServletResponse response, @RequestParam String username, @RequestParam String password) {
+	public @ResponseBody String login(HttpServletResponse response, @RequestParam String username, @RequestParam String password) {
 		String token = this.recipeService.login(username, password);
 		if(token != null) {
 			response.setHeader("token", token);
-			return Boolean.TRUE;
+			System.out.println(token);
+			return token;
 		} else {
-			return Boolean.FALSE;
+			return "";
 		}
 	}
 
 	@GetMapping(path = "/printBookInline")
 	public @ResponseBody ResponseEntity<byte[]> printBookInline(HttpServletRequest request) {
-		this.recipeService.refreshTokenExpiration(request);
+		this.recipeService.isTokenValid(request);
 		return this.recipeService.printBook(BookPrintType.INLINE);
 	}
 
 	@GetMapping(path = "/printBookDownload")
 	public @ResponseBody ResponseEntity<byte[]> printBookDownload(HttpServletRequest request) {
-		this.recipeService.refreshTokenExpiration(request);
+		this.recipeService.isTokenValid(request);
 		return this.recipeService.printBook(BookPrintType.ATTACHMENT);
 	}
 	
 	@GetMapping(path = "/findRecipeByName")
 	public @ResponseBody List<RecipeDto> findRecipeByName(HttpServletRequest request, @RequestParam String name) {
-		this.recipeService.refreshTokenExpiration(request);
+		this.recipeService.isTokenValid(request);
 		return this.recipeService.findRecipeByName(name, false);
 	}
 
 	@GetMapping(path = "/getAllRecipeByTagWithoutMeta")
 	public @ResponseBody List<RecipeDto> getAllRecipeByTagWithoutMeta(HttpServletRequest request, @RequestParam Integer id) {
-		this.recipeService.refreshTokenExpiration(request);
+		this.recipeService.isTokenValid(request);
 		return recipeService.getAllRecipeByTag(id, false);
 	}
 
 	@GetMapping(path = "/removeRecipeById")
-	public @ResponseBody Boolean removeRecipeById(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id) {
+	public @ResponseBody Boolean removeRecipeById(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id) throws IOException {
 		Boolean tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid.booleanValue()) {
 			return recipeService.deleteRecipe(id);
 		} else {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
 			return null;
 		}
 	}
 
 	@GetMapping(path = "/getRecipeById")
 	public @ResponseBody RecipeDto getRecipeById(HttpServletRequest request, @RequestParam Integer id) {
-		this.recipeService.refreshTokenExpiration(request);
+		this.recipeService.isTokenValid(request);
 		return recipeService.getRecipeById(id);
 	}
 
 	@GetMapping(path = "/getAllSources")
 	public @ResponseBody Iterable<SourceDto> getAllSources(HttpServletRequest request) {
-		this.recipeService.refreshTokenExpiration(request);
+		this.recipeService.isTokenValid(request);
 		return recipeService.getAllSources(Boolean.FALSE);
 	}
 	
 	@GetMapping(path = "/getAllSourcesSorted")
 	public @ResponseBody Iterable<SourceDto> getAllSourcesSorted(HttpServletRequest request) {
-		this.recipeService.refreshTokenExpiration(request);
+		this.recipeService.isTokenValid(request);
 		return recipeService.getAllSources(Boolean.TRUE);
 	}
 	
 	@GetMapping(path = "/getAllTags")
 	public @ResponseBody Iterable<TagDto> getAllTags(HttpServletRequest request) {
-		this.recipeService.refreshTokenExpiration(request);
+		this.recipeService.isTokenValid(request);
 		return recipeService.getAllTags(Boolean.FALSE);
 	}
 	
 	@GetMapping(path = "/getAllTagsSorted")
 	public @ResponseBody Iterable<TagDto> getAllTagsSorted(HttpServletRequest request) {
-		this.recipeService.refreshTokenExpiration(request);
+		this.recipeService.isTokenValid(request);
 		return recipeService.getAllTags(Boolean.TRUE);
 	}
 	
 	@GetMapping(path = "/getAllTagTypes")
 	public @ResponseBody Iterable<TagtypeDto> getAllTagtypes(HttpServletRequest request) {
-		this.recipeService.refreshTokenExpiration(request);
+		this.recipeService.isTokenValid(request);
 		return recipeService.getAllTagtypes(Boolean.FALSE);
 	}
 	
 	@GetMapping(path = "/getAllTagTypesSorted")
 	public @ResponseBody Iterable<TagtypeDto> getAllTagtypesSorted(HttpServletRequest request) {
-		this.recipeService.refreshTokenExpiration(request);
+		this.recipeService.isTokenValid(request);
 		return recipeService.getAllTagtypes(Boolean.TRUE);
 	}
 	
 	@GetMapping(path = "/getAllUnits")
 	public @ResponseBody Iterable<UnitDto> getAllUnits(HttpServletRequest request) {
-		this.recipeService.refreshTokenExpiration(request);
+		this.recipeService.isTokenValid(request);
 		return recipeService.getAllUnits(Boolean.FALSE);
 	}
 	
 	@GetMapping(path = "/getAllUnitsSorted")
 	public @ResponseBody Iterable<UnitDto> getAllUnitsSorted(HttpServletRequest request) {
-		this.recipeService.refreshTokenExpiration(request);
+		this.recipeService.isTokenValid(request);
 		return recipeService.getAllUnits(Boolean.TRUE);
 	}
 	
 	@GetMapping(path = "/getAllParts")
 	public @ResponseBody Iterable<PartDto> getAllParts(HttpServletRequest request) {
-		this.recipeService.refreshTokenExpiration(request);
+		this.recipeService.isTokenValid(request);
 		return recipeService.getAllParts(Boolean.FALSE);
 	}
 
