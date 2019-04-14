@@ -134,7 +134,7 @@ type alias Model = {
     addTag: Maybe Tag,
     kl: KeyLists,
     loginToken: Maybe String,
-    loggedIn: Maybe Bool,
+--    loggedIn: Maybe Bool,
     deleteRecipe: Bool,
     usernameForCheck: String,
     passwordForCheck: String
@@ -172,7 +172,7 @@ initialModel = {
     addTag = Nothing,
     kl = keyLists,
     loginToken = Nothing,
-    loggedIn = Nothing,
+--    loggedIn = Nothing,
     deleteRecipe = False,
     usernameForCheck = "",
     passwordForCheck = ""

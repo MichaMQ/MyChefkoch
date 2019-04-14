@@ -20,7 +20,7 @@ viewOverview: Model -> Html Msg -> Html Msg
 viewOverview model alertMsg =
   let
     content = case model.selectedRecipe of
-      Just rec -> RW.viewRecipe model.loggedIn rec model.sp
+      Just rec -> RW.viewRecipe model.loginToken rec model.sp
       Nothing -> case model.recipesOfSelectedTag of
         Just recipeList -> RLW.viewRecipesOfTag model
         Nothing -> TtW.viewInitialTagtypeList model
@@ -33,16 +33,18 @@ viewOverview model alertMsg =
     tagForm = case model.addTag of
       Just tag -> EW.viewAddTagForm model
       Nothing -> Html.text ""
-    loginForm = case model.loggedIn of
-      Just isLoggedInTmp -> if isLoggedInTmp == False
+    loginForm = case model.loginToken of
+      Just isLoggedInTmp -> if String.length isLoggedInTmp == 0
         then LW.getLoginForm model
         else Html.text ""
       Nothing -> Html.text ""
     confirmDeleteForm = if model.deleteRecipe
       then Utils.getConfirmForm DeleteRecipe CancelDelete "Soll das Rezept wirklich gelöscht werden?" model
       else Html.text ""
-    isLoggedIn = case model.loggedIn of
-      Just log -> log
+    isLoggedIn = case model.loginToken of
+      Just log -> if String.length log > 0
+        then True
+        else False
       Nothing -> False
     actionButton = if isLoggedIn == True
       then Html.button [ onClick InsertRecipe ][ Html.text "hinzufügen" ]
