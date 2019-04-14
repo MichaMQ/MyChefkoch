@@ -64,21 +64,18 @@ setSize: Maybe Recipe -> String -> Maybe Recipe
 setSize recipe newVal =
   case recipe of
     Just rec -> Just { rec | nv_size = Just (Maybe.withDefault 0 <| String.toInt newVal)}
---    Just rec -> Just { rec | nv_size = Just (Result.withDefault 0 (String.toInt newVal)) }
     Nothing -> Nothing
 
 setSourcePage: Maybe Recipe -> String -> Maybe Recipe
 setSourcePage recipe newVal =
   case recipe of
     Just rec -> Just { rec | source_page = Just (Maybe.withDefault 0 <| String.toInt newVal) }
---    Just rec -> Just { rec | source_page = Just (Result.withDefault 0 (String.toInt newVal)) }
     Nothing -> Nothing
 
 setNumber: Maybe Recipe -> String -> Maybe Recipe
 setNumber recipe newVal =
   case recipe of
     Just rec -> Just { rec | number = Just (Maybe.withDefault 0 <| String.toInt newVal) }
---    Just rec -> Just { rec | number = Just (Result.withDefault 0 (String.toInt newVal)) }
     Nothing -> Nothing
 
 setName: Maybe Recipe -> String -> Maybe Recipe
@@ -109,28 +106,24 @@ setCarbo: Maybe Recipe -> String -> Maybe Recipe
 setCarbo recipe newVal =
   case recipe of
     Just rec -> Just { rec | nv_carbohydrates = Just (Maybe.withDefault 0 <| String.toFloat newVal) }
---    Just rec -> Just { rec | nv_carbohydrates = Just (Result.withDefault 0 (String.toFloat newVal)) }
     Nothing -> Nothing
 
 setEnergy: Maybe Recipe -> String -> Maybe Recipe
 setEnergy recipe newVal =
   case recipe of
     Just rec -> Just { rec | nv_energy = Just (Maybe.withDefault 0 <| String.toFloat newVal) }
---    Just rec -> Just { rec | nv_energy = Just (Result.withDefault 0 (String.toFloat newVal)) }
     Nothing -> Nothing
 
 setFat: Maybe Recipe -> String -> Maybe Recipe
 setFat recipe newVal =
   case recipe of
     Just rec -> Just { rec | nv_fat = Just (Maybe.withDefault 0 <| String.toFloat newVal) }
---    Just rec -> Just { rec | nv_fat = Just (Result.withDefault 0 (String.toFloat newVal)) }
     Nothing -> Nothing
 
 setProt: Maybe Recipe -> String -> Maybe Recipe
 setProt recipe newVal =
   case recipe of
     Just rec -> Just { rec | nv_protein = Just (Maybe.withDefault 0 <| String.toFloat newVal) }
---    Just rec -> Just { rec | nv_protein = Just (Result.withDefault 0 (String.toFloat newVal)) }
     Nothing -> Nothing
 
 setSource: Maybe Recipe -> Source -> Maybe Recipe

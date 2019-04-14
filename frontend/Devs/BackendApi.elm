@@ -8,66 +8,83 @@ import Json.Encode as Encode exposing (..)
 
 import Devs.Objects as Objects exposing (..)
 
+import Debug exposing (log)
+
 import Devs.RecipeDecode as RD exposing (tagtypeDecoder,recipeLightDecoder,recipeDecoder,unitDecoder,sourceDecoder,tagDecoder,partLightDecoder)
 import Devs.RecipeEncode as RE exposing (sourceEncoder,recipeEncoder,imageEncoder)
 
-uploadImage: (Result Http.Error (Bool) -> Msg) -> String -> ImagePortData -> Cmd Msg
-uploadImage event url image =
+uploadImage: (Result Http.Error (Bool) -> Msg) -> Maybe String -> String -> ImagePortData -> Cmd Msg
+uploadImage event token url image =
   let
     jsonValue = RE.imageEncoder image
---    _ = Debug.log "src-url: " url
   in
---    Http.send event (Http.post url (Http.jsonBody jsonValue) Decode.bool)
-    Http.post {url=url, body=(Http.jsonBody jsonValue), expect=Http.expectJson event Decode.bool}
+    --Http.post {url=url, body=(Http.jsonBody jsonValue), expect=Http.expectJson event Decode.bool}
+    myRequest "POST" url (Http.expectJson event Decode.bool) token (Just jsonValue)
 
-saveRecipe: (Result Http.Error (Recipe) -> Msg) -> String -> Recipe -> Cmd Msg
-saveRecipe event url newRecipe =
+saveRecipe: (Result Http.Error (Recipe) -> Msg) -> Maybe String -> String -> Recipe -> Cmd Msg
+saveRecipe event token url newRecipe =
   let
     jsonValue = RE.recipeEncoder newRecipe
---    _ = Debug.log "src-url: " url
+    logString = Encode.encode 0 jsonValue
+    _ = Debug.log "newRecipe: " logString
   in
---    Http.send event (Http.post url (Http.jsonBody jsonValue) recipeDecoder)
-    Http.post {url=url, body=(Http.jsonBody jsonValue), expect=Http.expectJson event recipeDecoder}
+    --Http.post {url=url, body=(Http.jsonBody jsonValue), expect=Http.expectJson event recipeDecoder}
+    myRequest "POST" url (Http.expectJson event recipeDecoder) token (Just jsonValue)
 
-saveSource: (Result Http.Error (Source) -> Msg) -> String -> Source -> Cmd Msg
-saveSource event url newSource =
+saveSource: (Result Http.Error (Source) -> Msg) -> Maybe String -> String -> Source -> Cmd Msg
+saveSource event token url newSource =
   let
     jsonValue = RE.sourceEncoder newSource
---    _ = Debug.log "src-url: " url
+
   in
---    Http.send event (Http.post url (Http.jsonBody jsonValue) sourceDecoder)
-    Http.post {url=url, body=(Http.jsonBody jsonValue), expect=Http.expectJson event sourceDecoder}
+    --Http.post {url=url, body=(Http.jsonBody jsonValue), expect=Http.expectJson event sourceDecoder}
+    myRequest "POST" url (Http.expectJson event sourceDecoder) token (Just jsonValue)
 
-getAllUnits: (Result Http.Error (List Unit) -> Msg) -> String -> Cmd Msg
---getAllUnits event url = Http.send event (Http.get url (Decode.list RD.unitDecoder))
-getAllUnits event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.unitDecoder)}
+getAllUnits: (Result Http.Error (List Unit) -> Msg) -> Maybe String -> String -> Cmd Msg
+getAllUnits event token url = myRequest "GET" url (Http.expectJson event (Decode.list RD.unitDecoder)) token Nothing
 
-getAllSources: (Result Http.Error (List Source) -> Msg) -> String -> Cmd Msg
---getAllSources event url = Http.send event (Http.get url (Decode.list RD.sourceDecoder))
-getAllSources event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.sourceDecoder)}
+getAllSources: (Result Http.Error (List Source) -> Msg) -> Maybe String -> String -> Cmd Msg
+getAllSources event token url = myRequest "GET" url (Http.expectJson event (Decode.list RD.sourceDecoder)) token Nothing
 
-getAllTags: (Result Http.Error (List Tag) -> Msg) -> String -> Cmd Msg
---getAllTags event url = Http.send event (Http.get url (Decode.list RD.tagDecoder))
-getAllTags event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.tagDecoder)}
+getAllTags: (Result Http.Error (List Tag) -> Msg) -> Maybe String -> String -> Cmd Msg
+getAllTags event token url = myRequest "GET" url (Http.expectJson event (Decode.list RD.tagDecoder)) token Nothing
 
-getAllParts: (Result Http.Error (List PartLight) -> Msg) -> String -> Cmd Msg
-getAllParts event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.partLightDecoder)}
+getAllParts: (Result Http.Error (List PartLight) -> Msg) -> Maybe String -> String -> Cmd Msg
+getAllParts event token url = myRequest "GET" url (Http.expectJson event (Decode.list RD.partLightDecoder)) token Nothing
 
-getTagtypeListForOverview: (Result Http.Error (List Tagtype) -> Msg) -> String -> Cmd Msg
---getTagtypeListForOverview event url = Http.send event (Http.get url (Decode.list RD.tagtypeDecoder))
-getTagtypeListForOverview event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.tagtypeDecoder)}
+getTagtypeListForOverview: (Result Http.Error (List Tagtype) -> Msg) -> Maybe String -> String -> Cmd Msg
+getTagtypeListForOverview event token url = myRequest "GET" url (Http.expectJson event (Decode.list RD.tagtypeDecoder)) token Nothing
 
-getRecipeListForTag : (Result Http.Error (List RecipeLight) -> Msg) -> String -> Cmd Msg
---getRecipeListForTag event url = Http.send event (Http.get url (Decode.list RD.recipeLightDecoder))
-getRecipeListForTag event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.recipeLightDecoder)}
+getRecipeListForTag : (Result Http.Error (List RecipeLight) -> Msg) -> Maybe String -> String -> Cmd Msg
+getRecipeListForTag event token url = myRequest "GET" url (Http.expectJson event (Decode.list RD.recipeLightDecoder)) token Nothing
 
-searchRecipe: (Result Http.Error (List RecipeLight) -> Msg) -> String -> Cmd Msg
---searchRecipe event url = Http.send event (Http.get url (Decode.list RD.recipeLightDecoder))
-searchRecipe event url = Http.get {url=url, expect=Http.expectJson event (Decode.list RD.recipeLightDecoder)}
+searchRecipe: (Result Http.Error (List RecipeLight) -> Msg) -> Maybe String -> String -> Cmd Msg
+searchRecipe event token url = myRequest "GET" url (Http.expectJson event (Decode.list RD.recipeLightDecoder)) token Nothing
 
-getRecipe: (Result Http.Error (Recipe) -> Msg) -> String -> Cmd Msg
---getRecipe event url = Http.send event (Http.get url RD.recipeDecoder)
-getRecipe event url = Http.get {url=url, expect=Http.expectJson event RD.recipeDecoder}
+getRecipe: (Result Http.Error (Recipe) -> Msg) -> Maybe String -> String -> Cmd Msg
+getRecipe event token url = myRequest "GET" url (Http.expectJson event RD.recipeDecoder) token Nothing
 
 login: (Result Http.Error (String) -> Msg) -> String -> Cmd Msg
 login event url = Http.get {url=url, expect=Http.expectString event}
+
+myRequest: String -> String -> (Http.Expect Msg) -> Maybe String -> Maybe Value -> Cmd Msg
+myRequest method url expect token content =
+  let
+      header = case token of
+        Just reqToken -> if String.length reqToken > 0
+          then [(Http.header "token" reqToken)]
+          else []
+        Nothing -> []
+      body = case content of
+        Just reqBody -> Http.jsonBody reqBody
+        Nothing -> Http.emptyBody
+  in
+     Http.request -- This line is missing from your code
+      { method = method
+      , headers = header
+      , url = url
+      , body = body
+      , expect = expect
+      , timeout = Nothing
+      , tracker = Nothing
+      }
