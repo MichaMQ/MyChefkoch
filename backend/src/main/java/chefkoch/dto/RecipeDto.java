@@ -9,6 +9,8 @@ import org.jdom2.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import chefkoch.entity.Ingredient;
 import chefkoch.entity.Part;
 import chefkoch.entity.Recipe;
@@ -35,6 +37,9 @@ public class RecipeDto extends GenericDto {
 	private List<PartDto> parts = new LinkedList<PartDto>();
 	private List<IngredientDto> ingredients = new LinkedList<IngredientDto>();
 	private List<TodoDto> todos = new LinkedList<TodoDto>();
+	
+	@JsonCreator
+	public RecipeDto() {}
 	
 	public RecipeDto(Recipe recipe) {
 		this.setId(recipe.getId());

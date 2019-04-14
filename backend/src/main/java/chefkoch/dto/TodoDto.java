@@ -2,6 +2,8 @@ package chefkoch.dto;
 
 import org.jdom2.Element;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import chefkoch.entity.Todo;
 import chefkoch.util.StringUtil;
 
@@ -12,6 +14,9 @@ public class TodoDto implements Comparable<TodoDto> {
 	private String image;
 	private String image_comment;
 	
+	@JsonCreator
+	public TodoDto() {}
+
 	public TodoDto(Todo todo) {
 		this.setId(todo.getId());
 		this.setNumber(todo.getNumber());

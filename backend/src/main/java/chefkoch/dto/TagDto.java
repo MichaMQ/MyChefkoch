@@ -4,12 +4,17 @@ import java.util.LinkedList;
 
 import org.jdom2.Element;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import chefkoch.entity.Tag;
 import chefkoch.util.StringUtil;
 
 public class TagDto extends GenericDto {
 	private TagtypeDto tagtype;
 	
+	@JsonCreator
+	public TagDto() {}
+
 	public TagDto(Tag tag) {
 		this.setId(tag.getId());
 		this.setName(tag.getName());

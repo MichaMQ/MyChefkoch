@@ -102,15 +102,17 @@ public class RecipeServiceImpl implements RecipeService {
 	public Boolean isTokenValid(HttpServletRequest request) {
 		Boolean tokenIsValid = Boolean.FALSE;
 		String token = request.getHeader("token");
+		System.out.println("----------- Refresh token!");
 		if(token != null) {
 			Account acc = this.accountRepository.findAccountByToken(token);
 			if(acc != null && acc.getExpirationdate() != null && acc.getExpirationdate().getTime() >= (new Date()).getTime()) {
+				System.out.println(token);
 				Date expirationdate = TimeUtil.addMinutesToDate(30, new Date());
 				acc.setExpirationdate(expirationdate);
 				this.accountRepository.save(acc);
 				tokenIsValid = true;
-			}
-		}
+			} else { System.out.println("----------- Token or date isn't valid!"); }
+		} else { System.out.println("----------- No token given!"); }
 		return tokenIsValid;
 	}
 

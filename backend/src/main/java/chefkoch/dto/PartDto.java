@@ -5,10 +5,15 @@ import java.util.List;
 
 import org.jdom2.Element;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import chefkoch.entity.Part;
 
 public class PartDto extends GenericDto {
 	private List<IngredientDto> ingredients = new LinkedList<IngredientDto>();
+	
+	@JsonCreator
+	public PartDto() {}
 	
 	public PartDto(Part part) {
 		if(part == null) {

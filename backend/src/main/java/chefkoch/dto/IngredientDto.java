@@ -2,6 +2,8 @@ package chefkoch.dto;
 
 import org.jdom2.Element;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import chefkoch.entity.Ingredient;
 import chefkoch.util.StringUtil;
 
@@ -11,6 +13,9 @@ public class IngredientDto extends GenericDto {
 	private Long sortorder;
 	private UnitDto unit;
 	private PartDto part;
+
+	@JsonCreator
+	public IngredientDto() {}
 
 	public IngredientDto(Ingredient ingredient) {
 		this.setId(ingredient.getId());

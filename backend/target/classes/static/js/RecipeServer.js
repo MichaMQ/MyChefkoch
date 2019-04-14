@@ -5564,297 +5564,7 @@ var author$project$Devs$Update$getIngreForEdit = F2(
 			return A2(author$project$Devs$Objects$getEmptyIngre, 0, elm$core$Maybe$Nothing);
 		}
 	});
-var author$project$Devs$Objects$Recipe = function (aikz) {
-	return function (id) {
-		return function (image) {
-			return function (ingredients) {
-				return function (parts) {
-					return function (name) {
-						return function (translate) {
-							return function (number) {
-								return function (number_comment) {
-									return function (nv_carbohydrates) {
-										return function (nv_energy) {
-											return function (nv_fat) {
-												return function (nv_protein) {
-													return function (nv_size) {
-														return function (source) {
-															return function (source_page) {
-																return function (tags) {
-																	return function (todos) {
-																		return {aikz: aikz, id: id, image: image, ingredients: ingredients, name: name, number: number, number_comment: number_comment, nv_carbohydrates: nv_carbohydrates, nv_energy: nv_energy, nv_fat: nv_fat, nv_protein: nv_protein, nv_size: nv_size, parts: parts, source: source, source_page: source_page, tags: tags, todos: todos, translate: translate};
-																	};
-																};
-															};
-														};
-													};
-												};
-											};
-										};
-									};
-								};
-							};
-						};
-					};
-				};
-			};
-		};
-	};
-};
-var author$project$Devs$Objects$Ingredient = F7(
-	function (id, name, comment, part, quantity, sortorder, unit) {
-		return {comment: comment, id: id, name: name, part: part, quantity: quantity, sortorder: sortorder, unit: unit};
-	});
-var author$project$Devs$Objects$PartLight = F2(
-	function (id, name) {
-		return {id: id, name: name};
-	});
-var elm$json$Json$Decode$field = _Json_decodeField;
-var elm$json$Json$Decode$int = _Json_decodeInt;
-var elm$json$Json$Decode$map2 = _Json_map2;
-var elm$json$Json$Decode$string = _Json_decodeString;
-var author$project$Devs$RecipeDecode$partLightDecoder = A3(
-	elm$json$Json$Decode$map2,
-	author$project$Devs$Objects$PartLight,
-	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string));
-var author$project$Devs$Objects$Unit = F3(
-	function (id, name, unitCategory) {
-		return {id: id, name: name, unitCategory: unitCategory};
-	});
-var author$project$Devs$Objects$UnitCategory = F2(
-	function (id, name) {
-		return {id: id, name: name};
-	});
-var author$project$Devs$RecipeDecode$unitCategoryDecoder = A3(
-	elm$json$Json$Decode$map2,
-	author$project$Devs$Objects$UnitCategory,
-	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string));
-var elm$json$Json$Decode$map3 = _Json_map3;
-var author$project$Devs$RecipeDecode$unitDecoder = A4(
-	elm$json$Json$Decode$map3,
-	author$project$Devs$Objects$Unit,
-	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'unitCategory', author$project$Devs$RecipeDecode$unitCategoryDecoder));
-var elm$json$Json$Decode$float = _Json_decodeFloat;
-var elm$json$Json$Decode$map7 = _Json_map7;
-var elm$json$Json$Decode$map = _Json_map1;
-var elm$json$Json$Decode$oneOf = _Json_oneOf;
-var elm$json$Json$Decode$succeed = _Json_succeed;
-var elm$json$Json$Decode$maybe = function (decoder) {
-	return elm$json$Json$Decode$oneOf(
-		_List_fromArray(
-			[
-				A2(elm$json$Json$Decode$map, elm$core$Maybe$Just, decoder),
-				elm$json$Json$Decode$succeed(elm$core$Maybe$Nothing)
-			]));
-};
-var author$project$Devs$RecipeDecode$ingrDecoder = A8(
-	elm$json$Json$Decode$map7,
-	author$project$Devs$Objects$Ingredient,
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'comment', elm$json$Json$Decode$string)),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'part', author$project$Devs$RecipeDecode$partLightDecoder)),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'quantity', elm$json$Json$Decode$float)),
-	A2(elm$json$Json$Decode$field, 'sortorder', elm$json$Json$Decode$int),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'unit', author$project$Devs$RecipeDecode$unitDecoder)));
-var elm$json$Json$Decode$list = _Json_decodeList;
-var author$project$Devs$RecipeDecode$ingrListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$ingrDecoder);
-var author$project$Devs$Objects$Part = F3(
-	function (id, name, ingredients) {
-		return {id: id, ingredients: ingredients, name: name};
-	});
-var author$project$Devs$RecipeDecode$partDecoder = A4(
-	elm$json$Json$Decode$map3,
-	author$project$Devs$Objects$Part,
-	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'ingredients', author$project$Devs$RecipeDecode$ingrListDecoder));
-var author$project$Devs$RecipeDecode$partListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$partDecoder);
-var author$project$Devs$Objects$Source = F4(
-	function (id, isbn, name, year) {
-		return {id: id, isbn: isbn, name: name, year: year};
-	});
-var elm$json$Json$Decode$map4 = _Json_map4;
-var author$project$Devs$RecipeDecode$sourceDecoder = A5(
-	elm$json$Json$Decode$map4,
-	author$project$Devs$Objects$Source,
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'isbn', elm$json$Json$Decode$string)),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'year', elm$json$Json$Decode$string)));
-var author$project$Devs$Objects$Tag = F3(
-	function (id, name, tagType) {
-		return {id: id, name: name, tagType: tagType};
-	});
-var author$project$Devs$Objects$TagtypeShort = F2(
-	function (id, name) {
-		return {id: id, name: name};
-	});
-var author$project$Devs$RecipeDecode$tagtypeShortDecoder = A3(
-	elm$json$Json$Decode$map2,
-	author$project$Devs$Objects$TagtypeShort,
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string));
-var author$project$Devs$RecipeDecode$tagDecoder = A4(
-	elm$json$Json$Decode$map3,
-	author$project$Devs$Objects$Tag,
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'tagtype', author$project$Devs$RecipeDecode$tagtypeShortDecoder));
-var author$project$Devs$RecipeDecode$tagListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$tagDecoder);
-var author$project$Devs$Objects$Todo = F5(
-	function (id, image, image_comment, number, text) {
-		return {id: id, image: image, image_comment: image_comment, number: number, text: text};
-	});
-var elm$json$Json$Decode$map5 = _Json_map5;
-var author$project$Devs$RecipeDecode$todoDecoder = A6(
-	elm$json$Json$Decode$map5,
-	author$project$Devs$Objects$Todo,
-	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'image', elm$json$Json$Decode$string)),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'image_comment', elm$json$Json$Decode$string)),
-	A2(elm$json$Json$Decode$field, 'number', elm$json$Json$Decode$int),
-	A2(elm$json$Json$Decode$field, 'text', elm$json$Json$Decode$string));
-var author$project$Devs$RecipeDecode$todoListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$todoDecoder);
-var elm_community$json_extra$Json$Decode$Extra$andMap = elm$json$Json$Decode$map2(elm$core$Basics$apR);
-var author$project$Devs$RecipeDecode$recipeDecoder = A2(
-	elm_community$json_extra$Json$Decode$Extra$andMap,
-	A2(
-		elm$json$Json$Decode$field,
-		'todos',
-		elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$todoListDecoder)),
-	A2(
-		elm_community$json_extra$Json$Decode$Extra$andMap,
-		A2(
-			elm$json$Json$Decode$field,
-			'tags',
-			elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$tagListDecoder)),
-		A2(
-			elm_community$json_extra$Json$Decode$Extra$andMap,
-			A2(
-				elm$json$Json$Decode$field,
-				'source_page',
-				elm$json$Json$Decode$maybe(elm$json$Json$Decode$int)),
-			A2(
-				elm_community$json_extra$Json$Decode$Extra$andMap,
-				A2(
-					elm$json$Json$Decode$field,
-					'source',
-					elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$sourceDecoder)),
-				A2(
-					elm_community$json_extra$Json$Decode$Extra$andMap,
-					A2(
-						elm$json$Json$Decode$field,
-						'nv_size',
-						elm$json$Json$Decode$maybe(elm$json$Json$Decode$int)),
-					A2(
-						elm_community$json_extra$Json$Decode$Extra$andMap,
-						A2(
-							elm$json$Json$Decode$field,
-							'nv_protein',
-							elm$json$Json$Decode$maybe(elm$json$Json$Decode$float)),
-						A2(
-							elm_community$json_extra$Json$Decode$Extra$andMap,
-							A2(
-								elm$json$Json$Decode$field,
-								'nv_fat',
-								elm$json$Json$Decode$maybe(elm$json$Json$Decode$float)),
-							A2(
-								elm_community$json_extra$Json$Decode$Extra$andMap,
-								A2(
-									elm$json$Json$Decode$field,
-									'nv_energy',
-									elm$json$Json$Decode$maybe(elm$json$Json$Decode$float)),
-								A2(
-									elm_community$json_extra$Json$Decode$Extra$andMap,
-									A2(
-										elm$json$Json$Decode$field,
-										'nv_carbohydrates',
-										elm$json$Json$Decode$maybe(elm$json$Json$Decode$float)),
-									A2(
-										elm_community$json_extra$Json$Decode$Extra$andMap,
-										A2(
-											elm$json$Json$Decode$field,
-											'number_comment',
-											elm$json$Json$Decode$maybe(elm$json$Json$Decode$string)),
-										A2(
-											elm_community$json_extra$Json$Decode$Extra$andMap,
-											A2(
-												elm$json$Json$Decode$field,
-												'number',
-												elm$json$Json$Decode$maybe(elm$json$Json$Decode$int)),
-											A2(
-												elm_community$json_extra$Json$Decode$Extra$andMap,
-												A2(
-													elm$json$Json$Decode$field,
-													'translate',
-													elm$json$Json$Decode$maybe(elm$json$Json$Decode$string)),
-												A2(
-													elm_community$json_extra$Json$Decode$Extra$andMap,
-													A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-													A2(
-														elm_community$json_extra$Json$Decode$Extra$andMap,
-														A2(
-															elm$json$Json$Decode$field,
-															'parts',
-															elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$partListDecoder)),
-														A2(
-															elm_community$json_extra$Json$Decode$Extra$andMap,
-															A2(
-																elm$json$Json$Decode$field,
-																'ingredients',
-																elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$ingrListDecoder)),
-															A2(
-																elm_community$json_extra$Json$Decode$Extra$andMap,
-																A2(
-																	elm$json$Json$Decode$field,
-																	'image',
-																	elm$json$Json$Decode$maybe(elm$json$Json$Decode$string)),
-																A2(
-																	elm_community$json_extra$Json$Decode$Extra$andMap,
-																	A2(
-																		elm$json$Json$Decode$field,
-																		'id',
-																		elm$json$Json$Decode$maybe(elm$json$Json$Decode$int)),
-																	A2(
-																		elm_community$json_extra$Json$Decode$Extra$andMap,
-																		A2(elm$json$Json$Decode$field, 'aikz', elm$json$Json$Decode$int),
-																		elm$json$Json$Decode$succeed(author$project$Devs$Objects$Recipe)))))))))))))))))));
-var elm$core$Result$mapError = F2(
-	function (f, result) {
-		if (result.$ === 'Ok') {
-			var v = result.a;
-			return elm$core$Result$Ok(v);
-		} else {
-			var e = result.a;
-			return elm$core$Result$Err(
-				f(e));
-		}
-	});
-var elm$core$Basics$composeR = F3(
-	function (f, g, x) {
-		return g(
-			f(x));
-	});
-var elm$core$Basics$identity = function (x) {
-	return x;
-};
+var elm$core$String$length = _String_length;
 var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
 var elm$core$Basics$compare = _Utils_compare;
@@ -6409,63 +6119,18 @@ var elm$http$Http$Sending = function (a) {
 	return {$: 'Sending', a: a};
 };
 var elm$http$Http$Timeout_ = {$: 'Timeout_'};
-var elm$http$Http$expectStringResponse = F2(
-	function (toMsg, toResult) {
-		return A3(
-			_Http_expect,
-			'',
-			elm$core$Basics$identity,
-			A2(elm$core$Basics$composeR, toResult, toMsg));
-	});
-var elm$http$Http$BadBody = function (a) {
-	return {$: 'BadBody', a: a};
-};
-var elm$http$Http$BadStatus = function (a) {
-	return {$: 'BadStatus', a: a};
-};
-var elm$http$Http$BadUrl = function (a) {
-	return {$: 'BadUrl', a: a};
-};
-var elm$http$Http$NetworkError = {$: 'NetworkError'};
-var elm$http$Http$Timeout = {$: 'Timeout'};
-var elm$http$Http$resolve = F2(
-	function (toResult, response) {
-		switch (response.$) {
-			case 'BadUrl_':
-				var url = response.a;
-				return elm$core$Result$Err(
-					elm$http$Http$BadUrl(url));
-			case 'Timeout_':
-				return elm$core$Result$Err(elm$http$Http$Timeout);
-			case 'NetworkError_':
-				return elm$core$Result$Err(elm$http$Http$NetworkError);
-			case 'BadStatus_':
-				var metadata = response.a;
-				return elm$core$Result$Err(
-					elm$http$Http$BadStatus(metadata.statusCode));
-			default:
-				var body = response.b;
-				return A2(
-					elm$core$Result$mapError,
-					elm$http$Http$BadBody,
-					toResult(body));
-		}
-	});
-var elm$json$Json$Decode$decodeString = _Json_runOnString;
-var elm$http$Http$expectJson = F2(
-	function (toMsg, decoder) {
-		return A2(
-			elm$http$Http$expectStringResponse,
-			toMsg,
-			elm$http$Http$resolve(
-				function (string) {
-					return A2(
-						elm$core$Result$mapError,
-						elm$json$Json$Decode$errorToString,
-						A2(elm$json$Json$Decode$decodeString, decoder, string));
-				}));
-	});
 var elm$http$Http$emptyBody = _Http_emptyBody;
+var elm$http$Http$Header = F2(
+	function (a, b) {
+		return {$: 'Header', a: a, b: b};
+	});
+var elm$http$Http$header = elm$http$Http$Header;
+var elm$http$Http$jsonBody = function (value) {
+	return A2(
+		_Http_pair,
+		'application/json',
+		A2(elm$json$Json$Encode$encode, 0, value));
+};
 var elm$http$Http$Request = function (a) {
 	return {$: 'Request', a: a};
 };
@@ -6637,6 +6302,11 @@ var elm$http$Http$cmdMap = F2(
 				});
 		}
 	});
+var elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
 var elm$http$Http$MySub = F2(
 	function (a, b) {
 		return {$: 'MySub', a: a, b: b};
@@ -6658,26 +6328,391 @@ var elm$http$Http$request = function (r) {
 		elm$http$Http$Request(
 			{allowCookiesFromOtherDomains: false, body: r.body, expect: r.expect, headers: r.headers, method: r.method, timeout: r.timeout, tracker: r.tracker, url: r.url}));
 };
-var elm$http$Http$get = function (r) {
-	return elm$http$Http$request(
-		{body: elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: r.url});
+var author$project$Devs$BackendApi$myRequest = F5(
+	function (method, url, expect, token, content) {
+		var header = function () {
+			if (token.$ === 'Just') {
+				var reqToken = token.a;
+				return (elm$core$String$length(reqToken) > 0) ? _List_fromArray(
+					[
+						A2(elm$http$Http$header, 'token', reqToken)
+					]) : _List_Nil;
+			} else {
+				return _List_Nil;
+			}
+		}();
+		var body = function () {
+			if (content.$ === 'Just') {
+				var reqBody = content.a;
+				return elm$http$Http$jsonBody(reqBody);
+			} else {
+				return elm$http$Http$emptyBody;
+			}
+		}();
+		return elm$http$Http$request(
+			{body: body, expect: expect, headers: header, method: method, timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: url});
+	});
+var author$project$Devs$Objects$Recipe = function (aikz) {
+	return function (id) {
+		return function (image) {
+			return function (ingredients) {
+				return function (parts) {
+					return function (name) {
+						return function (translate) {
+							return function (number) {
+								return function (number_comment) {
+									return function (nv_carbohydrates) {
+										return function (nv_energy) {
+											return function (nv_fat) {
+												return function (nv_protein) {
+													return function (nv_size) {
+														return function (source) {
+															return function (source_page) {
+																return function (tags) {
+																	return function (todos) {
+																		return {aikz: aikz, id: id, image: image, ingredients: ingredients, name: name, number: number, number_comment: number_comment, nv_carbohydrates: nv_carbohydrates, nv_energy: nv_energy, nv_fat: nv_fat, nv_protein: nv_protein, nv_size: nv_size, parts: parts, source: source, source_page: source_page, tags: tags, todos: todos, translate: translate};
+																	};
+																};
+															};
+														};
+													};
+												};
+											};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
 };
-var author$project$Devs$BackendApi$getRecipe = F2(
-	function (event, url) {
-		return elm$http$Http$get(
-			{
-				expect: A2(elm$http$Http$expectJson, event, author$project$Devs$RecipeDecode$recipeDecoder),
-				url: url
-			});
+var author$project$Devs$Objects$Ingredient = F7(
+	function (id, name, comment, part, quantity, sortorder, unit) {
+		return {comment: comment, id: id, name: name, part: part, quantity: quantity, sortorder: sortorder, unit: unit};
+	});
+var author$project$Devs$Objects$PartLight = F2(
+	function (id, name) {
+		return {id: id, name: name};
+	});
+var elm$json$Json$Decode$field = _Json_decodeField;
+var elm$json$Json$Decode$int = _Json_decodeInt;
+var elm$json$Json$Decode$map2 = _Json_map2;
+var elm$json$Json$Decode$string = _Json_decodeString;
+var author$project$Devs$RecipeDecode$partLightDecoder = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Devs$Objects$PartLight,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string));
+var author$project$Devs$Objects$Unit = F3(
+	function (id, name, unitCategory) {
+		return {id: id, name: name, unitCategory: unitCategory};
+	});
+var author$project$Devs$Objects$UnitCategory = F2(
+	function (id, name) {
+		return {id: id, name: name};
+	});
+var author$project$Devs$RecipeDecode$unitCategoryDecoder = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Devs$Objects$UnitCategory,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string));
+var elm$json$Json$Decode$map3 = _Json_map3;
+var author$project$Devs$RecipeDecode$unitDecoder = A4(
+	elm$json$Json$Decode$map3,
+	author$project$Devs$Objects$Unit,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'unitCategory', author$project$Devs$RecipeDecode$unitCategoryDecoder));
+var elm$json$Json$Decode$float = _Json_decodeFloat;
+var elm$json$Json$Decode$map7 = _Json_map7;
+var elm$json$Json$Decode$map = _Json_map1;
+var elm$json$Json$Decode$oneOf = _Json_oneOf;
+var elm$json$Json$Decode$succeed = _Json_succeed;
+var elm$json$Json$Decode$maybe = function (decoder) {
+	return elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				A2(elm$json$Json$Decode$map, elm$core$Maybe$Just, decoder),
+				elm$json$Json$Decode$succeed(elm$core$Maybe$Nothing)
+			]));
+};
+var author$project$Devs$RecipeDecode$ingrDecoder = A8(
+	elm$json$Json$Decode$map7,
+	author$project$Devs$Objects$Ingredient,
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'comment', elm$json$Json$Decode$string)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'part', author$project$Devs$RecipeDecode$partLightDecoder)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'quantity', elm$json$Json$Decode$float)),
+	A2(elm$json$Json$Decode$field, 'sortorder', elm$json$Json$Decode$int),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'unit', author$project$Devs$RecipeDecode$unitDecoder)));
+var elm$json$Json$Decode$list = _Json_decodeList;
+var author$project$Devs$RecipeDecode$ingrListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$ingrDecoder);
+var author$project$Devs$Objects$Part = F3(
+	function (id, name, ingredients) {
+		return {id: id, ingredients: ingredients, name: name};
+	});
+var author$project$Devs$RecipeDecode$partDecoder = A4(
+	elm$json$Json$Decode$map3,
+	author$project$Devs$Objects$Part,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'ingredients', author$project$Devs$RecipeDecode$ingrListDecoder));
+var author$project$Devs$RecipeDecode$partListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$partDecoder);
+var author$project$Devs$Objects$Source = F4(
+	function (id, isbn, name, year) {
+		return {id: id, isbn: isbn, name: name, year: year};
+	});
+var elm$json$Json$Decode$map4 = _Json_map4;
+var author$project$Devs$RecipeDecode$sourceDecoder = A5(
+	elm$json$Json$Decode$map4,
+	author$project$Devs$Objects$Source,
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'isbn', elm$json$Json$Decode$string)),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'year', elm$json$Json$Decode$string)));
+var author$project$Devs$Objects$Tag = F3(
+	function (id, name, tagType) {
+		return {id: id, name: name, tagType: tagType};
+	});
+var author$project$Devs$Objects$TagtypeShort = F2(
+	function (id, name) {
+		return {id: id, name: name};
+	});
+var author$project$Devs$RecipeDecode$tagtypeShortDecoder = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Devs$Objects$TagtypeShort,
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string));
+var author$project$Devs$RecipeDecode$tagDecoder = A4(
+	elm$json$Json$Decode$map3,
+	author$project$Devs$Objects$Tag,
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'tagtype', author$project$Devs$RecipeDecode$tagtypeShortDecoder));
+var author$project$Devs$RecipeDecode$tagListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$tagDecoder);
+var author$project$Devs$Objects$Todo = F5(
+	function (id, image, image_comment, number, text) {
+		return {id: id, image: image, image_comment: image_comment, number: number, text: text};
+	});
+var elm$json$Json$Decode$map5 = _Json_map5;
+var author$project$Devs$RecipeDecode$todoDecoder = A6(
+	elm$json$Json$Decode$map5,
+	author$project$Devs$Objects$Todo,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'image', elm$json$Json$Decode$string)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'image_comment', elm$json$Json$Decode$string)),
+	A2(elm$json$Json$Decode$field, 'number', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'text', elm$json$Json$Decode$string));
+var author$project$Devs$RecipeDecode$todoListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$todoDecoder);
+var elm_community$json_extra$Json$Decode$Extra$andMap = elm$json$Json$Decode$map2(elm$core$Basics$apR);
+var author$project$Devs$RecipeDecode$recipeDecoder = A2(
+	elm_community$json_extra$Json$Decode$Extra$andMap,
+	A2(
+		elm$json$Json$Decode$field,
+		'todos',
+		elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$todoListDecoder)),
+	A2(
+		elm_community$json_extra$Json$Decode$Extra$andMap,
+		A2(
+			elm$json$Json$Decode$field,
+			'tags',
+			elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$tagListDecoder)),
+		A2(
+			elm_community$json_extra$Json$Decode$Extra$andMap,
+			A2(
+				elm$json$Json$Decode$field,
+				'source_page',
+				elm$json$Json$Decode$maybe(elm$json$Json$Decode$int)),
+			A2(
+				elm_community$json_extra$Json$Decode$Extra$andMap,
+				A2(
+					elm$json$Json$Decode$field,
+					'source',
+					elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$sourceDecoder)),
+				A2(
+					elm_community$json_extra$Json$Decode$Extra$andMap,
+					A2(
+						elm$json$Json$Decode$field,
+						'nv_size',
+						elm$json$Json$Decode$maybe(elm$json$Json$Decode$int)),
+					A2(
+						elm_community$json_extra$Json$Decode$Extra$andMap,
+						A2(
+							elm$json$Json$Decode$field,
+							'nv_protein',
+							elm$json$Json$Decode$maybe(elm$json$Json$Decode$float)),
+						A2(
+							elm_community$json_extra$Json$Decode$Extra$andMap,
+							A2(
+								elm$json$Json$Decode$field,
+								'nv_fat',
+								elm$json$Json$Decode$maybe(elm$json$Json$Decode$float)),
+							A2(
+								elm_community$json_extra$Json$Decode$Extra$andMap,
+								A2(
+									elm$json$Json$Decode$field,
+									'nv_energy',
+									elm$json$Json$Decode$maybe(elm$json$Json$Decode$float)),
+								A2(
+									elm_community$json_extra$Json$Decode$Extra$andMap,
+									A2(
+										elm$json$Json$Decode$field,
+										'nv_carbohydrates',
+										elm$json$Json$Decode$maybe(elm$json$Json$Decode$float)),
+									A2(
+										elm_community$json_extra$Json$Decode$Extra$andMap,
+										A2(
+											elm$json$Json$Decode$field,
+											'number_comment',
+											elm$json$Json$Decode$maybe(elm$json$Json$Decode$string)),
+										A2(
+											elm_community$json_extra$Json$Decode$Extra$andMap,
+											A2(
+												elm$json$Json$Decode$field,
+												'number',
+												elm$json$Json$Decode$maybe(elm$json$Json$Decode$int)),
+											A2(
+												elm_community$json_extra$Json$Decode$Extra$andMap,
+												A2(
+													elm$json$Json$Decode$field,
+													'translate',
+													elm$json$Json$Decode$maybe(elm$json$Json$Decode$string)),
+												A2(
+													elm_community$json_extra$Json$Decode$Extra$andMap,
+													A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+													A2(
+														elm_community$json_extra$Json$Decode$Extra$andMap,
+														A2(
+															elm$json$Json$Decode$field,
+															'parts',
+															elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$partListDecoder)),
+														A2(
+															elm_community$json_extra$Json$Decode$Extra$andMap,
+															A2(
+																elm$json$Json$Decode$field,
+																'ingredients',
+																elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$ingrListDecoder)),
+															A2(
+																elm_community$json_extra$Json$Decode$Extra$andMap,
+																A2(
+																	elm$json$Json$Decode$field,
+																	'image',
+																	elm$json$Json$Decode$maybe(elm$json$Json$Decode$string)),
+																A2(
+																	elm_community$json_extra$Json$Decode$Extra$andMap,
+																	A2(
+																		elm$json$Json$Decode$field,
+																		'id',
+																		elm$json$Json$Decode$maybe(elm$json$Json$Decode$int)),
+																	A2(
+																		elm_community$json_extra$Json$Decode$Extra$andMap,
+																		A2(elm$json$Json$Decode$field, 'aikz', elm$json$Json$Decode$int),
+																		elm$json$Json$Decode$succeed(author$project$Devs$Objects$Recipe)))))))))))))))))));
+var elm$core$Result$mapError = F2(
+	function (f, result) {
+		if (result.$ === 'Ok') {
+			var v = result.a;
+			return elm$core$Result$Ok(v);
+		} else {
+			var e = result.a;
+			return elm$core$Result$Err(
+				f(e));
+		}
+	});
+var elm$core$Basics$identity = function (x) {
+	return x;
+};
+var elm$http$Http$expectStringResponse = F2(
+	function (toMsg, toResult) {
+		return A3(
+			_Http_expect,
+			'',
+			elm$core$Basics$identity,
+			A2(elm$core$Basics$composeR, toResult, toMsg));
+	});
+var elm$http$Http$BadBody = function (a) {
+	return {$: 'BadBody', a: a};
+};
+var elm$http$Http$BadStatus = function (a) {
+	return {$: 'BadStatus', a: a};
+};
+var elm$http$Http$BadUrl = function (a) {
+	return {$: 'BadUrl', a: a};
+};
+var elm$http$Http$NetworkError = {$: 'NetworkError'};
+var elm$http$Http$Timeout = {$: 'Timeout'};
+var elm$http$Http$resolve = F2(
+	function (toResult, response) {
+		switch (response.$) {
+			case 'BadUrl_':
+				var url = response.a;
+				return elm$core$Result$Err(
+					elm$http$Http$BadUrl(url));
+			case 'Timeout_':
+				return elm$core$Result$Err(elm$http$Http$Timeout);
+			case 'NetworkError_':
+				return elm$core$Result$Err(elm$http$Http$NetworkError);
+			case 'BadStatus_':
+				var metadata = response.a;
+				return elm$core$Result$Err(
+					elm$http$Http$BadStatus(metadata.statusCode));
+			default:
+				var body = response.b;
+				return A2(
+					elm$core$Result$mapError,
+					elm$http$Http$BadBody,
+					toResult(body));
+		}
+	});
+var elm$json$Json$Decode$decodeString = _Json_runOnString;
+var elm$http$Http$expectJson = F2(
+	function (toMsg, decoder) {
+		return A2(
+			elm$http$Http$expectStringResponse,
+			toMsg,
+			elm$http$Http$resolve(
+				function (string) {
+					return A2(
+						elm$core$Result$mapError,
+						elm$json$Json$Decode$errorToString,
+						A2(elm$json$Json$Decode$decodeString, decoder, string));
+				}));
+	});
+var author$project$Devs$BackendApi$getRecipe = F3(
+	function (event, token, url) {
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'GET',
+			url,
+			A2(elm$http$Http$expectJson, event, author$project$Devs$RecipeDecode$recipeDecoder),
+			token,
+			elm$core$Maybe$Nothing);
 	});
 var author$project$Devs$Objects$SetRecipe = function (a) {
 	return {$: 'SetRecipe', a: a};
 };
 var author$project$Devs$Update$getRecipe = F2(
 	function (model, rec) {
-		return A2(
+		return A3(
 			author$project$Devs$BackendApi$getRecipe,
 			author$project$Devs$Objects$SetRecipe,
+			model.loginToken,
 			model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + ('/getRecipeById/?id=' + elm$core$String$fromInt(rec.id))))));
 	});
 var author$project$Devs$Objects$RecipeLight = F2(
@@ -6689,16 +6724,18 @@ var author$project$Devs$RecipeDecode$recipeLightDecoder = A3(
 	author$project$Devs$Objects$RecipeLight,
 	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
 	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string));
-var author$project$Devs$BackendApi$getRecipeListForTag = F2(
-	function (event, url) {
-		return elm$http$Http$get(
-			{
-				expect: A2(
-					elm$http$Http$expectJson,
-					event,
-					elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$recipeLightDecoder)),
-				url: url
-			});
+var author$project$Devs$BackendApi$getRecipeListForTag = F3(
+	function (event, token, url) {
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'GET',
+			url,
+			A2(
+				elm$http$Http$expectJson,
+				event,
+				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$recipeLightDecoder)),
+			token,
+			elm$core$Maybe$Nothing);
 	});
 var author$project$Devs$Objects$ListRecipesForTag = function (a) {
 	return {$: 'ListRecipesForTag', a: a};
@@ -6731,9 +6768,10 @@ var author$project$Devs$Update$getRecipeListForTag = F2(
 				}
 			}
 		}();
-		return A2(
+		return A3(
 			author$project$Devs$BackendApi$getRecipeListForTag,
 			author$project$Devs$Objects$ListRecipesForTag,
+			model.loginToken,
 			model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + ('/getAllRecipeByTagWithoutMeta/?id=' + elm$core$String$fromInt(tagId))))));
 	});
 var author$project$Devs$Update$getTodoForEdit = F2(
@@ -6776,6 +6814,10 @@ var elm$http$Http$expectString = function (toMsg) {
 		elm$http$Http$expectStringResponse,
 		toMsg,
 		elm$http$Http$resolve(elm$core$Result$Ok));
+};
+var elm$http$Http$get = function (r) {
+	return elm$http$Http$request(
+		{body: elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: r.url});
 };
 var author$project$Devs$BackendApi$login = F2(
 	function (event, url) {
@@ -7088,66 +7130,64 @@ var author$project$Devs$RecipeEncode$recipeEncoder = function (rec) {
 		]);
 	return elm$json$Json$Encode$object(list);
 };
-var elm$http$Http$jsonBody = function (value) {
-	return A2(
-		_Http_pair,
-		'application/json',
-		A2(elm$json$Json$Encode$encode, 0, value));
-};
-var elm$http$Http$post = function (r) {
-	return elm$http$Http$request(
-		{body: r.body, expect: r.expect, headers: _List_Nil, method: 'POST', timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: r.url});
-};
-var author$project$Devs$BackendApi$saveRecipe = F3(
-	function (event, url, newRecipe) {
+var elm$core$Debug$log = _Debug_log;
+var author$project$Devs$BackendApi$saveRecipe = F4(
+	function (event, token, url, newRecipe) {
 		var jsonValue = author$project$Devs$RecipeEncode$recipeEncoder(newRecipe);
-		return elm$http$Http$post(
-			{
-				body: elm$http$Http$jsonBody(jsonValue),
-				expect: A2(elm$http$Http$expectJson, event, author$project$Devs$RecipeDecode$recipeDecoder),
-				url: url
-			});
+		var logString = A2(elm$json$Json$Encode$encode, 0, jsonValue);
+		var _n0 = A2(elm$core$Debug$log, 'newRecipe: ', logString);
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'POST',
+			url,
+			A2(elm$http$Http$expectJson, event, author$project$Devs$RecipeDecode$recipeDecoder),
+			token,
+			elm$core$Maybe$Just(jsonValue));
 	});
 var author$project$Devs$Objects$SavedRecipe = function (a) {
 	return {$: 'SavedRecipe', a: a};
 };
 var author$project$Devs$Update$saveRecipe = F2(
 	function (model, newRecipe) {
-		return A3(author$project$Devs$BackendApi$saveRecipe, author$project$Devs$Objects$SavedRecipe, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/saveRecipe'))), newRecipe);
+		return A4(author$project$Devs$BackendApi$saveRecipe, author$project$Devs$Objects$SavedRecipe, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/saveRecipe'))), newRecipe);
 	});
-var author$project$Devs$BackendApi$saveSource = F3(
-	function (event, url, newSource) {
+var author$project$Devs$BackendApi$saveSource = F4(
+	function (event, token, url, newSource) {
 		var jsonValue = author$project$Devs$RecipeEncode$sourceEncoder(newSource);
-		return elm$http$Http$post(
-			{
-				body: elm$http$Http$jsonBody(jsonValue),
-				expect: A2(elm$http$Http$expectJson, event, author$project$Devs$RecipeDecode$sourceDecoder),
-				url: url
-			});
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'POST',
+			url,
+			A2(elm$http$Http$expectJson, event, author$project$Devs$RecipeDecode$sourceDecoder),
+			token,
+			elm$core$Maybe$Just(jsonValue));
 	});
 var author$project$Devs$Objects$SavedSource = function (a) {
 	return {$: 'SavedSource', a: a};
 };
 var author$project$Devs$Update$saveSource = F2(
 	function (model, newSource) {
-		return A3(author$project$Devs$BackendApi$saveSource, author$project$Devs$Objects$SavedSource, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/saveSource'))), newSource);
+		return A4(author$project$Devs$BackendApi$saveSource, author$project$Devs$Objects$SavedSource, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/saveSource'))), newSource);
 	});
-var author$project$Devs$BackendApi$searchRecipe = F2(
-	function (event, url) {
-		return elm$http$Http$get(
-			{
-				expect: A2(
-					elm$http$Http$expectJson,
-					event,
-					elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$recipeLightDecoder)),
-				url: url
-			});
+var author$project$Devs$BackendApi$searchRecipe = F3(
+	function (event, token, url) {
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'GET',
+			url,
+			A2(
+				elm$http$Http$expectJson,
+				event,
+				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$recipeLightDecoder)),
+			token,
+			elm$core$Maybe$Nothing);
 	});
 var elm$core$String$trim = _String_trim;
 var author$project$Devs$Update$searchRecipe = function (model) {
-	return A2(
+	return A3(
 		author$project$Devs$BackendApi$searchRecipe,
 		author$project$Devs$Objects$ListRecipesForTag,
+		model.loginToken,
 		model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + ('/findRecipeByName/?name=' + elm$core$String$trim(model.searchValue))))));
 };
 var author$project$Devs$Update$setInitialPart = F2(
@@ -7195,22 +7235,23 @@ var author$project$Devs$RecipeEncode$imageEncoder = function (img) {
 			]));
 };
 var elm$json$Json$Decode$bool = _Json_decodeBool;
-var author$project$Devs$BackendApi$uploadImage = F3(
-	function (event, url, image) {
+var author$project$Devs$BackendApi$uploadImage = F4(
+	function (event, token, url, image) {
 		var jsonValue = author$project$Devs$RecipeEncode$imageEncoder(image);
-		return elm$http$Http$post(
-			{
-				body: elm$http$Http$jsonBody(jsonValue),
-				expect: A2(elm$http$Http$expectJson, event, elm$json$Json$Decode$bool),
-				url: url
-			});
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'POST',
+			url,
+			A2(elm$http$Http$expectJson, event, elm$json$Json$Decode$bool),
+			token,
+			elm$core$Maybe$Just(jsonValue));
 	});
 var author$project$Devs$Objects$UploadImage = function (a) {
 	return {$: 'UploadImage', a: a};
 };
 var author$project$Devs$Update$uploadImage = F2(
 	function (model, image) {
-		return A3(author$project$Devs$BackendApi$uploadImage, author$project$Devs$Objects$UploadImage, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/uploadImage'))), image);
+		return A4(author$project$Devs$BackendApi$uploadImage, author$project$Devs$Objects$UploadImage, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/uploadImage'))), image);
 	});
 var elm$core$List$isEmpty = function (xs) {
 	if (!xs.b) {
@@ -7261,7 +7302,6 @@ var author$project$Devs$Update$validateRecipe = function (rec) {
 };
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
-var elm$core$String$length = _String_length;
 var elm_community$list_extra$List$Extra$find = F2(
 	function (predicate, list) {
 		find:
@@ -8852,73 +8892,81 @@ var author$project$Devs$Update$update = F2(
 var author$project$Devs$Objects$keyLists = {partList: elm$core$Maybe$Nothing, sourceList: elm$core$Maybe$Nothing, tagList: elm$core$Maybe$Nothing, unitList: elm$core$Maybe$Nothing};
 var author$project$Devs$Objects$serverParams = {apiUrlPrefix: '/api/v1', iconPath: 'icons/', imagePath: 'images/', serverHost: 'horst:8085', serverProtokoll: 'http://', serverUrlPrefix: '/RecipeServer'};
 var author$project$Devs$Objects$initialModel = {addTag: elm$core$Maybe$Nothing, alertMessage: elm$core$Maybe$Nothing, deleteRecipe: false, kl: author$project$Devs$Objects$keyLists, loginToken: elm$core$Maybe$Nothing, newSource: elm$core$Maybe$Nothing, passwordForCheck: '', recAlertMessage: elm$core$Maybe$Nothing, recImage: elm$core$Maybe$Nothing, recipeForEdit: elm$core$Maybe$Nothing, recipesOfSelectedTag: elm$core$Maybe$Nothing, searchValue: '', selectedRecipe: elm$core$Maybe$Nothing, selectedTab: 'Tab1', selectedTag: elm$core$Maybe$Nothing, sp: author$project$Devs$Objects$serverParams, subAlertMessage: elm$core$Maybe$Nothing, tagtypeList: elm$core$Maybe$Nothing, usernameForCheck: ''};
-var author$project$Devs$BackendApi$getAllParts = F2(
-	function (event, url) {
-		return elm$http$Http$get(
-			{
-				expect: A2(
-					elm$http$Http$expectJson,
-					event,
-					elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$partLightDecoder)),
-				url: url
-			});
+var author$project$Devs$BackendApi$getAllParts = F3(
+	function (event, token, url) {
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'GET',
+			url,
+			A2(
+				elm$http$Http$expectJson,
+				event,
+				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$partLightDecoder)),
+			token,
+			elm$core$Maybe$Nothing);
 	});
 var author$project$Devs$Objects$SetPartList = function (a) {
 	return {$: 'SetPartList', a: a};
 };
 var author$project$Devs$Update$getAllParts = function (model) {
-	return A2(author$project$Devs$BackendApi$getAllParts, author$project$Devs$Objects$SetPartList, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllParts'))));
+	return A3(author$project$Devs$BackendApi$getAllParts, author$project$Devs$Objects$SetPartList, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllParts'))));
 };
-var author$project$Devs$BackendApi$getAllSources = F2(
-	function (event, url) {
-		return elm$http$Http$get(
-			{
-				expect: A2(
-					elm$http$Http$expectJson,
-					event,
-					elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$sourceDecoder)),
-				url: url
-			});
+var author$project$Devs$BackendApi$getAllSources = F3(
+	function (event, token, url) {
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'GET',
+			url,
+			A2(
+				elm$http$Http$expectJson,
+				event,
+				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$sourceDecoder)),
+			token,
+			elm$core$Maybe$Nothing);
 	});
 var author$project$Devs$Objects$SetSourceList = function (a) {
 	return {$: 'SetSourceList', a: a};
 };
 var author$project$Devs$Update$getAllSources = function (model) {
-	return A2(author$project$Devs$BackendApi$getAllSources, author$project$Devs$Objects$SetSourceList, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllSources'))));
+	return A3(author$project$Devs$BackendApi$getAllSources, author$project$Devs$Objects$SetSourceList, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllSources'))));
 };
-var author$project$Devs$BackendApi$getAllTags = F2(
-	function (event, url) {
-		return elm$http$Http$get(
-			{
-				expect: A2(
-					elm$http$Http$expectJson,
-					event,
-					elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$tagDecoder)),
-				url: url
-			});
+var author$project$Devs$BackendApi$getAllTags = F3(
+	function (event, token, url) {
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'GET',
+			url,
+			A2(
+				elm$http$Http$expectJson,
+				event,
+				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$tagDecoder)),
+			token,
+			elm$core$Maybe$Nothing);
 	});
 var author$project$Devs$Objects$SetTagList = function (a) {
 	return {$: 'SetTagList', a: a};
 };
 var author$project$Devs$Update$getAllTags = function (model) {
-	return A2(author$project$Devs$BackendApi$getAllTags, author$project$Devs$Objects$SetTagList, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllTags'))));
+	return A3(author$project$Devs$BackendApi$getAllTags, author$project$Devs$Objects$SetTagList, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllTags'))));
 };
-var author$project$Devs$BackendApi$getAllUnits = F2(
-	function (event, url) {
-		return elm$http$Http$get(
-			{
-				expect: A2(
-					elm$http$Http$expectJson,
-					event,
-					elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$unitDecoder)),
-				url: url
-			});
+var author$project$Devs$BackendApi$getAllUnits = F3(
+	function (event, token, url) {
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'GET',
+			url,
+			A2(
+				elm$http$Http$expectJson,
+				event,
+				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$unitDecoder)),
+			token,
+			elm$core$Maybe$Nothing);
 	});
 var author$project$Devs$Objects$SetUnitList = function (a) {
 	return {$: 'SetUnitList', a: a};
 };
 var author$project$Devs$Update$getAllUnits = function (model) {
-	return A2(author$project$Devs$BackendApi$getAllUnits, author$project$Devs$Objects$SetUnitList, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllUnits'))));
+	return A3(author$project$Devs$BackendApi$getAllUnits, author$project$Devs$Objects$SetUnitList, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllUnits'))));
 };
 var author$project$Devs$Objects$Tagtype = F3(
 	function (id, name, tagList) {
@@ -8930,22 +8978,24 @@ var author$project$Devs$RecipeDecode$tagtypeDecoder = A4(
 	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
 	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'tagList', author$project$Devs$RecipeDecode$tagListDecoder));
-var author$project$Devs$BackendApi$getTagtypeListForOverview = F2(
-	function (event, url) {
-		return elm$http$Http$get(
-			{
-				expect: A2(
-					elm$http$Http$expectJson,
-					event,
-					elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$tagtypeDecoder)),
-				url: url
-			});
+var author$project$Devs$BackendApi$getTagtypeListForOverview = F3(
+	function (event, token, url) {
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'GET',
+			url,
+			A2(
+				elm$http$Http$expectJson,
+				event,
+				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$tagtypeDecoder)),
+			token,
+			elm$core$Maybe$Nothing);
 	});
 var author$project$Devs$Objects$ListTagtypes = function (a) {
 	return {$: 'ListTagtypes', a: a};
 };
 var author$project$Devs$Update$getTagtypeListForOverview = function (model) {
-	return A2(author$project$Devs$BackendApi$getTagtypeListForOverview, author$project$Devs$Objects$ListTagtypes, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllTagTypes'))));
+	return A3(author$project$Devs$BackendApi$getTagtypeListForOverview, author$project$Devs$Objects$ListTagtypes, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllTagTypes'))));
 };
 var author$project$RecipeServer$init = _Utils_Tuple2(
 	author$project$Devs$Objects$initialModel,

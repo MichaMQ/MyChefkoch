@@ -2,6 +2,8 @@ package chefkoch.dto;
 
 import org.jdom2.Element;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import chefkoch.entity.Source;
 import chefkoch.util.StringUtil;
 
@@ -9,6 +11,9 @@ public class SourceDto extends GenericDto {
 	private String year;
 	private String isbn;
 	
+	@JsonCreator
+	public SourceDto() {}
+
 	public SourceDto(Source source) {
 		this.setId(source.getId());
 		this.setName(source.getName());
