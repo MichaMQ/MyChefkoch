@@ -5,10 +5,11 @@ import Devs.Ports as Ports exposing (fileSelected)
 import List exposing (..)
 import List.Extra as ListE
 import Http
-import Debug exposing (log)
+--import Debug exposing (log)
 
 import Devs.Objects as Objects exposing (..)
 import Devs.Recipe as RecipeObj
+import Devs.BackendApi as Api
 
 
 -- Update
@@ -25,7 +26,7 @@ update msg model =
               }
           in
             ( { model | recImage = Just newImage, recipeForEdit = (RecipeObj.setImage model.recipeForEdit (Just imagePortData.filename)) }, uploadImage model newImage )
-        GetLoginForm -> ( { model | loginToken = Nothing } , Cmd.none)
+        GetLoginForm -> ( { model | loginToken = Just "" } , Cmd.none)
         SetUsernameForCheck val -> ( { model | usernameForCheck = val } , Cmd.none)
         SetPasswortForCheck val -> ( { model | passwordForCheck = val } , Cmd.none)
         Login ->
@@ -37,12 +38,9 @@ update msg model =
               else
                 ( model, login model )
         HandleLogin (Ok loginToken) ->
-            let
-                _ = Debug.log "loginToken: " loginToken
-            in
-                if String.length loginToken > 0 then
-                  ( { model | subAlertMessage = Nothing, loginToken = Just loginToken } , Cmd.none )
-                else ( { model | subAlertMessage = Just "Mindestens eine der eingegeben Daten ist falsch!" }, Cmd.none )
+            if String.length loginToken > 0 then
+              ( { model | subAlertMessage = Nothing, loginToken = Just loginToken } , Cmd.none )
+            else ( { model | subAlertMessage = Just "Mindestens eine der eingegeben Daten ist falsch!" }, Cmd.none )
         HandleLogin (Err error) ->
           ( { model | recAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
         ShowOverView ->
@@ -481,37 +479,37 @@ setInitialPart: KeyLists -> List PartLight -> KeyLists
 setInitialPart keyList newList = { keyList | partList = Just newList }
 
 getAllUnits: Model -> Cmd Msg
-getAllUnits model = RecipeObj.getAllUnits SetUnitList (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllUnits")
+getAllUnits model = Api.getAllUnits SetUnitList (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllUnits")
 
 getAllSources: Model -> Cmd Msg
-getAllSources model = RecipeObj.getAllSources SetSourceList (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllSources")
+getAllSources model = Api.getAllSources SetSourceList (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllSources")
 
 getAllTags: Model -> Cmd Msg
-getAllTags model = RecipeObj.getAllTags SetTagList (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllTags")
+getAllTags model = Api.getAllTags SetTagList (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllTags")
 
 getAllParts: Model -> Cmd Msg
-getAllParts model = RecipeObj.getAllParts SetPartList (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllParts")
+getAllParts model = Api.getAllParts SetPartList (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllParts")
 
 uploadImage: Model -> ImagePortData -> Cmd Msg
-uploadImage model image = RecipeObj.uploadImage UploadImage (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/uploadImage") image
+uploadImage model image = Api.uploadImage UploadImage (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/uploadImage") image
 
 saveSource: Model -> Source -> Cmd Msg
-saveSource model newSource = RecipeObj.saveSource SavedSource (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/saveSource") newSource
+saveSource model newSource = Api.saveSource SavedSource (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/saveSource") newSource
 
 saveRecipe: Model -> Recipe -> Cmd Msg
-saveRecipe model newRecipe = RecipeObj.saveRecipe SavedRecipe (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/saveRecipe") newRecipe
+saveRecipe model newRecipe = Api.saveRecipe SavedRecipe (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/saveRecipe") newRecipe
 
 getTagtypeListForOverview : Model -> Cmd Msg
-getTagtypeListForOverview model = RecipeObj.getTagtypeListForOverview ListTagtypes (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllTagTypes")
+getTagtypeListForOverview model = Api.getTagtypeListForOverview ListTagtypes (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllTagTypes")
 
 searchRecipe: Model -> Cmd Msg
-searchRecipe model = RecipeObj.searchRecipe ListRecipesForTag (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/findRecipeByName/?name=" ++ String.trim model.searchValue)
+searchRecipe model = Api.searchRecipe ListRecipesForTag (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/findRecipeByName/?name=" ++ String.trim model.searchValue)
 
 getRecipe: Model -> RecipeLight -> Cmd Msg
-getRecipe model rec = RecipeObj.getRecipe SetRecipe (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getRecipeById/?id=" ++ String.fromInt rec.id)
+getRecipe model rec = Api.getRecipe SetRecipe (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getRecipeById/?id=" ++ String.fromInt rec.id)
 
 login: Model -> Cmd Msg
-login model = RecipeObj.login HandleLogin (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/login/?username=" ++ model.usernameForCheck ++ "&password=" ++ model.passwordForCheck)
+login model = Api.login HandleLogin (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/login/?username=" ++ model.usernameForCheck ++ "&password=" ++ model.passwordForCheck)
 
 getRecipeListForTag: Model -> Maybe Tag -> Cmd Msg
 getRecipeListForTag model selectedTag =
@@ -529,7 +527,7 @@ getRecipeListForTag model selectedTag =
             Nothing -> -3
         Nothing -> -4
   in
-    RecipeObj.getRecipeListForTag ListRecipesForTag (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllRecipeByTagWithoutMeta/?id=" ++ (String.fromInt tagId))
+    Api.getRecipeListForTag ListRecipesForTag (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllRecipeByTagWithoutMeta/?id=" ++ (String.fromInt tagId))
 
 httpErrorToMessage: Http.Error -> String
 httpErrorToMessage error =
@@ -546,6 +544,6 @@ isNotMember a =
   let
     --_ = Debug.log "isNotMember: " a
     isNotMemberVal = ListE.notMember (Tuple.second a) (Tuple.first a)
-    _ = Debug.log "isNotMember: " isNotMemberVal
+--    _ = Debug.log "isNotMember: " isNotMemberVal
   in
     isNotMemberVal
