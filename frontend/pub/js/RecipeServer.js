@@ -11794,66 +11794,82 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 							elm$html$Html$div,
 							_List_fromArray(
 								[
-									elm$html$Html$Attributes$id('ingredientsDiv')
+									elm$html$Html$Attributes$id('recipe')
 								]),
 							_List_fromArray(
 								[
 									A2(
-									elm$html$Html$h4,
-									_List_Nil,
+									elm$html$Html$div,
 									_List_fromArray(
 										[
-											elm$html$Html$text('Zutaten')
-										])),
-									A2(
-									elm$html$Html$table,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$class('incredientsTable')
+											elm$html$Html$Attributes$id('ingredientsDiv')
 										]),
 									_List_fromArray(
 										[
 											A2(
-											elm$html$Html$tbody,
+											elm$html$Html$h4,
 											_List_Nil,
+											_List_fromArray(
+												[
+													elm$html$Html$text('Zutaten')
+												])),
 											A2(
-												elm$core$List$map,
-												author$project$Pages$RecipeView$showPartRow,
-												A2(
-													elm$core$List$sortBy,
-													function ($) {
-														return $.name;
-													},
-													rec_parts)))
-										]))
-								])),
-							A2(
-							elm$html$Html$div,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$id('todosDiv')
-								]),
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$h4,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text('Zubereitung')
+											elm$html$Html$table,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('incredientsTable')
+												]),
+											_List_fromArray(
+												[
+													A2(
+													elm$html$Html$tbody,
+													_List_Nil,
+													A2(
+														elm$core$List$map,
+														author$project$Pages$RecipeView$showPartRow,
+														A2(
+															elm$core$List$sortBy,
+															function ($) {
+																return $.name;
+															},
+															rec_parts)))
+												]))
 										])),
 									A2(
 									elm$html$Html$div,
-									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$id('todosDiv')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$h4,
+											_List_Nil,
+											_List_fromArray(
+												[
+													elm$html$Html$text('Zubereitung')
+												])),
+											A2(
+											elm$html$Html$div,
+											_List_Nil,
+											A2(
+												elm$core$List$map,
+												author$project$Pages$RecipeView$showTodoRow(sp),
+												A2(
+													elm$core$List$sortBy,
+													function ($) {
+														return $.number;
+													},
+													rec_todos)))
+										])),
 									A2(
-										elm$core$List$map,
-										author$project$Pages$RecipeView$showTodoRow(sp),
-										A2(
-											elm$core$List$sortBy,
-											function ($) {
-												return $.number;
-											},
-											rec_todos)))
+									elm$html$Html$div,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$class('clear')
+										]),
+									_List_Nil)
 								]))
 						]))
 				]));

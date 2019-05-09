@@ -625,6 +625,11 @@ button:active {
 	padding: 10px;
 }
 
+#ingredientsDiv {
+	float: left;
+	padding-right: 10px;
+}
+
 .incredientsTable {
 	border-top: 1px solid #ddd;
 	width: 100%;

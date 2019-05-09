@@ -73,14 +73,17 @@ viewRecipe loginToken rec sp =
         Html.div [ id "recipeSource" ][ Html.text (rec_source ++ sourcePage ++ sourceYear ++ sourceIsbn), amazonLink ],
         Html.div [ id "recipeTags" ][ Html.text ("Tags: " ++ (String.join ", " (List.map getTagName (sortBy .name tagList)))) ],
         Html.figure [][ recImage, Html.figcaption [][ Html.text rec_number ] ],
-        Html.div [ id "ingredientsDiv" ][
-          Html.h4 [][ Html.text "Zutaten" ],
---          Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showIngrRow (sortBy .sortorder rec_ingredients) ) ]
-          Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showPartRow (sortBy .name rec_parts) ) ]
-        ],
-        Html.div [ id "todosDiv" ][
-          Html.h4 [][ Html.text "Zubereitung" ],
-          Html.div [] (List.map (showTodoRow sp) (sortBy .number rec_todos))
+        Html.div [ id "recipe" ][
+          Html.div [ id "ingredientsDiv" ][
+            Html.h4 [][ Html.text "Zutaten" ],
+  --          Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showIngrRow (sortBy .sortorder rec_ingredients) ) ]
+            Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showPartRow (sortBy .name rec_parts) ) ]
+          ],
+          Html.div [ id "todosDiv" ][
+            Html.h4 [][ Html.text "Zubereitung" ],
+            Html.div [] (List.map (showTodoRow sp) (sortBy .number rec_todos))
+          ],
+          Html.div [ class "clear" ][]
         ]
       ]
     ]
