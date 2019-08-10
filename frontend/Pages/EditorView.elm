@@ -8,6 +8,7 @@ import List exposing (..)
 import Json.Decode as Json
 
 import Devs.Objects as Objects exposing (..)
+import Devs.TypeObject as TO exposing (Msg)
 import Pages.Utils as PU exposing (alert, onEnter)
 import Pages.EditorTabs.Tab1 as Tab1 exposing (showTab)
 import Pages.EditorTabs.Tab2 as Tab2 exposing (showTab,showTagOption)
@@ -29,12 +30,12 @@ viewAddTagForm model =
       Html.div [ class "srcFormDiv" ] [
         Html.div[ class "srcFormDivRow"][
           Html.div[][
-            Html.select [ on "change" (Json.map SetChoosenTag targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (Tab2.showTagOption Objects.getEmptyTag) (sortBy .name initialTagList)))
+            Html.select [ on "change" (Json.map TO.SetChoosenTag targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (Tab2.showTagOption Objects.getEmptyTag) (sortBy .name initialTagList)))
           ]
-        ], PU.alert CloseLoginAlert model.subAlertMessage model,
+        ], PU.alert TO.CloseLoginAlert model.subAlertMessage model,
         Html.div [ class "editFormActionDiv" ][
-          Html.button [ onClick AddTagToRecipe ][ Html.text "zuordnen" ],
-          Html.button [ onClick CancelAddTag ][ Html.text "abbrechen" ]
+          Html.button [ onClick TO.AddTagToRecipe ][ Html.text "zuordnen" ],
+          Html.button [ onClick TO.CancelAddTag ][ Html.text "abbrechen" ]
         ]
       ]
     ]
@@ -69,20 +70,20 @@ viewSourceForm model =
           -}
           Html.div[][
             Html.label [ for "name" ][ Html.text "Name *" ],
-            Html.input [ type_ "text", onInput SetSrcName, id "name", value newSrc.name ][]
+            Html.input [ type_ "text", onInput TO.SetSrcName, id "name", value newSrc.name ][]
           ],
           Html.div[][
             Html.label [ for "isbn" ][ Html.text "ISBN" ],
-            Html.input [ type_ "text", onInput SetSrcIsbn, id "isbn", value isbnValue ][]
+            Html.input [ type_ "text", onInput TO.SetSrcIsbn, id "isbn", value isbnValue ][]
           ],
           Html.div[][
             Html.label [ for "year" ][ Html.text "Jahr" ],
-            Html.input [ type_ "text", onInput SetSrcYear, id "year", value yearValue ][]
+            Html.input [ type_ "text", onInput TO.SetSrcYear, id "year", value yearValue ][]
           ]
-        ], PU.alert CloseLoginAlert model.subAlertMessage model,
+        ], PU.alert TO.CloseLoginAlert model.subAlertMessage model,
         Html.div [ class "editFormActionDiv" ][
-          Html.button [ onClick SaveNewSource ][ Html.text "speichern" ],
-          Html.button [ onClick CancelSourceEdit ][ Html.text "abbrechen" ]
+          Html.button [ onClick TO.SaveNewSource ][ Html.text "speichern" ],
+          Html.button [ onClick TO.CancelSourceEdit ][ Html.text "abbrechen" ]
         ]
       ]
     ]
@@ -99,17 +100,17 @@ viewEditForm model =
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
     delBtn = if recipeForEdit.id /= Nothing
-      then Html.button [ onClick ConfirmDelete ][ Html.text "löschen" ]
+      then Html.button [ onClick TO.ConfirmDelete ][ Html.text "löschen" ]
       else Html.text ""
   in
     Html.div [ class "editFormBG" ][
       Html.div [ class "editFormDiv" ] [
         Html.div[ class "TabDiv" ][
-          Html.span [ class tab1BtnClass, onClick (ToggleTab "Tab1") ][ Html.text "Grunddaten" ],
-          Html.span [ class tab2BtnClass, onClick (ToggleTab "Tab2") ][ Html.text "Tags *" ],
-          Html.span [ class tab3BtnClass, onClick (ToggleTab "Tab3") ][ Html.text "Zutaten *" ],
-          Html.span [ class tab4BtnClass, onClick (ToggleTab "Tab4") ][ Html.text "Anweisungen *" ],
-          Html.span [ class tab5BtnClass, onClick (ToggleTab "Tab5") ][ Html.text "Nährwerte" ]
+          Html.span [ class tab1BtnClass, onClick (TO.ToggleTab "Tab1") ][ Html.text "Grunddaten" ],
+          Html.span [ class tab2BtnClass, onClick (TO.ToggleTab "Tab2") ][ Html.text "Tags *" ],
+          Html.span [ class tab3BtnClass, onClick (TO.ToggleTab "Tab3") ][ Html.text "Zutaten *" ],
+          Html.span [ class tab4BtnClass, onClick (TO.ToggleTab "Tab4") ][ Html.text "Anweisungen *" ],
+          Html.span [ class tab5BtnClass, onClick (TO.ToggleTab "Tab5") ][ Html.text "Nährwerte" ]
         ],
         Html.div[ class "TabContentDiv" ][
           (Tab1.showTab model),
@@ -117,11 +118,11 @@ viewEditForm model =
           (Tab3.showTab model),
           (Tab4.showTab model),
           (Tab5.showTab model)
-        ], PU.alert CloseRecipeAlert model.recAlertMessage model,
+        ], PU.alert TO.CloseRecipeAlert model.recAlertMessage model,
         Html.div [ class "editFormActionDiv" ][
-          Html.button [ onClick SaveRecipe ][ Html.text "speichern" ],
+          Html.button [ onClick TO.SaveRecipe ][ Html.text "speichern" ],
           delBtn,
-          Html.button [ onClick CancelRecipeEdit ][ Html.text "abbrechen" ]
+          Html.button [ onClick TO.CancelRecipeEdit ][ Html.text "abbrechen" ]
         ]
       ]
     ]

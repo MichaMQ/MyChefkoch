@@ -1,11 +1,14 @@
 port module RecipeServer exposing (..)
 
+--elm make --debug RecipeServer.elm --output=pub/js/RecipeServer.js
+
 import Devs.Ports as Ports exposing (fileContentRead)
 
 import Browser exposing (..)
 import Html exposing (..)
-import Devs.Objects as Objects exposing (..)
-import Devs.Update as Update exposing (..)
+import Devs.Objects as O exposing (..)
+import Devs.Update as U exposing (..)
+import Devs.TypeObject as TO exposing (Msg)
 
 import Pages.OverViewPage as OVP exposing (viewOverview)
 import Pages.Utils as PU exposing (alert)
@@ -22,7 +25,7 @@ view model =
             ]
 
         alertMsg =
-            PU.alert CloseAlert model.alertMessage model
+            PU.alert TO.CloseAlert model.alertMessage model
     in
       OVP.viewOverview model alertMsg
 
@@ -36,7 +39,7 @@ main =
         }
 
 subscriptions : Model -> Sub Msg
-subscriptions model = Ports.fileContentRead ImageRead
+subscriptions model = Ports.fileContentRead TO.ImageRead
 
 init : ( Model, Cmd Msg )
-init =  ( initialModel, Cmd.batch [ Update.getTagtypeListForOverview initialModel, Update.getAllUnits initialModel, Update.getAllSources initialModel, Update.getAllTags initialModel, Update.getAllParts initialModel ] )
+init =  ( initialModel, Cmd.batch [ U.getTagtypeListForOverview initialModel, U.getAllUnits initialModel, U.getAllSources initialModel, U.getAllTags initialModel, U.getAllParts initialModel ] )

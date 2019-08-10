@@ -6,6 +6,7 @@ import Html.Events exposing (onClick, onInput)
 import List exposing (..)
 
 import Devs.Objects as Objects exposing (..)
+import Devs.TypeObject as TO exposing (Msg)
 -- View
 
 
@@ -35,5 +36,5 @@ viewInitialTag tag =
     Html.button [
       id (String.fromInt tag_id),
       class "tagLink",
-      onClick (ShowRecipesOfTag (Just tag))
+      onClick (TO.ShowRecipesOfTag (Just tag))
     ][ Html.text tag.name ]

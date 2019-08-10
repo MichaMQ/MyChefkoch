@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
 import Devs.Objects as Objects exposing (..)
+import Devs.TypeObject as TO exposing (Msg)
 --import Debug exposing (log)
 
 --import Recipe as RecipeObj
@@ -39,7 +40,7 @@ viewOverview model alertMsg =
         else Html.text ""
       Nothing -> Html.text ""
     confirmDeleteForm = if model.deleteRecipe
-      then Utils.getConfirmForm DeleteRecipe CancelDelete "Soll das Rezept wirklich gelöscht werden?" model
+      then Utils.getConfirmForm TO.DeleteRecipe TO.CancelDelete "Soll das Rezept wirklich gelöscht werden?" model
       else Html.text ""
     isLoggedIn = case model.loginToken of
       Just log -> if String.length log > 0
@@ -47,8 +48,8 @@ viewOverview model alertMsg =
         else False
       Nothing -> False
     actionButton = if isLoggedIn == True
-      then Html.button [ onClick InsertRecipe ][ Html.text "hinzufügen" ]
-      else Html.button [ class "loginBtn", onClick GetLoginForm ][ Html.text "einloggen" ]
+      then Html.button [ onClick TO.InsertRecipe ][ Html.text "hinzufügen" ]
+      else Html.button [ class "loginBtn", onClick TO.GetLoginForm ][ Html.text "einloggen" ]
     printBookLink = model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/printBookDownload"
   in
     Html.div[][
@@ -62,13 +63,13 @@ viewOverview model alertMsg =
             class "searchField",
             placeholder "Welches Rezept suchst du?",
             value model.searchValue,
-            onInput SetSearchInput,
-            Utils.onEnter SearchRecipe
+            onInput TO.SetSearchInput,
+            Utils.onEnter TO.SearchRecipe
           ][],
           Html.button [
             name "searchButton",
             value "search",
-            onClick SearchRecipe
+            onClick TO.SearchRecipe
           ][ Html.text "suche" ],
           actionButton,
           Html.a [ href printBookLink ] [ Html.text "Buch drucken" ]

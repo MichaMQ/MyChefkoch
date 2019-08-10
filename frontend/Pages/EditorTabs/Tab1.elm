@@ -9,6 +9,7 @@ import Json.Decode as Json
 import Html.Events.Extra exposing (targetValueIntParse)
 
 import Devs.Objects as Objects exposing (..)
+import Devs.TypeObject as TO exposing (Msg)
 import Pages.Utils as PU exposing (getSelectOption)
 -- View
 
@@ -52,28 +53,28 @@ showTab model =
             ],
             Html.div[][
               Html.label [ for "name" ][ Html.text "Name *" ],
-              Html.input [ type_ "text", autofocus True, onInput SetName, id "name", value mod_rec.name ][]
+              Html.input [ type_ "text", autofocus True, onInput TO.SetName, id "name", value mod_rec.name ][]
             ],
             Html.div[][
               Html.label [ for "translate" ][ Html.text "Übersetzung" ],
-              Html.input [ type_ "text", onInput SetTranslate, id "translate", value translateValue ][]
+              Html.input [ type_ "text", onInput TO.SetTranslate, id "translate", value translateValue ][]
             ],
             Html.div[][
               Html.label [ for "number" ][ Html.text "Portionen" ],
-              Html.input [ type_ "number", onInput SetNumber, id "number", value numberValue ][]
+              Html.input [ type_ "number", onInput TO.SetNumber, id "number", value numberValue ][]
             ],
             Html.div[][
               Html.label [ for "number_comment" ][ Html.text "Port.-Kom." ],
-              Html.input [ type_ "text", onInput SetNumberComment, id "number_comment", value numberCommentValue ][]
+              Html.input [ type_ "text", onInput TO.SetNumberComment, id "number_comment", value numberCommentValue ][]
             ],
             Html.div[][
               Html.label [ for "source" ][ Html.text "Quelle *" ],
-              Html.select [ id "source", on "change" (Json.map SetSource targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (showSourceOption sourceValue) (sortBy .name initialSrcList))),
-              Html.button [ onClick AddNewSource ][ Html.text "+" ]
+              Html.select [ id "source", on "change" (Json.map TO.SetSource targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (showSourceOption sourceValue) (sortBy .name initialSrcList))),
+              Html.button [ onClick TO.AddNewSource ][ Html.text "+" ]
             ],
             Html.div[][
               Html.label [ for "source_page" ][ Html.text "Seitenangabe" ],
-              Html.input [ type_ "number", onInput SetSourcePage, id "source_page", value sourcePageValue ][]
+              Html.input [ type_ "number", onInput TO.SetSourcePage, id "source_page", value sourcePageValue ][]
             ],
             Html.div[](
               List.append
@@ -96,8 +97,8 @@ getImageField model rec =
     field = case rec.image of
       Just imgValue -> [
         Html.input [ type_ "text", id "image", value imgValue, disabled True ][],
-        Html.button [ onClick RemoveImageFromRecipe ][ Html.text "-" ]]
-      Nothing -> [Html.input [ class "fileUploadInput", on "change" (Json.succeed ImageSelected), type_ "file", id "recImage", accept "image/*" ][]]
+        Html.button [ onClick TO.RemoveImageFromRecipe ][ Html.text "-" ]]
+      Nothing -> [Html.input [ class "fileUploadInput", on "change" (Json.succeed TO.ImageSelected), type_ "file", id "recImage", accept "image/*" ][]]
   in
     field
 

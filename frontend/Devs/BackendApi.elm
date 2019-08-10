@@ -7,6 +7,7 @@ import Json.Decode as Decode exposing (Decoder, field, succeed)
 import Json.Encode as Encode exposing (..)
 
 import Devs.Objects as Objects exposing (..)
+import Devs.TypeObject as TO exposing (Msg)
 
 import Debug exposing (log)
 

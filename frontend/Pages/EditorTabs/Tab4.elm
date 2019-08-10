@@ -11,6 +11,7 @@ import Tuple exposing (..)
 --import Html.Events.Extra exposing (targetValueIntParse)
 
 import Devs.Objects as Objects exposing (..)
+import Devs.TypeObject as TO exposing (Msg)
 import Pages.Utils as PU exposing (getSelectOption)
 -- View
 
@@ -30,7 +31,7 @@ showTab model =
             [getLabelRow],
             ( List.map showTodoList (indexedMap Tuple.pair (sortBy .number todoListOfRec)) ),
             [Html.div[][
-              Html.button [ onClick AddTodoToRecipe ][ Html.text "Anweisung hinzufügen" ]
+              Html.button [ onClick TO.AddTodoToRecipe ][ Html.text "Anweisung hinzufügen" ]
             ]]
           ]
         )
@@ -57,9 +58,9 @@ showTodoList todoObj =
       Nothing -> ""
   in
     Html.div[ class "todoRow" ][
-      Html.input[ id "number", onInput (SetTodoNr idx), type_ "number", class "numberInput", value (String.fromInt todo.number) ][],
-      Html.textarea[ id "text", onInput (SetTodoText idx), class "textInput", cols 50, rows 4 ][ Html.text todo.text ],
-      Html.input [ id "image", onInput (SetTodoImg idx), type_ "text", class "imageInput", value imgValue ][],
-      Html.input [ id "comment", onInput (SetTodoImgComment idx), type_ "text", class "imageInput", value commentValue ][],
-      Html.button [ onClick RemoveTodoFromRecipe ][ Html.text "-" ]
+      Html.input[ id "number", onInput (TO.SetTodoNr idx), type_ "number", class "numberInput", value (String.fromInt todo.number) ][],
+      Html.textarea[ id "text", onInput (TO.SetTodoText idx), class "textInput", cols 50, rows 4 ][ Html.text todo.text ],
+      Html.input [ id "image", onInput (TO.SetTodoImg idx), type_ "text", class "imageInput", value imgValue ][],
+      Html.input [ id "comment", onInput (TO.SetTodoImgComment idx), type_ "text", class "imageInput", value commentValue ][],
+      Html.button [ onClick TO.RemoveTodoFromRecipe ][ Html.text "-" ]
     ]

@@ -11,6 +11,7 @@ import Json.Decode as Json
 import Html.Events.Extra exposing (targetValueIntParse)
 
 import Devs.Objects as Objects exposing (..)
+import Devs.TypeObject as TO exposing (Msg)
 import Pages.Utils as PU exposing (getSelectOption)
 -- View
 
@@ -36,7 +37,7 @@ showTab model =
             [getLabelRow],
             ( List.map (showIngreList initialUnitList initialPartList) (indexedMap Tuple.pair (sortBy .sortorder ingrListOfRec)) ),
             [Html.div[][
-              Html.button [ onClick AddIngreToRecipe ][ Html.text "Zutat hinzufügen" ]
+              Html.button [ onClick TO.AddIngreToRecipe ][ Html.text "Zutat hinzufügen" ]
             ]]
           ]
         )
@@ -71,14 +72,14 @@ showIngreList unitList partList ingreObj =
       Nothing -> ""
   in
     Html.div[ class "ingreRow" ][
-      Html.input[ id "order", onInput (SetIngreOrder idx), type_ "number", class "orderInput", value (String.fromInt ingre.sortorder) ][],
-      Html.input[ id "ingre", onInput (SetIngreName idx), class "ingrInput", value ingre.name ][],
-      Html.input[ id "quant", onInput (SetIngreQuant idx), type_ "number", step "0.1", class "quantInput", value quant ][],
-      Html.select [ id "unit", on "change" (Json.map (SetIngreUnit idx) targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (showUnitOption unit) unitList)),
-      Html.input[ id "comment", onInput (SetIngreComment idx), class "ingrInput", value commentVal ][],
+      Html.input[ id "order", onInput (TO.SetIngreOrder idx), type_ "number", class "orderInput", value (String.fromInt ingre.sortorder) ][],
+      Html.input[ id "ingre", onInput (TO.SetIngreName idx), class "ingrInput", value ingre.name ][],
+      Html.input[ id "quant", onInput (TO.SetIngreQuant idx), type_ "number", step "0.1", class "quantInput", value quant ][],
+      Html.select [ id "unit", on "change" (Json.map (TO.SetIngreUnit idx) targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (showUnitOption unit) unitList)),
+      Html.input[ id "comment", onInput (TO.SetIngreComment idx), class "ingrInput", value commentVal ][],
 --      Html.input[ id "part", onInput (SetIngrePart idx), type_ "number", class "partInput", value (String.fromInt part.id) ][],
-      Html.select [ id "part", on "change" (Json.map (SetIngrePart idx) targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (showPartOption part) partList)),
-      Html.button [ onClick RemoveIngreFromRecipe ][ Html.text "-" ]
+      Html.select [ id "part", on "change" (Json.map (TO.SetIngrePart idx) targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (showPartOption part) partList)),
+      Html.button [ onClick TO.RemoveIngreFromRecipe ][ Html.text "-" ]
     ]
 
 showUnitOption: Unit -> Unit -> Html Msg

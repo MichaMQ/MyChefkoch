@@ -5,8 +5,8 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (keyCode, on, onClick, onInput)
 import Json.Decode as Json exposing ( .. )
 
-import Devs.Objects as Objects exposing (..)
-
+import Devs.Objects as O exposing (..)
+import Devs.TypeObject as TO exposing (Msg)
 
 alert : msg -> Maybe String -> Model -> Html msg
 alert event alertMsg model =

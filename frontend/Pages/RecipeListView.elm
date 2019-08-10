@@ -6,6 +6,7 @@ import Html.Events exposing (onClick, onInput)
 import List exposing (..)
 
 import Devs.Objects as Objects exposing (..)
+import Devs.TypeObject as TO exposing (Msg)
 -- View
 
 viewRecipesOfTag: Model -> Html Msg
@@ -22,7 +23,7 @@ viewRecipesOfTag model =
 showRecipeList: List RecipeLight -> String -> Html Msg
 showRecipeList recipeList divHeader =
     Html.div [ id "contentDiv", class "cf" ] [
-      Html.div[][ Html.button [ onClick RemoveSelectedTag ][ Html.text "zur Startseite" ] ],
+      Html.div[][ Html.button [ onClick TO.RemoveSelectedTag ][ Html.text "zur Startseite" ] ],
       Html.div [ id "categoryTypeDiv", style "width" "99%" ][
         Html.h3 [][ Html.text divHeader ],
         Html.div [ id "categoryDiv" ] (List.map showRecipeView recipeList)
@@ -34,5 +35,5 @@ showRecipeView rec =
   Html.button [
     id (String.fromInt rec.id),
     class "tagLink",
-    onClick (ShowRecipe (Just rec))
+    onClick (TO.ShowRecipe (Just rec))
   ][ Html.text rec.name ]

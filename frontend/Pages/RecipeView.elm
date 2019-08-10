@@ -6,6 +6,7 @@ import Html.Events exposing (onClick, onInput)
 import List exposing (..)
 
 import Devs.Objects as Objects exposing (..)
+import Devs.TypeObject as TO exposing (Msg)
 -- View
 
 viewRecipe: Maybe String -> Recipe -> ServerParams -> Html Msg
@@ -17,7 +18,7 @@ viewRecipe loginToken rec sp =
         else False
       Nothing -> False
     actionButton = if isLoggedIn == True
-      then Html.button [ onClick EditRecipe ][ Html.text "bearbeiten" ]
+      then Html.button [ onClick TO.EditRecipe ][ Html.text "bearbeiten" ]
       else Html.span [][]
     header = case rec.translate of
       Just translate -> rec.name ++ " (" ++ translate ++ ")"
@@ -67,7 +68,7 @@ viewRecipe loginToken rec sp =
   in
     Html.div [ id "contentDiv", class "cf" ] [
       Html.div[ class "noprint" ][
-        Html.button [ onClick RemoveSelectedRecipe ][ Html.text "zur Liste zurück" ], actionButton ],
+        Html.button [ onClick TO.RemoveSelectedRecipe ][ Html.text "zur Liste zurück" ], actionButton ],
       Html.div [ id "recipeDiv" ][
         Html.h2 [][ Html.text header ],
         Html.div [ id "recipeSource" ][ Html.text (rec_source ++ sourcePage ++ sourceYear ++ sourceIsbn), amazonLink ],

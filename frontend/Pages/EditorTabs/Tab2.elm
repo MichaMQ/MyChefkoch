@@ -7,6 +7,7 @@ import List exposing (..)
 import Tuple exposing (..)
 
 import Devs.Objects as Objects exposing (..)
+import Devs.TypeObject as TO exposing (Msg)
 -- View
 
 showTab: Model -> Html Msg
@@ -28,7 +29,7 @@ showTab model =
             Html.table [ ]( List.map (showTagDiv initialTagList) (indexedMap Tuple.pair (sortBy .name tagListValue)) )
           ],
           Html.div[][
-            Html.button [ onClick ChooseNewTag ][ Html.text "Tag hinzufügen" ]
+            Html.button [ onClick TO.ChooseNewTag ][ Html.text "Tag hinzufügen" ]
             --,Html.button [][ Html.text "+" ]
           ]
         ]
@@ -41,7 +42,7 @@ showTagDiv initialTagList tagObj =
   in
     Html.tr[][
       Html.td[][ Html.text (tag.name ++ " (" ++ tag.tagType.name ++ ")") ],
-      Html.td[][ Html.button [ onClick (RemoveTagFromRec idx) ][ Html.text "-" ] ]
+      Html.td[][ Html.button [ onClick (TO.RemoveTagFromRec idx) ][ Html.text "-" ] ]
     ]
 
 showTagOption: Tag -> Tag -> Html Msg

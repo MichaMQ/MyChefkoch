@@ -10,6 +10,7 @@ import Json.Decode as Json
 --import Html.Events.Extra exposing (targetValueIntParse)
 
 import Devs.Objects as Objects exposing (..)
+import Devs.TypeObject as TO exposing (Msg)
 import Pages.Utils as PU exposing (getSelectOption)
 -- View
 
@@ -39,22 +40,22 @@ showTab model =
         Html.div[ class tabClass ] [
           Html.div[][
             Html.label [ for "size" ][ Html.text "Portionsgröße" ],
-            Html.input [ type_ "number", onInput SetSize, id "size", value sizeValue ][]
+            Html.input [ type_ "number", onInput TO.SetSize, id "size", value sizeValue ][]
           ],
           Html.div[][
             Html.label [ for "carbo" ][ Html.text "Kohlenhydrate" ],
-            Html.input [ type_ "number", step "0.1", onInput SetCarbo, id "carbo", value carboValue ][]
+            Html.input [ type_ "number", step "0.1", onInput TO.SetCarbo, id "carbo", value carboValue ][]
           ],
           Html.div[][
             Html.label [ for "energy" ][ Html.text "Brennwert" ],
-            Html.input [ type_ "number", step "0.1", onInput SetEnergy, id "energy", value energyValue ][]
+            Html.input [ type_ "number", step "0.1", onInput TO.SetEnergy, id "energy", value energyValue ][]
           ],
           Html.div[][
             Html.label [ for "fat" ][ Html.text "Fett" ],
-            Html.input [ type_ "number", step "0.1", onInput SetFat, id "fat", value fatValue ][]
+            Html.input [ type_ "number", step "0.1", onInput TO.SetFat, id "fat", value fatValue ][]
           ],
           Html.div[][
             Html.label [ for "prot" ][ Html.text "Eiweiß" ],
-            Html.input [ type_ "number", step "0.1", onInput SetProt, id "prot", value protValue ][]
+            Html.input [ type_ "number", step "0.1", onInput TO.SetProt, id "prot", value protValue ][]
           ]
         ]

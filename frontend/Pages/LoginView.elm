@@ -5,6 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
 
 import Devs.Objects as Objects exposing (..)
+import Devs.TypeObject as TO exposing (Msg)
 import Pages.Utils as PU exposing (alert, onEnter)
 -- View
 
@@ -14,15 +15,15 @@ getLoginForm model =
     Html.div [ class "editFormDiv" ] [
       Html.div[][
         Html.label [ for "username" ][ Html.text "Benutzername" ],
-        Html.input [ id "username", type_ "text", autofocus True, onInput SetUsernameForCheck, PU.onEnter Login ][]
+        Html.input [ id "username", type_ "text", autofocus True, onInput TO.SetUsernameForCheck, PU.onEnter TO.Login ][]
       ],
       Html.div[][
         Html.label [ for "password" ][ Html.text "Passwort" ],
-        Html.input [ id "password", type_ "password", onInput SetPasswortForCheck, PU.onEnter Login ][]
-      ], PU.alert CloseLoginAlert model.subAlertMessage model,
+        Html.input [ id "password", type_ "password", onInput TO.SetPasswortForCheck, PU.onEnter TO.Login ][]
+      ], PU.alert TO.CloseLoginAlert model.subAlertMessage model,
       Html.div [ class "editFormActionDiv" ][
-        Html.button [ onClick Login ][ Html.text "login" ],
-        Html.button [ onClick CancelLogin ][ Html.text "abbrechen" ]
+        Html.button [ onClick TO.Login ][ Html.text "login" ],
+        Html.button [ onClick TO.CancelLogin ][ Html.text "abbrechen" ]
       ]
     ]
   ]
