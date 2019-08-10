@@ -38,14 +38,9 @@ public class Recipe {
 	@NotNull
 	private String name;
 
-	@NotNull
 	private String translate;
-
 	private Long number;
-
-	@NotNull
 	private String number_comment;
-
 	private Long nv_size;
 
 	private Double nv_energy;

@@ -1,2 +1,7 @@
 target/classes/chefkoch
+target/classes/static
 target/test-classes
+target/chefkoch-0.0.1-SNAPSHOT
+target/chefkoch-0.0.1-SNAPSHOT.war
+target/chefkoch-0.0.1-SNAPSHOT.war.original
+

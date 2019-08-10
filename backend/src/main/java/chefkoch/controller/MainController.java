@@ -35,11 +35,13 @@ public class MainController {
 	private RecipeService recipeService;
 	
 	private final String timeoutMsg = "Timeout der Authentifizierung!";
+	private final String successMsg = "Request processed successful!";
 	
 	@PostMapping("/saveSource")
 	SourceDto saveSource(HttpServletRequest request, HttpServletResponse response, @RequestBody SourceDto source) throws IOException {
 		Boolean tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid.booleanValue()) {
+			response.sendError(200, this.successMsg);
 			return this.recipeService.saveSource(source);
 		} else {
 			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
@@ -50,18 +52,22 @@ public class MainController {
 	@PostMapping("/saveRecipe")
 	RecipeDto saveRecipe(HttpServletRequest request, HttpServletResponse response, @RequestBody RecipeDto recipe) throws IOException {
 		Boolean tokenIsValid = this.recipeService.isTokenValid(request);
+		RecipeDto savedRecipe = null;
 		if(tokenIsValid.booleanValue()) {
-			return this.recipeService.saveRecipe(recipe);
+			savedRecipe = this.recipeService.saveRecipe(recipe);
+			response.setStatus(HttpServletResponse.SC_OK);
 		} else {
 			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
-			return null;
+			savedRecipe = null;
 		}
+		return savedRecipe;
 	}
 	
 	@GetMapping(path = "/savePassword")
 	public @ResponseBody Boolean savePassword(HttpServletRequest request, HttpServletResponse response, @RequestParam String username, @RequestParam String password) throws IOException {
 		Boolean tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid.booleanValue()) {
+			response.sendError(200, this.successMsg);
 			return this.recipeService.savePassword(username, password);
 		} else {
 			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -334,6 +335,7 @@ public class RecipeServiceImpl implements RecipeService {
 			src.setYear(srcDto.getYear());
 			recipe.setSource(src);
 			
+			recipe.setTags(new HashSet<>());
 			for(TagDto tagDto : recipeDto.getTags()) {
 				Tag tag = new Tag();
 				Optional<Tag> tagOpt = tagRepository.findById(tagDto.getId());
@@ -346,6 +348,7 @@ public class RecipeServiceImpl implements RecipeService {
 				recipe.getTags().add(tag);
 			}
 			
+			recipe.setTodos(new HashSet<>());
 			for(TodoDto todoDto : recipeDto.getTodos()) {
 				Todo todo = new Todo();
 				Optional<Todo> todoOpt = todoRepository.findById(todoDto.getId());
@@ -360,6 +363,7 @@ public class RecipeServiceImpl implements RecipeService {
 				recipe.getTodos().add(todo);
 			}
 			
+			recipe.setIngredients(new HashSet<>());
 			for(IngredientDto ingreDto : recipeDto.getIngredients()) {
 				Ingredient ingre = new Ingredient();
 				Optional<Ingredient> ingreOpt = ingredientRepository.findById(ingreDto.getId());
