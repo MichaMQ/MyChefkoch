@@ -39,7 +39,7 @@ main =
         }
 
 subscriptions : Model -> Sub Msg
-subscriptions model = Ports.fileContentRead TO.ImageRead
+subscriptions model = Sub.batch [ Ports.fileContentRead TO.ImageRead, Ports.initialize TO.Initialize ]
 
 init : ( Model, Cmd Msg )
 init =  ( initialModel, Cmd.batch [ U.getTagtypeListForOverview initialModel, U.getAllUnits initialModel, U.getAllSources initialModel, U.getAllTags initialModel, U.getAllParts initialModel ] )

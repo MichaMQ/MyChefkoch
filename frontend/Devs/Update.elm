@@ -17,7 +17,8 @@ import Devs.BackendApi as Api
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp -> ( model , Cmd.none)
+        NoOp -> ( model , Cmd.none )
+        Initialize initData -> ( { model | random = initData.random } , Cmd.none )
         ImageSelected -> ( model , Ports.fileSelected "recImage")
         ImageRead imagePortData ->
           let

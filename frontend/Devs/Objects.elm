@@ -1,5 +1,8 @@
 module Devs.Objects exposing (..)
 
+import UUID exposing (UUID)
+import Random
+
 --import Video as VideoObj
 
 -- Model
@@ -38,26 +41,32 @@ type alias Recipe = {
 type alias ImagePortData = { contents : String, filename : String }
 
 type alias Model = {
-    sp: ServerParams,
-    alertMessage: Maybe String,
-    subAlertMessage: Maybe String,
-    recAlertMessage: Maybe String,
-    searchValue: String,
-    tagtypeList: Maybe (List Tagtype),
-    selectedTag: Maybe Tag,
-    recipesOfSelectedTag: Maybe (List RecipeLight),
-    selectedRecipe: Maybe Recipe,
-    recipeForEdit: Maybe Recipe,
-    recImage: Maybe ImagePortData,
-    selectedTab: String,
-    newSource: Maybe Source,
-    addTag: Maybe Tag,
-    kl: KeyLists,
-    loginToken: Maybe String,
---    loggedIn: Maybe Bool,
-    deleteRecipe: Bool,
-    usernameForCheck: String,
-    passwordForCheck: String
+  currentSeed : Maybe Random.Seed
+  , random: Int
+  , sp: ServerParams
+  , alertMessage: Maybe String
+  , subAlertMessage: Maybe String
+  , recAlertMessage: Maybe String
+  , searchValue: String
+  , tagtypeList: Maybe (List Tagtype)
+  , selectedTag: Maybe Tag
+  , recipesOfSelectedTag: Maybe (List RecipeLight)
+  , selectedRecipe: Maybe Recipe
+  , recipeForEdit: Maybe Recipe
+  , recImage: Maybe ImagePortData
+  , selectedTab: String
+  , newSource: Maybe Source
+  , addTag: Maybe Tag
+  , kl: KeyLists
+  , loginToken: Maybe String
+--    loggedIn: Maybe Bool
+  , deleteRecipe: Bool
+  , usernameForCheck: String
+  , passwordForCheck: String
+  }
+
+type alias InitData = {
+  random: Int
   }
 
 -- Model
@@ -76,26 +85,28 @@ serverParams = {serverProtokoll = "http://",
 
 initialModel: Model
 initialModel = {
-    sp = serverParams,
-    alertMessage = Nothing,
-    subAlertMessage = Nothing,
-    recAlertMessage = Nothing,
-    searchValue = "",
-    tagtypeList = Nothing,
-    selectedTag = Nothing,
-    recipesOfSelectedTag = Nothing,
-    selectedRecipe = Nothing,
-    recipeForEdit = Nothing,
-    recImage = Nothing,
-    selectedTab = "Tab1",
-    newSource = Nothing,
-    addTag = Nothing,
-    kl = keyLists,
-    loginToken = Nothing,
---    loggedIn = Nothing,
-    deleteRecipe = False,
-    usernameForCheck = "",
-    passwordForCheck = ""
+  currentSeed = Nothing
+  , random = 123456789
+  , sp = serverParams
+  , alertMessage = Nothing
+  , subAlertMessage = Nothing
+  , recAlertMessage = Nothing
+  , searchValue = ""
+  , tagtypeList = Nothing
+  , selectedTag = Nothing
+  , recipesOfSelectedTag = Nothing
+  , selectedRecipe = Nothing
+  , recipeForEdit = Nothing
+  , recImage = Nothing
+  , selectedTab = "Tab1"
+  , newSource = Nothing
+  , addTag = Nothing
+  , kl = keyLists
+  , loginToken = Nothing
+--    loggedIn = Nothing
+  , deleteRecipe = False
+  , usernameForCheck = ""
+  , passwordForCheck = ""
   }
 
 getEmptyTodo: Int -> Todo
