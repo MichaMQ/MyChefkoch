@@ -8,9 +8,10 @@ import Json.Decode.Extra exposing (andMap)
 import Devs.Objects as Objects exposing (..)
 
 tagtypeShortDecoder : Decoder TagtypeShort
-tagtypeShortDecoder = Decode.map2 TagtypeShort
+tagtypeShortDecoder = Decode.map3 TagtypeShort
   (Decode.maybe <| field "id" Decode.int)
   (field "name" Decode.string)
+  (field "uuid" Decode.string)
 
 tagDecoder : Decoder Tag
 tagDecoder = Decode.map4 Tag
@@ -60,9 +61,10 @@ partDecoder =
 
 partLightDecoder : Decoder PartLight
 partLightDecoder =
-  Decode.map2 PartLight
+  Decode.map3 PartLight
     (field "id" Decode.int)
     (field "name" Decode.string)
+    (field "uuid" Decode.string)
 
 unitDecoder : Decoder Unit
 unitDecoder = Decode.map4 Unit
@@ -98,9 +100,10 @@ todoListDecoder : Decoder (List Todo)
 todoListDecoder = Decode.list todoDecoder
 
 recipeLightDecoder : Decoder RecipeLight
-recipeLightDecoder = Decode.map2 RecipeLight
+recipeLightDecoder = Decode.map3 RecipeLight
   (field "id" Decode.int)
   (field "name" Decode.string)
+  (field "uuid" Decode.string)
 
 recipeDecoder : Decode.Decoder Recipe
 recipeDecoder =

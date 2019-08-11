@@ -91,6 +91,7 @@ tagtypeEncoder: TagtypeShort -> Encode.Value
 tagtypeEncoder tt =
     Encode.object [ ( "id", encodeInt tt.id )
     , ( "name", Encode.string tt.name )
+    , ( "uuid", Encode.string tt.uuid )
     ]
 
 ingreEncoder: Ingredient -> Encode.Value
@@ -125,6 +126,7 @@ partLightEncoder: PartLight -> Encode.Value
 partLightEncoder p =
     Encode.object [ ( "id", Encode.int p.id )
     , ( "name", Encode.string p.name )
+    , ( "uuid", Encode.string p.uuid )
     ]
 
 unitEncoder: Unit -> Encode.Value

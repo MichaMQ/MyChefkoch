@@ -5,6 +5,7 @@ import Devs.Ports as Ports exposing (fileSelected)
 import List exposing (..)
 import List.Extra as ListE
 import Http
+import UUID exposing (UUID)
 --import Debug exposing (log)
 
 import Devs.Objects as Objects exposing (..)
@@ -51,7 +52,7 @@ update msg model =
           let
             selectedRecipe = case rec of
               Just recipe -> recipe
-              Nothing -> {id = -1, name = ""}
+              Nothing -> {id = -1, name = "", uuid=UUID.toString UUID.nil}
           in
             ( model, getRecipe model selectedRecipe )
         EditRecipe ->

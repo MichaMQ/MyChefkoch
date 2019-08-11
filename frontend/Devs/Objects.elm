@@ -8,7 +8,7 @@ import Random
 -- Model
 type alias ServerParams = {serverProtokoll: String, serverHost: String, serverUrlPrefix: String, apiUrlPrefix: String, iconPath: String, imagePath: String}
 type alias KeyLists = {sourceList: Maybe (List Source), tagList: Maybe (List Tag), unitList: Maybe (List Unit), partList: Maybe (List PartLight)}
-type alias TagtypeShort = {id: Maybe Int, name: String}
+type alias TagtypeShort = {id: Maybe Int, name: String, uuid: String}
 type alias Tag = {id: Maybe Int, name: String, tagType: TagtypeShort, uuid: String}
 type alias Tagtype = {id: Int, name: String, tagList: List Tag, uuid: String}
 type alias UnitCategory = {id: Int, name: String, uuid: String}
@@ -17,8 +17,8 @@ type alias Source = {id: Maybe Int, isbn: Maybe String, name: String, year: Mayb
 type alias Todo = {id: Int, image: Maybe String, image_comment: Maybe String, number: Int, text: String, uuid: String}
 type alias Ingredient = {id: Maybe Int, name: String, comment: Maybe String , part: Maybe PartLight, quantity: Maybe Float, sortorder: Int, unit: Maybe Unit, uuid: String}
 type alias Part = {id: Int, name: String, ingredients: List Ingredient, uuid: String}
-type alias PartLight = {id: Int, name: String}
-type alias RecipeLight = {id: Int, name: String}
+type alias PartLight = {id: Int, name: String, uuid: String}
+type alias RecipeLight = {id: Int, name: String, uuid: String}
 type alias Recipe = {
   aikz: Int,
   id: Maybe Int,
@@ -153,10 +153,10 @@ getEmptyTagtype: Tagtype
 getEmptyTagtype = {id=0, name="", tagList=[], uuid=UUID.toString UUID.nil}
 
 getEmptyPart: PartLight
-getEmptyPart = {id=-2, name="Sonstige Zutaten"}
+getEmptyPart = {id=-2, name="Sonstige Zutaten", uuid=UUID.toString UUID.nil}
 
 getEmptyTag: Tag
-getEmptyTag = {id=Nothing, name="", tagType={id=Nothing, name=""}, uuid=UUID.toString UUID.nil}
+getEmptyTag = {id=Nothing, name="", tagType={id=Nothing, name="", uuid=UUID.toString UUID.nil}, uuid=UUID.toString UUID.nil}
 
 getEmptyRecipe: Recipe
 getEmptyRecipe = {
