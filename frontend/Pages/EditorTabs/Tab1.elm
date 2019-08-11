@@ -16,7 +16,6 @@ import Pages.Utils as PU exposing (getSelectOption)
 showTab: Model -> Html Msg
 showTab model =
   let
-    tab1Class = if model.selectedTab == "Tab1" then "showTabContent" else "hideTabContent"
     mod_rec = case model.selectedRecipe of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
@@ -45,7 +44,7 @@ showTab model =
       Just val -> val
       Nothing -> ""
   in
-        Html.div[ class tab1Class ][
+        Html.div[ class "showTabContent" ][
           Html.div[ style "float" "left" ][
             Html.div[][
               Html.label [ for "id" ][ Html.text "ID" ],

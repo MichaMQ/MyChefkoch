@@ -19,7 +19,7 @@ viewRecipe loginToken rec sp =
       else Html.span [][]
     header = case rec.translate of
       Just translate -> rec.name ++ " (" ++ translate ++ ")"
-      Nothing -> rec.name
+      Nothing -> if String.isEmpty rec.name then "Bitte Name eingeben" else rec.name
     rec_source = case rec.source of
       Just source -> "Quelle: " ++ source.name
       Nothing -> ""

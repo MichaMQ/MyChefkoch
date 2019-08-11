@@ -17,7 +17,6 @@ import Pages.Utils as PU exposing (getSelectOption)
 showTab: Model -> Html Msg
 showTab model =
   let
-    tabClass = if model.selectedTab == "Tab5" then "showTabContent" else "hideTabContent"
     recForEdit = case model.selectedRecipe of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
@@ -37,7 +36,7 @@ showTab model =
       Just val -> String.fromInt val
       Nothing -> ""
   in
-        Html.div[ class tabClass ] [
+        Html.div[ class "showTabContent" ][
           Html.div[][
             Html.label [ for "size" ][ Html.text "Portionsgröße" ],
             Html.input [ type_ "number", onInput TO.SetSize, id "size", value sizeValue ][]

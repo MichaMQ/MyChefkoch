@@ -19,8 +19,6 @@ import Pages.Utils as PU exposing (getSelectOption)
 showTab: Model -> Html Msg
 showTab model =
   let
---    tab3Class = if model.selectedTab == "Tab3" then "showTabContent" else "hideTabContent"
-    tab3Class = "showTabContent"
     recForEdit = case model.selectedRecipe of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
@@ -35,7 +33,7 @@ showTab model =
       Nothing -> []
 --    _ = Debug.log "recForEdit: " recForEdit
   in
-        Html.div[ class tab3Class ] (
+        Html.div[ class "showTabContent" ](
           List.concat [
             [getLabelRow],
             ( List.map (showIngreList initialUnitList initialPartList) (indexedMap Tuple.pair (sortBy .sortorder ingrListOfRec)) ),

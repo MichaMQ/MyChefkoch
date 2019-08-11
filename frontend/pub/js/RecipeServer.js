@@ -8392,9 +8392,9 @@ var author$project$Devs$Update$update = F2(
 						model,
 						{
 							recImage: elm$core$Maybe$Just(newImage),
-							recipeForEdit: A2(
+							selectedRecipe: A2(
 								author$project$Devs$Recipe$setImage,
-								model.recipeForEdit,
+								model.selectedRecipe,
 								elm$core$Maybe$Just(imagePortData.filename))
 						}),
 					A2(author$project$Devs$Update$uploadImage, model, newImage));
@@ -8499,19 +8499,19 @@ var author$project$Devs$Update$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{recipeForEdit: model.selectedRecipe}),
+						{selectedRecipe: model.selectedRecipe}),
 					elm$core$Platform$Cmd$none);
 			case 'InsertRecipe':
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: elm$core$Maybe$Just(author$project$Devs$Objects$getEmptyRecipe)
+							selectedRecipe: elm$core$Maybe$Just(author$project$Devs$Objects$getEmptyRecipe)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SaveRecipe':
 				var errorMsg = function () {
-					var _n4 = model.recipeForEdit;
+					var _n4 = model.selectedRecipe;
 					if (_n4.$ === 'Just') {
 						var rec = _n4.a;
 						return author$project$Devs$Update$validateRecipe(rec);
@@ -8529,7 +8529,7 @@ var author$project$Devs$Update$update = F2(
 							}),
 						elm$core$Platform$Cmd$none);
 				} else {
-					var _n3 = model.recipeForEdit;
+					var _n3 = model.selectedRecipe;
 					if (_n3.$ === 'Just') {
 						var newRecipe = _n3.a;
 						return _Utils_Tuple2(
@@ -8547,9 +8547,7 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								recAlertMessage: elm$core$Maybe$Nothing,
-								recipeForEdit: elm$core$Maybe$Nothing,
-								selectedRecipe: elm$core$Maybe$Just(savedRecipe),
-								selectedTab: 'Tab1'
+								selectedRecipe: elm$core$Maybe$Just(savedRecipe)
 							}),
 						elm$core$Platform$Cmd$none);
 				} else {
@@ -8567,7 +8565,7 @@ var author$project$Devs$Update$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{deleteRecipe: false, newSource: elm$core$Maybe$Nothing, recipeForEdit: elm$core$Maybe$Nothing, recipesOfSelectedTag: elm$core$Maybe$Nothing, selectedRecipe: elm$core$Maybe$Nothing, selectedTab: 'Tab1', selectedTag: elm$core$Maybe$Nothing}),
+						{deleteRecipe: false, newSource: elm$core$Maybe$Nothing, recipesOfSelectedTag: elm$core$Maybe$Nothing, selectedRecipe: elm$core$Maybe$Nothing, selectedTag: elm$core$Maybe$Nothing}),
 					elm$core$Platform$Cmd$none);
 			case 'CloseRecipeAlert':
 				return _Utils_Tuple2(
@@ -8581,7 +8579,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setAikz, model.recipeForEdit, val)
+							selectedRecipe: A2(author$project$Devs$Recipe$setAikz, model.selectedRecipe, val)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetName':
@@ -8590,7 +8588,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setName, model.recipeForEdit, val)
+							selectedRecipe: A2(author$project$Devs$Recipe$setName, model.selectedRecipe, val)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetTranslate':
@@ -8599,7 +8597,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setTranslate, model.recipeForEdit, val)
+							selectedRecipe: A2(author$project$Devs$Recipe$setTranslate, model.selectedRecipe, val)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetNumber':
@@ -8608,7 +8606,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setNumber, model.recipeForEdit, val)
+							selectedRecipe: A2(author$project$Devs$Recipe$setNumber, model.selectedRecipe, val)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetNumberComment':
@@ -8617,7 +8615,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setNumberComment, model.recipeForEdit, val)
+							selectedRecipe: A2(author$project$Devs$Recipe$setNumberComment, model.selectedRecipe, val)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetRecImage':
@@ -8626,9 +8624,9 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(
+							selectedRecipe: A2(
 								author$project$Devs$Recipe$setImage,
-								model.recipeForEdit,
+								model.selectedRecipe,
 								elm$core$Maybe$Just(val))
 						}),
 					elm$core$Platform$Cmd$none);
@@ -8638,7 +8636,7 @@ var author$project$Devs$Update$update = F2(
 						model,
 						{
 							recImage: elm$core$Maybe$Nothing,
-							recipeForEdit: A2(author$project$Devs$Recipe$setImage, model.recipeForEdit, elm$core$Maybe$Nothing)
+							selectedRecipe: A2(author$project$Devs$Recipe$setImage, model.selectedRecipe, elm$core$Maybe$Nothing)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetCarbo':
@@ -8647,7 +8645,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setCarbo, model.recipeForEdit, val)
+							selectedRecipe: A2(author$project$Devs$Recipe$setCarbo, model.selectedRecipe, val)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetEnergy':
@@ -8656,7 +8654,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setEnergy, model.recipeForEdit, val)
+							selectedRecipe: A2(author$project$Devs$Recipe$setEnergy, model.selectedRecipe, val)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetFat':
@@ -8665,7 +8663,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setFat, model.recipeForEdit, val)
+							selectedRecipe: A2(author$project$Devs$Recipe$setFat, model.selectedRecipe, val)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetProt':
@@ -8674,7 +8672,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setProt, model.recipeForEdit, val)
+							selectedRecipe: A2(author$project$Devs$Recipe$setProt, model.selectedRecipe, val)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetSize':
@@ -8683,7 +8681,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setSize, model.recipeForEdit, val)
+							selectedRecipe: A2(author$project$Devs$Recipe$setSize, model.selectedRecipe, val)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetSourcePage':
@@ -8692,7 +8690,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setSourcePage, model.recipeForEdit, val)
+							selectedRecipe: A2(author$project$Devs$Recipe$setSourcePage, model.selectedRecipe, val)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetSource':
@@ -8730,7 +8728,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setSource, model.recipeForEdit, selectedSrc)
+							selectedRecipe: A2(author$project$Devs$Recipe$setSource, model.selectedRecipe, selectedSrc)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'AddNewSource':
@@ -8884,7 +8882,7 @@ var author$project$Devs$Update$update = F2(
 			case 'RemoveTagFromRec':
 				var idx = msg.a;
 				var tagList = function () {
-					var _n14 = model.recipeForEdit;
+					var _n14 = model.selectedRecipe;
 					if (_n14.$ === 'Just') {
 						var rec = _n14.a;
 						var _n15 = rec.tags;
@@ -8903,7 +8901,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setTags, model.recipeForEdit, newTagList)
+							selectedRecipe: A2(author$project$Devs$Recipe$setTags, model.selectedRecipe, newTagList)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'AddTagToRecipe':
@@ -8918,7 +8916,7 @@ var author$project$Devs$Update$update = F2(
 								model,
 								{
 									addTag: elm$core$Maybe$Nothing,
-									recipeForEdit: A2(author$project$Devs$Recipe$addToTags, model.recipeForEdit, newTag),
+									selectedRecipe: A2(author$project$Devs$Recipe$addToTags, model.selectedRecipe, newTag),
 									subAlertMessage: elm$core$Maybe$Nothing
 								}),
 							elm$core$Platform$Cmd$none);
@@ -8948,7 +8946,7 @@ var author$project$Devs$Update$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'AddIngreToRecipe':
 				var ingreList = function () {
-					var _n21 = model.recipeForEdit;
+					var _n21 = model.selectedRecipe;
 					if (_n21.$ === 'Just') {
 						var rec = _n21.a;
 						var _n22 = rec.ingredients;
@@ -9004,9 +9002,9 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(
+							selectedRecipe: A2(
 								author$project$Devs$Recipe$addToIngredients,
-								model.recipeForEdit,
+								model.selectedRecipe,
 								A2(
 									author$project$Devs$Objects$getEmptyIngre,
 									newOrder,
@@ -9021,7 +9019,7 @@ var author$project$Devs$Update$update = F2(
 					0,
 					elm$core$String$toInt(val));
 				var ingreList = function () {
-					var _n23 = model.recipeForEdit;
+					var _n23 = model.selectedRecipe;
 					if (_n23.$ === 'Just') {
 						var rec = _n23.a;
 						var _n24 = rec.ingredients;
@@ -9050,14 +9048,14 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setIngredients, model.recipeForEdit, newIngreList)
+							selectedRecipe: A2(author$project$Devs$Recipe$setIngredients, model.selectedRecipe, newIngreList)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetIngreName':
 				var idx = msg.a;
 				var val = msg.b;
 				var ingreList = function () {
-					var _n25 = model.recipeForEdit;
+					var _n25 = model.selectedRecipe;
 					if (_n25.$ === 'Just') {
 						var rec = _n25.a;
 						var _n26 = rec.ingredients;
@@ -9086,14 +9084,14 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setIngredients, model.recipeForEdit, newIngreList)
+							selectedRecipe: A2(author$project$Devs$Recipe$setIngredients, model.selectedRecipe, newIngreList)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetIngreComment':
 				var idx = msg.a;
 				var val = msg.b;
 				var ingreList = function () {
-					var _n27 = model.recipeForEdit;
+					var _n27 = model.selectedRecipe;
 					if (_n27.$ === 'Just') {
 						var rec = _n27.a;
 						var _n28 = rec.ingredients;
@@ -9122,7 +9120,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setIngredients, model.recipeForEdit, newIngreList)
+							selectedRecipe: A2(author$project$Devs$Recipe$setIngredients, model.selectedRecipe, newIngreList)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetIngreQuant':
@@ -9133,7 +9131,7 @@ var author$project$Devs$Update$update = F2(
 					0,
 					elm$core$String$toFloat(val));
 				var ingreList = function () {
-					var _n29 = model.recipeForEdit;
+					var _n29 = model.selectedRecipe;
 					if (_n29.$ === 'Just') {
 						var rec = _n29.a;
 						var _n30 = rec.ingredients;
@@ -9162,7 +9160,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setIngredients, model.recipeForEdit, newIngreList)
+							selectedRecipe: A2(author$project$Devs$Recipe$setIngredients, model.selectedRecipe, newIngreList)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetIngrePart':
@@ -9192,7 +9190,7 @@ var author$project$Devs$Update$update = F2(
 					}
 				}();
 				var ingreList = function () {
-					var _n31 = model.recipeForEdit;
+					var _n31 = model.selectedRecipe;
 					if (_n31.$ === 'Just') {
 						var rec = _n31.a;
 						var _n32 = rec.ingredients;
@@ -9221,7 +9219,7 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setIngredients, model.recipeForEdit, newIngreList)
+							selectedRecipe: A2(author$project$Devs$Recipe$setIngredients, model.selectedRecipe, newIngreList)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetIngreUnit':
@@ -9251,7 +9249,7 @@ var author$project$Devs$Update$update = F2(
 					}
 				}();
 				var ingreList = function () {
-					var _n35 = model.recipeForEdit;
+					var _n35 = model.selectedRecipe;
 					if (_n35.$ === 'Just') {
 						var rec = _n35.a;
 						var _n36 = rec.ingredients;
@@ -9280,12 +9278,12 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setIngredients, model.recipeForEdit, newIngreList)
+							selectedRecipe: A2(author$project$Devs$Recipe$setIngredients, model.selectedRecipe, newIngreList)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'RemoveIngreFromRecipe':
 				var ingreList = function () {
-					var _n39 = model.recipeForEdit;
+					var _n39 = model.selectedRecipe;
 					if (_n39.$ === 'Just') {
 						var rec = _n39.a;
 						var _n40 = rec.ingredients;
@@ -9310,12 +9308,12 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setIngredients, model.recipeForEdit, newIngreList)
+							selectedRecipe: A2(author$project$Devs$Recipe$setIngredients, model.selectedRecipe, newIngreList)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'AddTodoToRecipe':
 				var todoList = function () {
-					var _n42 = model.recipeForEdit;
+					var _n42 = model.selectedRecipe;
 					if (_n42.$ === 'Just') {
 						var rec = _n42.a;
 						var _n43 = rec.todos;
@@ -9352,9 +9350,9 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(
+							selectedRecipe: A2(
 								author$project$Devs$Recipe$addToTodos,
-								model.recipeForEdit,
+								model.selectedRecipe,
 								author$project$Devs$Objects$getEmptyTodo(newNumber))
 						}),
 					elm$core$Platform$Cmd$none);
@@ -9362,7 +9360,7 @@ var author$project$Devs$Update$update = F2(
 				var idx = msg.a;
 				var val = msg.b;
 				var todoList = function () {
-					var _n44 = model.recipeForEdit;
+					var _n44 = model.selectedRecipe;
 					if (_n44.$ === 'Just') {
 						var rec = _n44.a;
 						var _n45 = rec.todos;
@@ -9395,14 +9393,14 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setTodos, model.recipeForEdit, newTodoList)
+							selectedRecipe: A2(author$project$Devs$Recipe$setTodos, model.selectedRecipe, newTodoList)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetTodoText':
 				var idx = msg.a;
 				var val = msg.b;
 				var todoList = function () {
-					var _n46 = model.recipeForEdit;
+					var _n46 = model.selectedRecipe;
 					if (_n46.$ === 'Just') {
 						var rec = _n46.a;
 						var _n47 = rec.todos;
@@ -9431,14 +9429,14 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setTodos, model.recipeForEdit, newTodoList)
+							selectedRecipe: A2(author$project$Devs$Recipe$setTodos, model.selectedRecipe, newTodoList)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetTodoImg':
 				var idx = msg.a;
 				var val = msg.b;
 				var todoList = function () {
-					var _n48 = model.recipeForEdit;
+					var _n48 = model.selectedRecipe;
 					if (_n48.$ === 'Just') {
 						var rec = _n48.a;
 						var _n49 = rec.todos;
@@ -9467,14 +9465,14 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setTodos, model.recipeForEdit, newTodoList)
+							selectedRecipe: A2(author$project$Devs$Recipe$setTodos, model.selectedRecipe, newTodoList)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetTodoImgComment':
 				var idx = msg.a;
 				var val = msg.b;
 				var todoList = function () {
-					var _n50 = model.recipeForEdit;
+					var _n50 = model.selectedRecipe;
 					if (_n50.$ === 'Just') {
 						var rec = _n50.a;
 						var _n51 = rec.todos;
@@ -9503,12 +9501,12 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setTodos, model.recipeForEdit, newTodoList)
+							selectedRecipe: A2(author$project$Devs$Recipe$setTodos, model.selectedRecipe, newTodoList)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'RemoveTodoFromRecipe':
 				var todoList = function () {
-					var _n52 = model.recipeForEdit;
+					var _n52 = model.selectedRecipe;
 					if (_n52.$ === 'Just') {
 						var rec = _n52.a;
 						var _n53 = rec.todos;
@@ -9533,21 +9531,14 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							recipeForEdit: A2(author$project$Devs$Recipe$setTodos, model.recipeForEdit, newTodoList)
+							selectedRecipe: A2(author$project$Devs$Recipe$setTodos, model.selectedRecipe, newTodoList)
 						}),
-					elm$core$Platform$Cmd$none);
-			case 'ToggleTab':
-				var tab = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{selectedTab: tab}),
 					elm$core$Platform$Cmd$none);
 			case 'CancelRecipeEdit':
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{newSource: elm$core$Maybe$Nothing, recAlertMessage: elm$core$Maybe$Nothing, recipeForEdit: elm$core$Maybe$Nothing, selectedTab: 'Tab1'}),
+						{newSource: elm$core$Maybe$Nothing, recAlertMessage: elm$core$Maybe$Nothing}),
 					elm$core$Platform$Cmd$none);
 			case 'ConfirmDelete':
 				return _Utils_Tuple2(
@@ -9783,7 +9774,7 @@ var author$project$Devs$Update$update = F2(
 	});
 var author$project$Devs$Objects$keyLists = {partList: elm$core$Maybe$Nothing, sourceList: elm$core$Maybe$Nothing, tagList: elm$core$Maybe$Nothing, unitList: elm$core$Maybe$Nothing};
 var author$project$Devs$Objects$serverParams = {apiUrlPrefix: '/api/v1', iconPath: 'icons/', imagePath: 'images/', serverHost: 'horst:8085', serverProtokoll: 'http://', serverUrlPrefix: '/RecipeServer'};
-var author$project$Devs$Objects$initialModel = {addTag: elm$core$Maybe$Nothing, alertMessage: elm$core$Maybe$Nothing, currentSeed: elm$core$Maybe$Nothing, deleteRecipe: false, kl: author$project$Devs$Objects$keyLists, loginToken: elm$core$Maybe$Nothing, newSource: elm$core$Maybe$Nothing, passwordForCheck: '', random: 123456789, recAlertMessage: elm$core$Maybe$Nothing, recImage: elm$core$Maybe$Nothing, recipeForEdit: elm$core$Maybe$Nothing, recipesOfSelectedTag: elm$core$Maybe$Nothing, searchValue: '', selectedRecipe: elm$core$Maybe$Nothing, selectedTab: 'Tab1', selectedTag: elm$core$Maybe$Nothing, showEditForm: elm$core$Maybe$Nothing, sp: author$project$Devs$Objects$serverParams, subAlertMessage: elm$core$Maybe$Nothing, tagtypeList: elm$core$Maybe$Nothing, usernameForCheck: ''};
+var author$project$Devs$Objects$initialModel = {addTag: elm$core$Maybe$Nothing, alertMessage: elm$core$Maybe$Nothing, currentSeed: elm$core$Maybe$Nothing, deleteRecipe: false, kl: author$project$Devs$Objects$keyLists, loginToken: elm$core$Maybe$Nothing, newSource: elm$core$Maybe$Nothing, passwordForCheck: '', random: 123456789, recAlertMessage: elm$core$Maybe$Nothing, recImage: elm$core$Maybe$Nothing, recipesOfSelectedTag: elm$core$Maybe$Nothing, searchValue: '', selectedRecipe: elm$core$Maybe$Nothing, selectedTag: elm$core$Maybe$Nothing, showEditForm: elm$core$Maybe$Nothing, sp: author$project$Devs$Objects$serverParams, subAlertMessage: elm$core$Maybe$Nothing, tagtypeList: elm$core$Maybe$Nothing, usernameForCheck: ''};
 var author$project$Devs$BackendApi$getAllParts = F3(
 	function (event, token, url) {
 		return A5(
@@ -10221,7 +10212,6 @@ var author$project$Pages$EditorView$viewAddTagForm = function (model) {
 					]))
 			]));
 };
-var author$project$Devs$TypeObject$ConfirmDelete = {$: 'ConfirmDelete'};
 var author$project$Devs$TypeObject$ToggleEditForm = function (a) {
 	return {$: 'ToggleEditForm', a: a};
 };
@@ -10387,7 +10377,6 @@ var elm$html$Html$Events$onInput = function (tagger) {
 			A2(elm$json$Json$Decode$map, tagger, elm$html$Html$Events$targetValue)));
 };
 var author$project$Pages$EditorTabs$Tab1$showTab = function (model) {
-	var tab1Class = (model.selectedTab === 'Tab1') ? 'showTabContent' : 'hideTabContent';
 	var mod_rec = function () {
 		var _n8 = model.selectedRecipe;
 		if (_n8.$ === 'Just') {
@@ -10473,7 +10462,7 @@ var author$project$Pages$EditorTabs$Tab1$showTab = function (model) {
 		elm$html$Html$div,
 		_List_fromArray(
 			[
-				elm$html$Html$Attributes$class(tab1Class)
+				elm$html$Html$Attributes$class('showTabContent')
 			]),
 		_List_fromArray(
 			[
@@ -10765,7 +10754,6 @@ var elm$core$Tuple$pair = F2(
 	});
 var elm$html$Html$table = _VirtualDom_node('table');
 var author$project$Pages$EditorTabs$Tab2$showTab = function (model) {
-	var tab2Class = 'showTabContent';
 	var recForEdit = function () {
 		var _n2 = model.selectedRecipe;
 		if (_n2.$ === 'Just') {
@@ -10797,7 +10785,7 @@ var author$project$Pages$EditorTabs$Tab2$showTab = function (model) {
 		elm$html$Html$div,
 		_List_fromArray(
 			[
-				elm$html$Html$Attributes$class(tab2Class)
+				elm$html$Html$Attributes$class('showTabContent')
 			]),
 		_List_fromArray(
 			[
@@ -11129,7 +11117,6 @@ var author$project$Pages$EditorTabs$Tab3$showIngreList = F3(
 				]));
 	});
 var author$project$Pages$EditorTabs$Tab3$showTab = function (model) {
-	var tab3Class = 'showTabContent';
 	var recForEdit = function () {
 		var _n3 = model.selectedRecipe;
 		if (_n3.$ === 'Just') {
@@ -11170,7 +11157,7 @@ var author$project$Pages$EditorTabs$Tab3$showTab = function (model) {
 		elm$html$Html$div,
 		_List_fromArray(
 			[
-				elm$html$Html$Attributes$class(tab3Class)
+				elm$html$Html$Attributes$class('showTabContent')
 			]),
 		elm$core$List$concat(
 			_List_fromArray(
@@ -11388,7 +11375,6 @@ var author$project$Pages$EditorTabs$Tab4$showTodoList = function (todoObj) {
 			]));
 };
 var author$project$Pages$EditorTabs$Tab4$showTab = function (model) {
-	var tabClass = 'showTabContent';
 	var recForEdit = function () {
 		var _n1 = model.selectedRecipe;
 		if (_n1.$ === 'Just') {
@@ -11411,7 +11397,7 @@ var author$project$Pages$EditorTabs$Tab4$showTab = function (model) {
 		elm$html$Html$div,
 		_List_fromArray(
 			[
-				elm$html$Html$Attributes$class(tabClass)
+				elm$html$Html$Attributes$class('showTabContent')
 			]),
 		elm$core$List$concat(
 			_List_fromArray(
@@ -11467,7 +11453,6 @@ var author$project$Devs$TypeObject$SetSize = function (a) {
 	return {$: 'SetSize', a: a};
 };
 var author$project$Pages$EditorTabs$Tab5$showTab = function (model) {
-	var tabClass = (model.selectedTab === 'Tab5') ? 'showTabContent' : 'hideTabContent';
 	var recForEdit = function () {
 		var _n5 = model.selectedRecipe;
 		if (_n5.$ === 'Just') {
@@ -11526,7 +11511,7 @@ var author$project$Pages$EditorTabs$Tab5$showTab = function (model) {
 		elm$html$Html$div,
 		_List_fromArray(
 			[
-				elm$html$Html$Attributes$class(tabClass)
+				elm$html$Html$Attributes$class('showTabContent')
 			]),
 		_List_fromArray(
 			[
@@ -11666,15 +11651,9 @@ var author$project$Pages$EditorTabs$Tab5$showTab = function (model) {
 					]))
 			]));
 };
-var elm$core$Basics$neq = _Utils_notEqual;
 var author$project$Pages$EditorView$viewEditForm = function (model) {
-	var tab5BtnClass = (model.selectedTab === 'Tab5') ? 'TabActive' : 'TabInactive';
-	var tab4BtnClass = (model.selectedTab === 'Tab4') ? 'TabActive' : 'TabInactive';
-	var tab3BtnClass = (model.selectedTab === 'Tab3') ? 'TabActive' : 'TabInactive';
-	var tab2BtnClass = (model.selectedTab === 'Tab2') ? 'TabActive' : 'TabInactive';
-	var tab1BtnClass = (model.selectedTab === 'Tab1') ? 'TabActive' : 'TabInactive';
 	var recipeForEdit = function () {
-		var _n2 = model.recipeForEdit;
+		var _n2 = model.selectedRecipe;
 		if (_n2.$ === 'Just') {
 			var rec = _n2.a;
 			return rec;
@@ -11691,16 +11670,6 @@ var author$project$Pages$EditorView$viewEditForm = function (model) {
 			return author$project$Devs$Objects$None;
 		}
 	}();
-	var delBtn = (!_Utils_eq(recipeForEdit.id, elm$core$Maybe$Nothing)) ? A2(
-		elm$html$Html$button,
-		_List_fromArray(
-			[
-				elm$html$Html$Events$onClick(author$project$Devs$TypeObject$ConfirmDelete)
-			]),
-		_List_fromArray(
-			[
-				elm$html$Html$text('löschen')
-			])) : elm$html$Html$text('');
 	return A2(
 		elm$html$Html$div,
 		_List_fromArray(
@@ -12152,6 +12121,7 @@ var author$project$Devs$Objects$BasicForm = {$: 'BasicForm'};
 var author$project$Devs$Objects$IngredientForm = {$: 'IngredientForm'};
 var author$project$Devs$Objects$TagForm = {$: 'TagForm'};
 var author$project$Devs$Objects$TodoForm = {$: 'TodoForm'};
+var author$project$Devs$TypeObject$ConfirmDelete = {$: 'ConfirmDelete'};
 var author$project$Devs$TypeObject$EditRecipe = {$: 'EditRecipe'};
 var author$project$Devs$TypeObject$NoOp = {$: 'NoOp'};
 var author$project$Devs$TypeObject$RemoveSelectedRecipe = {$: 'RemoveSelectedRecipe'};
@@ -12562,7 +12532,7 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 				var translate = _n2.a;
 				return rec.name + (' (' + (translate + ')'));
 			} else {
-				return rec.name;
+				return elm$core$String$isEmpty(rec.name) ? 'Bitte Name eingeben' : rec.name;
 			}
 		}();
 		var amazonUrl = 'https://www.amazon.de/gp/search?index=books&linkCode=qs&keywords=';
@@ -16220,6 +16190,7 @@ var elm$browser$Debugger$Report$MessageChanged = F2(
 var elm$browser$Debugger$Report$SomethingChanged = function (a) {
 	return {$: 'SomethingChanged', a: a};
 };
+var elm$core$Basics$neq = _Utils_notEqual;
 var elm$browser$Debugger$Metadata$checkTypes = F2(
 	function (old, _new) {
 		return (!_Utils_eq(old.message, _new.message)) ? A2(elm$browser$Debugger$Report$MessageChanged, old.message, _new.message) : elm$browser$Debugger$Report$SomethingChanged(
@@ -16682,4 +16653,4 @@ var author$project$RecipeServer$main = elm$browser$Browser$element(
 		view: author$project$RecipeServer$view
 	});
 _Platform_export({'RecipeServer':{'init':author$project$RecipeServer$main(
-	elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.0"},"types":{"message":"Devs.TypeObject.Msg","aliases":{"Devs.Objects.ImagePortData":{"args":[],"type":"{ contents : String.String, filename : String.String }"},"Devs.Objects.Ingredient":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, comment : Maybe.Maybe String.String, part : Maybe.Maybe Devs.Objects.PartLight, quantity : Maybe.Maybe Basics.Float, sortorder : Basics.Int, unit : Maybe.Maybe Devs.Objects.Unit, uuid : String.String }"},"Devs.Objects.InitData":{"args":[],"type":"{ random : Basics.Int }"},"Devs.Objects.Part":{"args":[],"type":"{ id : Basics.Int, name : String.String, ingredients : List.List Devs.Objects.Ingredient, uuid : String.String }"},"Devs.Objects.PartLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Recipe":{"args":[],"type":"{ aikz : Basics.Int, id : Maybe.Maybe Basics.Int, image : Maybe.Maybe String.String, ingredients : Maybe.Maybe (List.List Devs.Objects.Ingredient), parts : Maybe.Maybe (List.List Devs.Objects.Part), name : String.String, translate : Maybe.Maybe String.String, number : Maybe.Maybe Basics.Int, number_comment : Maybe.Maybe String.String, nv_carbohydrates : Maybe.Maybe Basics.Float, nv_energy : Maybe.Maybe Basics.Float, nv_fat : Maybe.Maybe Basics.Float, nv_protein : Maybe.Maybe Basics.Float, nv_size : Maybe.Maybe Basics.Int, source : Maybe.Maybe Devs.Objects.Source, source_page : Maybe.Maybe Basics.Int, tags : Maybe.Maybe (List.List Devs.Objects.Tag), todos : Maybe.Maybe (List.List Devs.Objects.Todo), uuid : String.String }"},"Devs.Objects.RecipeLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Source":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, isbn : Maybe.Maybe String.String, name : String.String, year : Maybe.Maybe String.String, uuid : String.String }"},"Devs.Objects.Tag":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, tagType : Devs.Objects.TagtypeShort, uuid : String.String }"},"Devs.Objects.Tagtype":{"args":[],"type":"{ id : Basics.Int, name : String.String, tagList : List.List Devs.Objects.Tag, uuid : String.String }"},"Devs.Objects.TagtypeShort":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Todo":{"args":[],"type":"{ id : Basics.Int, image : Maybe.Maybe String.String, image_comment : Maybe.Maybe String.String, number : Basics.Int, text : String.String, uuid : String.String }"},"Devs.Objects.Unit":{"args":[],"type":"{ id : Basics.Int, name : String.String, unitCategory : Devs.Objects.UnitCategory, uuid : String.String }"},"Devs.Objects.UnitCategory":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"}},"unions":{"Devs.TypeObject.Msg":{"args":[],"tags":{"NoOp":[],"Initialize":["Devs.Objects.InitData"],"ImageSelected":[],"ImageRead":["Devs.Objects.ImagePortData"],"ShowOverView":[],"ToggleEditForm":["Devs.Objects.EditForm"],"GetLoginForm":[],"SetUsernameForCheck":["String.String"],"SetPasswortForCheck":["String.String"],"Login":[],"HandleLogin":["Result.Result Http.Error String.String"],"ShowRecipesOfTag":["Maybe.Maybe Devs.Objects.Tag"],"ShowRecipe":["Maybe.Maybe Devs.Objects.RecipeLight"],"EditRecipe":[],"InsertRecipe":[],"SaveRecipe":[],"SavedRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"DeleteRecipe":[],"SetAikz":["Basics.Int"],"SetName":["String.String"],"SetTranslate":["String.String"],"SetNumber":["String.String"],"SetNumberComment":["String.String"],"SetRecImage":["String.String"],"RemoveImageFromRecipe":[],"SetCarbo":["String.String"],"SetEnergy":["String.String"],"SetFat":["String.String"],"SetProt":["String.String"],"SetSize":["String.String"],"SetSourcePage":["String.String"],"SetSource":["Basics.Int"],"AddNewSource":[],"SetSrcName":["String.String"],"SetSrcIsbn":["String.String"],"SetSrcYear":["String.String"],"CancelSourceEdit":[],"SaveNewSource":[],"SavedSource":["Result.Result Http.Error Devs.Objects.Source"],"ChooseNewTag":[],"SetChoosenTag":["Basics.Int"],"RemoveTagFromRec":["Basics.Int"],"CancelAddTag":[],"AddTagToRecipe":[],"AddIngreToRecipe":[],"SetIngreOrder":["Basics.Int","String.String"],"SetIngreName":["Basics.Int","String.String"],"SetIngrePart":["Basics.Int","Basics.Int"],"SetIngreUnit":["Basics.Int","Basics.Int"],"SetIngreQuant":["Basics.Int","String.String"],"SetIngreComment":["Basics.Int","String.String"],"RemoveIngreFromRecipe":[],"AddTodoToRecipe":[],"SetTodoNr":["Basics.Int","String.String"],"SetTodoText":["Basics.Int","String.String"],"SetTodoImg":["Basics.Int","String.String"],"SetTodoImgComment":["Basics.Int","String.String"],"RemoveTodoFromRecipe":[],"CancelRecipeEdit":[],"ConfirmDelete":[],"CancelDelete":[],"CancelLogin":[],"ToggleTab":["String.String"],"CloseAlert":[],"CloseLoginAlert":[],"CloseRecipeAlert":[],"RemoveSelectedTag":[],"RemoveSelectedRecipe":[],"ListTagtypes":["Result.Result Http.Error (List.List Devs.Objects.Tagtype)"],"ListRecipesForTag":["Result.Result Http.Error (List.List Devs.Objects.RecipeLight)"],"SetRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"SetUnitList":["Result.Result Http.Error (List.List Devs.Objects.Unit)"],"SetSourceList":["Result.Result Http.Error (List.List Devs.Objects.Source)"],"SetTagList":["Result.Result Http.Error (List.List Devs.Objects.Tag)"],"SetPartList":["Result.Result Http.Error (List.List Devs.Objects.PartLight)"],"SetSearchInput":["String.String"],"SearchRecipe":[],"UploadImage":["Result.Result Http.Error Basics.Bool"]}},"Devs.Objects.EditForm":{"args":[],"tags":{"BasicForm":[],"TagForm":[],"IngredientForm":[],"TodoForm":[],"FootValueForm":[],"None":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}}}}})}});}(this));
+	elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.0"},"types":{"message":"Devs.TypeObject.Msg","aliases":{"Devs.Objects.ImagePortData":{"args":[],"type":"{ contents : String.String, filename : String.String }"},"Devs.Objects.Ingredient":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, comment : Maybe.Maybe String.String, part : Maybe.Maybe Devs.Objects.PartLight, quantity : Maybe.Maybe Basics.Float, sortorder : Basics.Int, unit : Maybe.Maybe Devs.Objects.Unit, uuid : String.String }"},"Devs.Objects.InitData":{"args":[],"type":"{ random : Basics.Int }"},"Devs.Objects.Part":{"args":[],"type":"{ id : Basics.Int, name : String.String, ingredients : List.List Devs.Objects.Ingredient, uuid : String.String }"},"Devs.Objects.PartLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Recipe":{"args":[],"type":"{ aikz : Basics.Int, id : Maybe.Maybe Basics.Int, image : Maybe.Maybe String.String, ingredients : Maybe.Maybe (List.List Devs.Objects.Ingredient), parts : Maybe.Maybe (List.List Devs.Objects.Part), name : String.String, translate : Maybe.Maybe String.String, number : Maybe.Maybe Basics.Int, number_comment : Maybe.Maybe String.String, nv_carbohydrates : Maybe.Maybe Basics.Float, nv_energy : Maybe.Maybe Basics.Float, nv_fat : Maybe.Maybe Basics.Float, nv_protein : Maybe.Maybe Basics.Float, nv_size : Maybe.Maybe Basics.Int, source : Maybe.Maybe Devs.Objects.Source, source_page : Maybe.Maybe Basics.Int, tags : Maybe.Maybe (List.List Devs.Objects.Tag), todos : Maybe.Maybe (List.List Devs.Objects.Todo), uuid : String.String }"},"Devs.Objects.RecipeLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Source":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, isbn : Maybe.Maybe String.String, name : String.String, year : Maybe.Maybe String.String, uuid : String.String }"},"Devs.Objects.Tag":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, tagType : Devs.Objects.TagtypeShort, uuid : String.String }"},"Devs.Objects.Tagtype":{"args":[],"type":"{ id : Basics.Int, name : String.String, tagList : List.List Devs.Objects.Tag, uuid : String.String }"},"Devs.Objects.TagtypeShort":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Todo":{"args":[],"type":"{ id : Basics.Int, image : Maybe.Maybe String.String, image_comment : Maybe.Maybe String.String, number : Basics.Int, text : String.String, uuid : String.String }"},"Devs.Objects.Unit":{"args":[],"type":"{ id : Basics.Int, name : String.String, unitCategory : Devs.Objects.UnitCategory, uuid : String.String }"},"Devs.Objects.UnitCategory":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"}},"unions":{"Devs.TypeObject.Msg":{"args":[],"tags":{"NoOp":[],"Initialize":["Devs.Objects.InitData"],"ImageSelected":[],"ImageRead":["Devs.Objects.ImagePortData"],"ShowOverView":[],"ToggleEditForm":["Devs.Objects.EditForm"],"GetLoginForm":[],"SetUsernameForCheck":["String.String"],"SetPasswortForCheck":["String.String"],"Login":[],"HandleLogin":["Result.Result Http.Error String.String"],"ShowRecipesOfTag":["Maybe.Maybe Devs.Objects.Tag"],"ShowRecipe":["Maybe.Maybe Devs.Objects.RecipeLight"],"EditRecipe":[],"InsertRecipe":[],"SaveRecipe":[],"SavedRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"DeleteRecipe":[],"SetAikz":["Basics.Int"],"SetName":["String.String"],"SetTranslate":["String.String"],"SetNumber":["String.String"],"SetNumberComment":["String.String"],"SetRecImage":["String.String"],"RemoveImageFromRecipe":[],"SetCarbo":["String.String"],"SetEnergy":["String.String"],"SetFat":["String.String"],"SetProt":["String.String"],"SetSize":["String.String"],"SetSourcePage":["String.String"],"SetSource":["Basics.Int"],"AddNewSource":[],"SetSrcName":["String.String"],"SetSrcIsbn":["String.String"],"SetSrcYear":["String.String"],"CancelSourceEdit":[],"SaveNewSource":[],"SavedSource":["Result.Result Http.Error Devs.Objects.Source"],"ChooseNewTag":[],"SetChoosenTag":["Basics.Int"],"RemoveTagFromRec":["Basics.Int"],"CancelAddTag":[],"AddTagToRecipe":[],"AddIngreToRecipe":[],"SetIngreOrder":["Basics.Int","String.String"],"SetIngreName":["Basics.Int","String.String"],"SetIngrePart":["Basics.Int","Basics.Int"],"SetIngreUnit":["Basics.Int","Basics.Int"],"SetIngreQuant":["Basics.Int","String.String"],"SetIngreComment":["Basics.Int","String.String"],"RemoveIngreFromRecipe":[],"AddTodoToRecipe":[],"SetTodoNr":["Basics.Int","String.String"],"SetTodoText":["Basics.Int","String.String"],"SetTodoImg":["Basics.Int","String.String"],"SetTodoImgComment":["Basics.Int","String.String"],"RemoveTodoFromRecipe":[],"CancelRecipeEdit":[],"ConfirmDelete":[],"CancelDelete":[],"CancelLogin":[],"CloseAlert":[],"CloseLoginAlert":[],"CloseRecipeAlert":[],"RemoveSelectedTag":[],"RemoveSelectedRecipe":[],"ListTagtypes":["Result.Result Http.Error (List.List Devs.Objects.Tagtype)"],"ListRecipesForTag":["Result.Result Http.Error (List.List Devs.Objects.RecipeLight)"],"SetRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"SetUnitList":["Result.Result Http.Error (List.List Devs.Objects.Unit)"],"SetSourceList":["Result.Result Http.Error (List.List Devs.Objects.Source)"],"SetTagList":["Result.Result Http.Error (List.List Devs.Objects.Tag)"],"SetPartList":["Result.Result Http.Error (List.List Devs.Objects.PartLight)"],"SetSearchInput":["String.String"],"SearchRecipe":[],"UploadImage":["Result.Result Http.Error Basics.Bool"]}},"Devs.Objects.EditForm":{"args":[],"tags":{"BasicForm":[],"TagForm":[],"IngredientForm":[],"TodoForm":[],"FootValueForm":[],"None":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}}}}})}});}(this));

@@ -13,8 +13,6 @@ import Devs.TypeObject as TO exposing (Msg)
 showTab: Model -> Html Msg
 showTab model =
   let
---    tab2Class = if model.selectedTab == "Tab2" then "showTabContent" else "hideTabContent"
-    tab2Class = "showTabContent"
     recForEdit = case model.selectedRecipe of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
@@ -25,7 +23,7 @@ showTab model =
       Just tags -> tags
       Nothing -> []
   in
-        Html.div[ class tab2Class ] [
+        Html.div[ class "showTabContent" ][
           Html.div[][
             Html.table [ ]( List.map (showTagDiv initialTagList) (indexedMap Tuple.pair (sortBy .name tagListValue)) )
           ],

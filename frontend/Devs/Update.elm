@@ -13,7 +13,6 @@ import Devs.TypeObject as TO exposing (..)
 import Devs.Recipe as RecipeObj
 import Devs.BackendApi as Api
 
-
 -- Update
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -28,7 +27,7 @@ update msg model =
               , filename = imagePortData.filename
               }
           in
-            ( { model | recImage = Just newImage, recipeForEdit = (RecipeObj.setImage model.recipeForEdit (Just imagePortData.filename)) }, uploadImage model newImage )
+            ( { model | recImage = Just newImage, selectedRecipe = (RecipeObj.setImage model.selectedRecipe (Just imagePortData.filename)) }, uploadImage model newImage )
         GetLoginForm -> ( { model | loginToken = Just "" } , Cmd.none)
         SetUsernameForCheck val -> ( { model | usernameForCheck = val } , Cmd.none)
         SetPasswortForCheck val -> ( { model | passwordForCheck = val } , Cmd.none)
@@ -61,40 +60,40 @@ update msg model =
           in
             ( model, getRecipe model selectedRecipe )
         EditRecipe ->
-          ( { model | recipeForEdit = model.selectedRecipe }, Cmd.none )
+          ( { model | selectedRecipe = model.selectedRecipe }, Cmd.none )
         InsertRecipe ->
-          ( { model | recipeForEdit = Just O.getEmptyRecipe }, Cmd.none )
+          ( { model | selectedRecipe = Just O.getEmptyRecipe }, Cmd.none )
         SaveRecipe ->
           let
-            errorMsg = case model.recipeForEdit of
+            errorMsg = case model.selectedRecipe of
               Just rec -> validateRecipe rec
               Nothing -> Nothing
           in
             case errorMsg of
               Just msg1 -> ( { model | recAlertMessage = Just msg1 }, Cmd.none )
-              Nothing -> case model.recipeForEdit of
+              Nothing -> case model.selectedRecipe of
                 Just newRecipe -> ( model, saveRecipe model newRecipe )
                 Nothing -> ( model, Cmd.none )
         SavedRecipe (Ok savedRecipe) ->
-          ( { model | selectedTab = "Tab1", selectedRecipe = Just savedRecipe, recipeForEdit = Nothing, recAlertMessage = Nothing }, Cmd.none )
+          ( { model | selectedRecipe = Just savedRecipe, recAlertMessage = Nothing }, Cmd.none )
         SavedRecipe (Err error) ->
           ( { model | recAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
         DeleteRecipe ->
-          ( { model | selectedTab = "Tab1", deleteRecipe = False, selectedTag = Nothing, recipesOfSelectedTag = Nothing, selectedRecipe = Nothing, recipeForEdit = Nothing, newSource = Nothing }, Cmd.none )
+          ( { model | deleteRecipe = False, selectedTag = Nothing, recipesOfSelectedTag = Nothing, selectedRecipe = Nothing, newSource = Nothing }, Cmd.none )
         CloseRecipeAlert -> ( { model | recAlertMessage = Nothing }, Cmd.none )
-        SetAikz val ->           ( { model | recipeForEdit = (RecipeObj.setAikz model.recipeForEdit val) } , Cmd.none)
-        SetName val ->           ( { model | recipeForEdit = (RecipeObj.setName model.recipeForEdit val) } , Cmd.none)
-        SetTranslate val ->      ( { model | recipeForEdit = (RecipeObj.setTranslate model.recipeForEdit val) } , Cmd.none)
-        SetNumber val ->         ( { model | recipeForEdit = (RecipeObj.setNumber model.recipeForEdit val) } , Cmd.none)
-        SetNumberComment val ->  ( { model | recipeForEdit = (RecipeObj.setNumberComment model.recipeForEdit val) } , Cmd.none)
-        SetRecImage val ->  ( { model | recipeForEdit = (RecipeObj.setImage model.recipeForEdit (Just val)) } , Cmd.none)
-        RemoveImageFromRecipe ->  ( { model | recImage = Nothing, recipeForEdit = (RecipeObj.setImage model.recipeForEdit Nothing) } , Cmd.none)
-        SetCarbo val ->          ( { model | recipeForEdit = (RecipeObj.setCarbo model.recipeForEdit val) } , Cmd.none)
-        SetEnergy val ->         ( { model | recipeForEdit = (RecipeObj.setEnergy model.recipeForEdit val) } , Cmd.none)
-        SetFat val ->            ( { model | recipeForEdit = (RecipeObj.setFat model.recipeForEdit val) } , Cmd.none)
-        SetProt val ->           ( { model | recipeForEdit = (RecipeObj.setProt model.recipeForEdit val) } , Cmd.none)
-        SetSize val ->           ( { model | recipeForEdit = (RecipeObj.setSize model.recipeForEdit val) } , Cmd.none)
-        SetSourcePage val ->     ( { model | recipeForEdit = (RecipeObj.setSourcePage model.recipeForEdit val) } , Cmd.none)
+        SetAikz val ->           ( { model | selectedRecipe = (RecipeObj.setAikz model.selectedRecipe val) } , Cmd.none)
+        SetName val ->           ( { model | selectedRecipe = (RecipeObj.setName model.selectedRecipe val) } , Cmd.none)
+        SetTranslate val ->      ( { model | selectedRecipe = (RecipeObj.setTranslate model.selectedRecipe val) } , Cmd.none)
+        SetNumber val ->         ( { model | selectedRecipe = (RecipeObj.setNumber model.selectedRecipe val) } , Cmd.none)
+        SetNumberComment val ->  ( { model | selectedRecipe = (RecipeObj.setNumberComment model.selectedRecipe val) } , Cmd.none)
+        SetRecImage val ->  ( { model | selectedRecipe = (RecipeObj.setImage model.selectedRecipe (Just val)) } , Cmd.none)
+        RemoveImageFromRecipe ->  ( { model | recImage = Nothing, selectedRecipe = (RecipeObj.setImage model.selectedRecipe Nothing) } , Cmd.none)
+        SetCarbo val ->          ( { model | selectedRecipe = (RecipeObj.setCarbo model.selectedRecipe val) } , Cmd.none)
+        SetEnergy val ->         ( { model | selectedRecipe = (RecipeObj.setEnergy model.selectedRecipe val) } , Cmd.none)
+        SetFat val ->            ( { model | selectedRecipe = (RecipeObj.setFat model.selectedRecipe val) } , Cmd.none)
+        SetProt val ->           ( { model | selectedRecipe = (RecipeObj.setProt model.selectedRecipe val) } , Cmd.none)
+        SetSize val ->           ( { model | selectedRecipe = (RecipeObj.setSize model.selectedRecipe val) } , Cmd.none)
+        SetSourcePage val ->     ( { model | selectedRecipe = (RecipeObj.setSourcePage model.selectedRecipe val) } , Cmd.none)
         SetSource val ->
           let
             sourceList = case model.kl.sourceList of
@@ -111,7 +110,7 @@ update msg model =
               Just src -> src
               Nothing -> O.getEmptySource
           in
-            ( { model | recipeForEdit = (RecipeObj.setSource model.recipeForEdit selectedSrc) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.setSource model.selectedRecipe selectedSrc) } , Cmd.none)
         AddNewSource -> ( { model | newSource = Just O.getEmptySource }, Cmd.none)
         SetSrcName val -> ( { model | newSource = (RecipeObj.setSourceName model.newSource val) }, Cmd.none)
         SetSrcIsbn val -> ( { model | newSource = (RecipeObj.setSourceIsbn model.newSource val) }, Cmd.none)
@@ -160,25 +159,25 @@ update msg model =
         RemoveTagFromRec idx ->
           let
 --            _ = Debug.log "idx: " idx
-            tagList = case model.recipeForEdit of
+            tagList = case model.selectedRecipe of
               Just rec -> case rec.tags of
                 Just list -> list
                 Nothing -> []
               Nothing -> []
             newTagList = ListE.removeAt idx tagList
           in
-            ( { model | recipeForEdit = (RecipeObj.setTags model.recipeForEdit newTagList) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.setTags model.selectedRecipe newTagList) } , Cmd.none)
         AddTagToRecipe ->
           case model.addTag of
             Just newTag -> case newTag.id of
-              Just id -> ( { model | addTag = Nothing, subAlertMessage = Nothing, recipeForEdit = (RecipeObj.addToTags model.recipeForEdit newTag) } , Cmd.none)
+              Just id -> ( { model | addTag = Nothing, subAlertMessage = Nothing, selectedRecipe = (RecipeObj.addToTags model.selectedRecipe newTag) } , Cmd.none)
               Nothing -> ( { model | subAlertMessage = Just "Bitte einen Tag auswählen." }, Cmd.none)
             Nothing -> ( { model | subAlertMessage = Just "Bitte einen Tag auswählen." }, Cmd.none)
         CancelAddTag ->
           ( { model | addTag = Nothing, subAlertMessage = Nothing } , Cmd.none)
         AddIngreToRecipe ->
           let
-            ingreList = case model.recipeForEdit of
+            ingreList = case model.selectedRecipe of
               Just rec -> case rec.ingredients of
                 Just ingre -> List.sortBy .sortorder ingre
                 Nothing -> []
@@ -197,12 +196,12 @@ update msg model =
                 Nothing -> O.getEmptyPart
               else O.getEmptyPart
           in
-            ( { model | recipeForEdit = (RecipeObj.addToIngredients model.recipeForEdit (O.getEmptyIngre newOrder (Just newPart))) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.addToIngredients model.selectedRecipe (O.getEmptyIngre newOrder (Just newPart))) } , Cmd.none)
         SetIngreOrder idx val ->
           let
 --            _ = Debug.log "idx: " idx
             newOrder = Maybe.withDefault 0 <| String.toInt val
-            ingreList = case model.recipeForEdit of
+            ingreList = case model.selectedRecipe of
               Just rec -> case rec.ingredients of
                 Just list -> list
                 Nothing -> []
@@ -210,11 +209,11 @@ update msg model =
             ingreForEdit = RecipeObj.setIngreOrder (getIngreForEdit ingreList idx) newOrder
             newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
           in
-            ( { model | recipeForEdit = (RecipeObj.setIngredients model.recipeForEdit newIngreList) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
         SetIngreName idx val ->
           let
 --            _ = Debug.log "idx: " idx
-            ingreList = case model.recipeForEdit of
+            ingreList = case model.selectedRecipe of
               Just rec -> case rec.ingredients of
                 Just list -> list
                 Nothing -> []
@@ -222,11 +221,11 @@ update msg model =
             ingreForEdit = RecipeObj.setIngreName (getIngreForEdit ingreList idx) val
             newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
           in
-            ( { model | recipeForEdit = (RecipeObj.setIngredients model.recipeForEdit newIngreList) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
         SetIngreComment idx val ->
           let
 --            _ = Debug.log "idx: " idx
-            ingreList = case model.recipeForEdit of
+            ingreList = case model.selectedRecipe of
               Just rec -> case rec.ingredients of
                 Just list -> list
                 Nothing -> []
@@ -234,11 +233,11 @@ update msg model =
             ingreForEdit = RecipeObj.setIngreComment (getIngreForEdit ingreList idx) val
             newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
           in
-            ( { model | recipeForEdit = (RecipeObj.setIngredients model.recipeForEdit newIngreList) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
         SetIngreQuant idx val ->
           let
             newQuant = Maybe.withDefault 0 <| String.toFloat val
-            ingreList = case model.recipeForEdit of
+            ingreList = case model.selectedRecipe of
               Just rec -> case rec.ingredients of
                 Just list -> list
                 Nothing -> []
@@ -246,7 +245,7 @@ update msg model =
             ingreForEdit = RecipeObj.setIngreQuant (getIngreForEdit ingreList idx) newQuant
             newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
           in
-            ( { model | recipeForEdit = (RecipeObj.setIngredients model.recipeForEdit newIngreList) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
         SetIngrePart idx partId ->
           let
 --            _ = Debug.log "idx: " idx
@@ -257,7 +256,7 @@ update msg model =
               Just part -> part
               Nothing -> O.getEmptyPart
 --            newPart = Maybe.withDefault 0 <| String.toInt val
-            ingreList = case model.recipeForEdit of
+            ingreList = case model.selectedRecipe of
               Just rec -> case rec.ingredients of
                 Just list -> list
                 Nothing -> []
@@ -265,7 +264,7 @@ update msg model =
             ingreForEdit = RecipeObj.setIngrePart (getIngreForEdit ingreList idx) selectedPart
             newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
           in
-            ( { model | recipeForEdit = (RecipeObj.setIngredients model.recipeForEdit newIngreList) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
         SetIngreUnit idx unitId ->
           let
 --            _ = Debug.log "idx: " idx
@@ -275,7 +274,7 @@ update msg model =
             selectedUnit = case ( ListE.find ( \unit -> unit.id == unitId ) unitList ) of
               Just tag -> tag
               Nothing -> O.getEmptyUnit
-            ingreList = case model.recipeForEdit of
+            ingreList = case model.selectedRecipe of
               Just rec -> case rec.ingredients of
                 Just list -> list
                 Nothing -> []
@@ -283,10 +282,10 @@ update msg model =
             ingreForEdit = RecipeObj.setIngreUnit (getIngreForEdit ingreList idx) selectedUnit
             newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
           in
-            ( { model | recipeForEdit = (RecipeObj.setIngredients model.recipeForEdit newIngreList) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
         RemoveIngreFromRecipe ->
           let
-            ingreList = case model.recipeForEdit of
+            ingreList = case model.selectedRecipe of
               Just rec -> case rec.ingredients of
                 Just ingre -> List.sortBy .sortorder ingre
                 Nothing -> []
@@ -297,10 +296,10 @@ update msg model =
               else []
             --_ = Debug.log "lastIdx: " lastIdx
           in
-            ( { model | recipeForEdit = (RecipeObj.setIngredients model.recipeForEdit newIngreList) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
         AddTodoToRecipe ->
           let
-            todoList = case model.recipeForEdit of
+            todoList = case model.selectedRecipe of
               Just rec -> case rec.todos of
                 Just todos -> List.sortBy .number todos
                 Nothing -> []
@@ -312,12 +311,12 @@ update msg model =
                 Nothing -> 0
               else 0
           in
-            ( { model | recipeForEdit = (RecipeObj.addToTodos model.recipeForEdit (O.getEmptyTodo newNumber)) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.addToTodos model.selectedRecipe (O.getEmptyTodo newNumber)) } , Cmd.none)
         SetTodoNr idx val ->
           let
 --            _ = Debug.log "idx: " idx
             newNr = Maybe.withDefault 0 <| String.toInt val
-            todoList = case model.recipeForEdit of
+            todoList = case model.selectedRecipe of
               Just rec -> case rec.todos of
                 Just list -> list
                 Nothing -> []
@@ -325,11 +324,11 @@ update msg model =
             todoForEdit = RecipeObj.setTodoNr (getTodoForEdit todoList idx) newNr
             newTodoList = ListE.updateAt idx (\todo -> todoForEdit) todoList
           in
-            ( { model | recipeForEdit = (RecipeObj.setTodos model.recipeForEdit newTodoList) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.setTodos model.selectedRecipe newTodoList) } , Cmd.none)
         SetTodoText idx val ->
           let
 --            _ = Debug.log "idx: " idx
-            todoList = case model.recipeForEdit of
+            todoList = case model.selectedRecipe of
               Just rec -> case rec.todos of
                 Just list -> list
                 Nothing -> []
@@ -337,11 +336,11 @@ update msg model =
             todoForEdit = RecipeObj.setTodoText (getTodoForEdit todoList idx) val
             newTodoList = ListE.updateAt idx (\todo -> todoForEdit) todoList
           in
-            ( { model | recipeForEdit = (RecipeObj.setTodos model.recipeForEdit newTodoList) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.setTodos model.selectedRecipe newTodoList) } , Cmd.none)
         SetTodoImg idx val ->
           let
 --            _ = Debug.log "idx: " idx
-            todoList = case model.recipeForEdit of
+            todoList = case model.selectedRecipe of
               Just rec -> case rec.todos of
                 Just list -> list
                 Nothing -> []
@@ -349,11 +348,11 @@ update msg model =
             todoForEdit = RecipeObj.setTodoImg (getTodoForEdit todoList idx) val
             newTodoList = ListE.updateAt idx (\todo -> todoForEdit) todoList
           in
-            ( { model | recipeForEdit = (RecipeObj.setTodos model.recipeForEdit newTodoList) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.setTodos model.selectedRecipe newTodoList) } , Cmd.none)
         SetTodoImgComment idx val ->
           let
 --            _ = Debug.log "idx: " idx
-            todoList = case model.recipeForEdit of
+            todoList = case model.selectedRecipe of
               Just rec -> case rec.todos of
                 Just list -> list
                 Nothing -> []
@@ -361,10 +360,10 @@ update msg model =
             todoForEdit = RecipeObj.setTodoImgComment (getTodoForEdit todoList idx) val
             newTodoList = ListE.updateAt idx (\todo -> todoForEdit) todoList
           in
-            ( { model | recipeForEdit = (RecipeObj.setTodos model.recipeForEdit newTodoList) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.setTodos model.selectedRecipe newTodoList) } , Cmd.none)
         RemoveTodoFromRecipe ->
           let
-            todoList = case model.recipeForEdit of
+            todoList = case model.selectedRecipe of
               Just rec -> case rec.todos of
                 Just todos -> List.sortBy .number todos
                 Nothing -> []
@@ -375,11 +374,9 @@ update msg model =
               else []
             --_ = Debug.log "lastIdx: " lastIdx
           in
-            ( { model | recipeForEdit = (RecipeObj.setTodos model.recipeForEdit newTodoList) } , Cmd.none)
-        ToggleTab tab ->
-          ( { model | selectedTab = tab }, Cmd.none )
+            ( { model | selectedRecipe = (RecipeObj.setTodos model.selectedRecipe newTodoList) } , Cmd.none)
         CancelRecipeEdit ->
-          ( { model | selectedTab = "Tab1", recipeForEdit = Nothing, newSource = Nothing, recAlertMessage = Nothing }, Cmd.none )
+          ( { model | newSource = Nothing, recAlertMessage = Nothing }, Cmd.none )
         ConfirmDelete ->
           ( { model | deleteRecipe = True }, Cmd.none )
         CancelDelete ->

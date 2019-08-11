@@ -68,7 +68,6 @@ type Msg =
   | ConfirmDelete
   | CancelDelete
   | CancelLogin
-  | ToggleTab String
   | CloseAlert
   | CloseLoginAlert
   | CloseRecipeAlert

@@ -62,9 +62,9 @@ type alias Model = {
   , selectedTag: Maybe Tag
   , recipesOfSelectedTag: Maybe (List RecipeLight)
   , selectedRecipe: Maybe Recipe
-  , recipeForEdit: Maybe Recipe
+--  , recipeForEdit: Maybe Recipe
   , recImage: Maybe ImagePortData
-  , selectedTab: String
+--  , selectedTab: String
   , newSource: Maybe Source
   , addTag: Maybe Tag
   , kl: KeyLists
@@ -107,9 +107,9 @@ initialModel = {
   , selectedTag = Nothing
   , recipesOfSelectedTag = Nothing
   , selectedRecipe = Nothing
-  , recipeForEdit = Nothing
+--  , recipeForEdit = Nothing
   , recImage = Nothing
-  , selectedTab = "Tab1"
+--  , selectedTab = "Tab1"
   , newSource = Nothing
   , addTag = Nothing
   , kl = keyLists

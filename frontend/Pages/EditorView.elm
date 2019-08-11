@@ -91,17 +91,9 @@ viewSourceForm model =
 viewEditForm: Model -> Html Msg
 viewEditForm model =
   let
-    tab1BtnClass = if model.selectedTab == "Tab1" then "TabActive" else "TabInactive"
-    tab2BtnClass = if model.selectedTab == "Tab2" then "TabActive" else "TabInactive"
-    tab3BtnClass = if model.selectedTab == "Tab3" then "TabActive" else "TabInactive"
-    tab4BtnClass = if model.selectedTab == "Tab4" then "TabActive" else "TabInactive"
-    tab5BtnClass = if model.selectedTab == "Tab5" then "TabActive" else "TabInactive"
-    recipeForEdit = case model.recipeForEdit of
+    recipeForEdit = case model.selectedRecipe of
       Just rec -> rec
       Nothing -> O.getEmptyRecipe
-    delBtn = if recipeForEdit.id /= Nothing
-      then Html.button [ onClick TO.ConfirmDelete ][ Html.text "löschen" ]
-      else Html.text ""
     editForm = case model.showEditForm of
       Just ef -> ef
       Nothing -> O.None
@@ -115,29 +107,8 @@ viewEditForm model =
           TodoForm -> Tab4.showTab model
           FootValueForm -> Tab5.showTab model
           None -> Html.text ""
-{-
-        Html.div[ class "TabDiv" ][
-          Html.span [ class tab1BtnClass, onClick (TO.ToggleTab "Tab1") ][ Html.text "Grunddaten" ],
-          Html.span [ class tab2BtnClass, onClick (TO.ToggleTab "Tab2") ][ Html.text "Tags *" ],
-          Html.span [ class tab3BtnClass, onClick (TO.ToggleTab "Tab3") ][ Html.text "Zutaten *" ],
-          Html.span [ class tab4BtnClass, onClick (TO.ToggleTab "Tab4") ][ Html.text "Anweisungen *" ],
-          Html.span [ class tab5BtnClass, onClick (TO.ToggleTab "Tab5") ][ Html.text "Nährwerte" ]
-        ],
-        Html.div[ class "TabContentDiv" ][
-          (Tab1.showTab model),
-          (Tab2.showTab model),
-          (Tab3.showTab model),
-          (Tab4.showTab model),
-          (Tab5.showTab model)
-        ], PU.alert TO.CloseRecipeAlert model.recAlertMessage model
--}
         , Html.div [ class "editFormActionDiv" ][
           Html.button [ onClick (TO.ToggleEditForm O.None) ][ Html.text "schließen" ]
-{-
-          Html.button [ onClick TO.SaveRecipe ][ Html.text "speichern" ],
-          delBtn,
-          Html.button [ onClick TO.CancelRecipeEdit ][ Html.text "abbrechen" ]
--}
         ]
       ]
     ]
