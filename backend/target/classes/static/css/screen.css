@@ -284,6 +284,8 @@ a:ACTIVE {
   margin-top: 50px;
   margin-left: 50px;
   margin-right: 50px;
+  max-height: 90%;
+  overflow-y: auto;
 }
 
 .editFormDiv label {
