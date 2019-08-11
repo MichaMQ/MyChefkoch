@@ -17,7 +17,7 @@ showTab: Model -> Html Msg
 showTab model =
   let
     tab1Class = if model.selectedTab == "Tab1" then "showTabContent" else "hideTabContent"
-    mod_rec = case model.recipeForEdit of
+    mod_rec = case model.selectedRecipe of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
     initialSrcList = case model.kl.sourceList of

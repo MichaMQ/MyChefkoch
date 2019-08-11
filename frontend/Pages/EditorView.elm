@@ -7,7 +7,7 @@ import Html.Events.Extra exposing (targetValueIntParse)
 import List exposing (..)
 import Json.Decode as Json
 
-import Devs.Objects as Objects exposing (..)
+import Devs.Objects as O exposing (..)
 import Devs.TypeObject as TO exposing (Msg)
 import Pages.Utils as PU exposing (alert, onEnter)
 import Pages.EditorTabs.Tab1 as Tab1 exposing (showTab)
@@ -30,7 +30,7 @@ viewAddTagForm model =
       Html.div [ class "srcFormDiv" ] [
         Html.div[ class "srcFormDivRow"][
           Html.div[][
-            Html.select [ on "change" (Json.map TO.SetChoosenTag targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (Tab2.showTagOption Objects.getEmptyTag) (sortBy .name initialTagList)))
+            Html.select [ on "change" (Json.map TO.SetChoosenTag targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (Tab2.showTagOption O.getEmptyTag) (sortBy .name initialTagList)))
           ]
         ], PU.alert TO.CloseLoginAlert model.subAlertMessage model,
         Html.div [ class "editFormActionDiv" ][
@@ -46,7 +46,7 @@ viewSourceForm model =
   let
     newSrc = case model.newSource of
       Just src -> src
-      Nothing -> Objects.getEmptySource
+      Nothing -> O.getEmptySource
     {-}
     idValue = case newSrc.id of
       Just val -> String.fromInt val
@@ -98,13 +98,24 @@ viewEditForm model =
     tab5BtnClass = if model.selectedTab == "Tab5" then "TabActive" else "TabInactive"
     recipeForEdit = case model.recipeForEdit of
       Just rec -> rec
-      Nothing -> Objects.getEmptyRecipe
+      Nothing -> O.getEmptyRecipe
     delBtn = if recipeForEdit.id /= Nothing
       then Html.button [ onClick TO.ConfirmDelete ][ Html.text "löschen" ]
       else Html.text ""
+    editForm = case model.showEditForm of
+      Just ef -> ef
+      Nothing -> O.None
   in
     Html.div [ class "editFormBG" ][
       Html.div [ class "editFormDiv" ] [
+        case editForm of
+          BasicForm -> Tab1.showTab model
+          TagForm -> Tab2.showTab model
+          IngredientForm -> Tab3.showTab model
+          TodoForm -> Tab4.showTab model
+          FootValueForm -> Tab5.showTab model
+          None -> Html.text ""
+{-
         Html.div[ class "TabDiv" ][
           Html.span [ class tab1BtnClass, onClick (TO.ToggleTab "Tab1") ][ Html.text "Grunddaten" ],
           Html.span [ class tab2BtnClass, onClick (TO.ToggleTab "Tab2") ][ Html.text "Tags *" ],
@@ -118,11 +129,15 @@ viewEditForm model =
           (Tab3.showTab model),
           (Tab4.showTab model),
           (Tab5.showTab model)
-        ], PU.alert TO.CloseRecipeAlert model.recAlertMessage model,
-        Html.div [ class "editFormActionDiv" ][
+        ], PU.alert TO.CloseRecipeAlert model.recAlertMessage model
+-}
+        , Html.div [ class "editFormActionDiv" ][
+          Html.button [ onClick (TO.ToggleEditForm O.None) ][ Html.text "schließen" ]
+{-
           Html.button [ onClick TO.SaveRecipe ][ Html.text "speichern" ],
           delBtn,
           Html.button [ onClick TO.CancelRecipeEdit ][ Html.text "abbrechen" ]
+-}
         ]
       ]
     ]

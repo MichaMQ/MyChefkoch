@@ -1,23 +1,20 @@
 module Pages.RecipeView exposing(viewRecipe)
 
 import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html.Attributes as Attr exposing (..)
 import Html.Events exposing (onClick, onInput)
 import List exposing (..)
 
-import Devs.Objects as Objects exposing (..)
+import Devs.Objects as O exposing (..)
 import Devs.TypeObject as TO exposing (Msg)
+import Devs.Update as U exposing (isLoggedIn)
+import Pages.Utils as PU exposing (getEditButton, getEditHeader)
 -- View
 
 viewRecipe: Maybe String -> Recipe -> ServerParams -> Html Msg
 viewRecipe loginToken rec sp =
   let
-    isLoggedIn = case loginToken of
-      Just log -> if String.length log > 0
-        then True
-        else False
-      Nothing -> False
-    actionButton = if isLoggedIn == True
+    actionButton = if (U.isLoggedIn loginToken) == True
       then Html.button [ onClick TO.EditRecipe ][ Html.text "bearbeiten" ]
       else Html.span [][]
     header = case rec.translate of
@@ -39,9 +36,11 @@ viewRecipe loginToken rec sp =
         Just isbn -> "; ISBN: " ++ isbn
         Nothing -> ""
       Nothing -> ""
+    amazonUrl = "https://www.amazon.de/gp/search?index=books&linkCode=qs&keywords="
     amazonLink = case rec.source of
       Just source -> case source.isbn of
-        Just isbn -> Html.a [ class "amazonLink", target "_blank", href ("https://www.amazon.de/gp/search/ref=sr_adv_b/?unfiltered=1&field-isbn=" ++ isbn ++ "&sort=relevancerank") ][ Html.img[ src (sp.iconPath ++ "amazon.png"), height 20 ][] ]
+--        Just isbn -> Html.a [ class "amazonLink", target "_blank", href ("https://www.amazon.de/gp/search/ref=sr_adv_b/?unfiltered=1&field-isbn=" ++ isbn ++ "&sort=relevancerank") ][ Html.img[ src (sp.iconPath ++ "amazon.png"), height 20 ][] ]
+        Just isbn -> PU.getEditButton sp (Just True) "amazon.png" (Just (amazonUrl ++ (String.replace "-" "" isbn))) TO.NoOp []
         Nothing -> Html.text ""
       Nothing -> Html.text ""
     tagList = case rec.tags of
@@ -68,21 +67,33 @@ viewRecipe loginToken rec sp =
   in
     Html.div [ id "contentDiv", class "cf" ] [
       Html.div[ class "noprint" ][
-        Html.button [ onClick TO.RemoveSelectedRecipe ][ Html.text "zur Liste zurück" ], actionButton ],
+        Html.button [ onClick TO.RemoveSelectedRecipe ][ Html.text "zur Liste zurück" ]],--, actionButton ],
       Html.div [ id "recipeDiv" ][
-        Html.h2 [][ Html.text header ],
-        Html.div [ id "recipeSource" ][ Html.text (rec_source ++ sourcePage ++ sourceYear ++ sourceIsbn), amazonLink ],
-        Html.div [ id "recipeTags" ][ Html.text ("Tags: " ++ (String.join ", " (List.map getTagName (sortBy .name tagList)))) ],
-        Html.figure [][ recImage, Html.figcaption [][ Html.text rec_number ] ],
+        Html.div [][
+          Html.h2 [ Attr.style "float" "left", Attr.style "margin-right" "5px" ][
+            PU.getEditHeader (U.isLoggedIn loginToken) header (TO.ToggleEditForm O.BasicForm)
+          ]
+          , PU.getEditButton sp (Just (U.isLoggedIn loginToken)) "save.png" Nothing TO.NoOp [Attr.style "margin-top" "10px"]
+          , PU.getEditButton sp (Just (U.isLoggedIn loginToken)) "delete.png" Nothing TO.ConfirmDelete [Attr.style "margin-top" "10px"]
+        ]
+        , Html.div [ id "recipeSource", Attr.style "clear" "both" ][ Html.text (rec_source ++ sourcePage ++ sourceYear ++ sourceIsbn), amazonLink ]
+        , Html.div [ id "recipeTags" ][
+          PU.getEditHeader (U.isLoggedIn loginToken) "Tags:" (TO.ToggleEditForm O.TagForm)
+          , Html.text (" " ++ (String.join ", " (List.map getTagName (sortBy .name tagList))))
+        ]
+        , Html.figure [][ recImage, Html.figcaption [][ Html.text rec_number ] ],
         Html.div [ id "recipe" ][
           Html.div [ id "ingredientsDiv" ][
-            Html.h4 [][ Html.text "Zutaten" ],
-  --          Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showIngrRow (sortBy .sortorder rec_ingredients) ) ]
-            Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showPartRow (sortBy .name rec_parts) ) ]
+            Html.h4 [][
+              PU.getEditHeader (U.isLoggedIn loginToken) "Zutaten" (TO.ToggleEditForm O.IngredientForm)
+            ]
+            , Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showPartRow (sortBy .name rec_parts) ) ]
           ],
           Html.div [ id "todosDiv" ][
-            Html.h4 [][ Html.text "Zubereitung" ],
-            Html.div [] (List.map (showTodoRow sp) (sortBy .number rec_todos))
+            Html.h4 [][
+              PU.getEditHeader (U.isLoggedIn loginToken) "Zubereitung" (TO.ToggleEditForm O.TodoForm)
+            ]
+            , Html.div [] (List.map (showTodoRow sp) (sortBy .number rec_todos))
           ],
           Html.div [ class "clear" ][]
         ]

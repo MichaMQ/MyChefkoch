@@ -5450,6 +5450,7 @@ var TSFoster$elm_uuid$UUID$canonical = function (_n0) {
 	}
 };
 var TSFoster$elm_uuid$UUID$toString = TSFoster$elm_uuid$UUID$canonical;
+var author$project$Devs$Objects$None = {$: 'None'};
 var author$project$Devs$Objects$getEmptyIngre = F2(
 	function (newOrder, newPart) {
 		return {
@@ -8469,6 +8470,14 @@ var author$project$Devs$Update$update = F2(
 						model,
 						{selectedRecipe: elm$core$Maybe$Nothing, selectedTag: elm$core$Maybe$Nothing}),
 					elm$core$Platform$Cmd$none);
+			case 'ToggleEditForm':
+				var formEnum = msg.a;
+				var fe = _Utils_eq(formEnum, author$project$Devs$Objects$None) ? elm$core$Maybe$Nothing : elm$core$Maybe$Just(formEnum);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{showEditForm: fe}),
+					elm$core$Platform$Cmd$none);
 			case 'ShowRecipe':
 				var rec = msg.a;
 				var selectedRecipe = function () {
@@ -9774,7 +9783,7 @@ var author$project$Devs$Update$update = F2(
 	});
 var author$project$Devs$Objects$keyLists = {partList: elm$core$Maybe$Nothing, sourceList: elm$core$Maybe$Nothing, tagList: elm$core$Maybe$Nothing, unitList: elm$core$Maybe$Nothing};
 var author$project$Devs$Objects$serverParams = {apiUrlPrefix: '/api/v1', iconPath: 'icons/', imagePath: 'images/', serverHost: 'horst:8085', serverProtokoll: 'http://', serverUrlPrefix: '/RecipeServer'};
-var author$project$Devs$Objects$initialModel = {addTag: elm$core$Maybe$Nothing, alertMessage: elm$core$Maybe$Nothing, currentSeed: elm$core$Maybe$Nothing, deleteRecipe: false, kl: author$project$Devs$Objects$keyLists, loginToken: elm$core$Maybe$Nothing, newSource: elm$core$Maybe$Nothing, passwordForCheck: '', random: 123456789, recAlertMessage: elm$core$Maybe$Nothing, recImage: elm$core$Maybe$Nothing, recipeForEdit: elm$core$Maybe$Nothing, recipesOfSelectedTag: elm$core$Maybe$Nothing, searchValue: '', selectedRecipe: elm$core$Maybe$Nothing, selectedTab: 'Tab1', selectedTag: elm$core$Maybe$Nothing, sp: author$project$Devs$Objects$serverParams, subAlertMessage: elm$core$Maybe$Nothing, tagtypeList: elm$core$Maybe$Nothing, usernameForCheck: ''};
+var author$project$Devs$Objects$initialModel = {addTag: elm$core$Maybe$Nothing, alertMessage: elm$core$Maybe$Nothing, currentSeed: elm$core$Maybe$Nothing, deleteRecipe: false, kl: author$project$Devs$Objects$keyLists, loginToken: elm$core$Maybe$Nothing, newSource: elm$core$Maybe$Nothing, passwordForCheck: '', random: 123456789, recAlertMessage: elm$core$Maybe$Nothing, recImage: elm$core$Maybe$Nothing, recipeForEdit: elm$core$Maybe$Nothing, recipesOfSelectedTag: elm$core$Maybe$Nothing, searchValue: '', selectedRecipe: elm$core$Maybe$Nothing, selectedTab: 'Tab1', selectedTag: elm$core$Maybe$Nothing, showEditForm: elm$core$Maybe$Nothing, sp: author$project$Devs$Objects$serverParams, subAlertMessage: elm$core$Maybe$Nothing, tagtypeList: elm$core$Maybe$Nothing, usernameForCheck: ''};
 var author$project$Devs$BackendApi$getAllParts = F3(
 	function (event, token, url) {
 		return A5(
@@ -10212,12 +10221,9 @@ var author$project$Pages$EditorView$viewAddTagForm = function (model) {
 					]))
 			]));
 };
-var author$project$Devs$TypeObject$CancelRecipeEdit = {$: 'CancelRecipeEdit'};
-var author$project$Devs$TypeObject$CloseRecipeAlert = {$: 'CloseRecipeAlert'};
 var author$project$Devs$TypeObject$ConfirmDelete = {$: 'ConfirmDelete'};
-var author$project$Devs$TypeObject$SaveRecipe = {$: 'SaveRecipe'};
-var author$project$Devs$TypeObject$ToggleTab = function (a) {
-	return {$: 'ToggleTab', a: a};
+var author$project$Devs$TypeObject$ToggleEditForm = function (a) {
+	return {$: 'ToggleEditForm', a: a};
 };
 var author$project$Devs$TypeObject$AddNewSource = {$: 'AddNewSource'};
 var author$project$Devs$TypeObject$SetName = function (a) {
@@ -10383,7 +10389,7 @@ var elm$html$Html$Events$onInput = function (tagger) {
 var author$project$Pages$EditorTabs$Tab1$showTab = function (model) {
 	var tab1Class = (model.selectedTab === 'Tab1') ? 'showTabContent' : 'hideTabContent';
 	var mod_rec = function () {
-		var _n8 = model.recipeForEdit;
+		var _n8 = model.selectedRecipe;
 		if (_n8.$ === 'Just') {
 			var rec = _n8.a;
 			return rec;
@@ -10759,9 +10765,9 @@ var elm$core$Tuple$pair = F2(
 	});
 var elm$html$Html$table = _VirtualDom_node('table');
 var author$project$Pages$EditorTabs$Tab2$showTab = function (model) {
-	var tab2Class = (model.selectedTab === 'Tab2') ? 'showTabContent' : 'hideTabContent';
+	var tab2Class = 'showTabContent';
 	var recForEdit = function () {
-		var _n2 = model.recipeForEdit;
+		var _n2 = model.selectedRecipe;
 		if (_n2.$ === 'Just') {
 			var rec = _n2.a;
 			return rec;
@@ -10972,8 +10978,27 @@ var elm$html$Html$Attributes$step = function (n) {
 	return A2(elm$html$Html$Attributes$stringProperty, 'step', n);
 };
 var author$project$Pages$EditorTabs$Tab3$showIngreList = F3(
-	function (unitList, partList, ingreObj) {
-		var ingre = ingreObj.b;
+	function (unitList, partList, _n0) {
+		var idx = _n0.a;
+		var ingre = _n0.b;
+		var unit = function () {
+			var _n5 = ingre.unit;
+			if (_n5.$ === 'Just') {
+				var unitTmp = _n5.a;
+				return unitTmp;
+			} else {
+				return author$project$Devs$Objects$getEmptyUnit;
+			}
+		}();
+		var quant = function () {
+			var _n4 = ingre.quantity;
+			if (_n4.$ === 'Just') {
+				var quantTmp = _n4.a;
+				return elm$core$String$fromFloat(quantTmp);
+			} else {
+				return '';
+			}
+		}();
 		var part = function () {
 			var _n3 = ingre.part;
 			if (_n3.$ === 'Just') {
@@ -10983,34 +11008,16 @@ var author$project$Pages$EditorTabs$Tab3$showIngreList = F3(
 				return author$project$Devs$Objects$getEmptyPart;
 			}
 		}();
-		var quant = function () {
-			var _n2 = ingre.quantity;
-			if (_n2.$ === 'Just') {
-				var quantTmp = _n2.a;
-				return elm$core$String$fromFloat(quantTmp);
-			} else {
-				return '';
-			}
-		}();
-		var unit = function () {
-			var _n1 = ingre.unit;
-			if (_n1.$ === 'Just') {
-				var unitTmp = _n1.a;
-				return unitTmp;
-			} else {
-				return author$project$Devs$Objects$getEmptyUnit;
-			}
-		}();
-		var idx = ingreObj.a;
 		var commentVal = function () {
-			var _n0 = ingre.comment;
-			if (_n0.$ === 'Just') {
-				var val = _n0.a;
+			var _n2 = ingre.comment;
+			if (_n2.$ === 'Just') {
+				var val = _n2.a;
 				return val;
 			} else {
 				return '';
 			}
 		}();
+		var _n1 = A2(elm$core$Debug$log, 'ingre: ', ingre);
 		return A2(
 			elm$html$Html$div,
 			_List_fromArray(
@@ -11122,9 +11129,9 @@ var author$project$Pages$EditorTabs$Tab3$showIngreList = F3(
 				]));
 	});
 var author$project$Pages$EditorTabs$Tab3$showTab = function (model) {
-	var tab3Class = (model.selectedTab === 'Tab3') ? 'showTabContent' : 'hideTabContent';
+	var tab3Class = 'showTabContent';
 	var recForEdit = function () {
-		var _n3 = model.recipeForEdit;
+		var _n3 = model.selectedRecipe;
 		if (_n3.$ === 'Just') {
 			var rec = _n3.a;
 			return rec;
@@ -11381,9 +11388,9 @@ var author$project$Pages$EditorTabs$Tab4$showTodoList = function (todoObj) {
 			]));
 };
 var author$project$Pages$EditorTabs$Tab4$showTab = function (model) {
-	var tabClass = (model.selectedTab === 'Tab4') ? 'showTabContent' : 'hideTabContent';
+	var tabClass = 'showTabContent';
 	var recForEdit = function () {
-		var _n1 = model.recipeForEdit;
+		var _n1 = model.selectedRecipe;
 		if (_n1.$ === 'Just') {
 			var rec = _n1.a;
 			return rec;
@@ -11462,7 +11469,7 @@ var author$project$Devs$TypeObject$SetSize = function (a) {
 var author$project$Pages$EditorTabs$Tab5$showTab = function (model) {
 	var tabClass = (model.selectedTab === 'Tab5') ? 'showTabContent' : 'hideTabContent';
 	var recForEdit = function () {
-		var _n5 = model.recipeForEdit;
+		var _n5 = model.selectedRecipe;
 		if (_n5.$ === 'Just') {
 			var rec = _n5.a;
 			return rec;
@@ -11667,12 +11674,21 @@ var author$project$Pages$EditorView$viewEditForm = function (model) {
 	var tab2BtnClass = (model.selectedTab === 'Tab2') ? 'TabActive' : 'TabInactive';
 	var tab1BtnClass = (model.selectedTab === 'Tab1') ? 'TabActive' : 'TabInactive';
 	var recipeForEdit = function () {
-		var _n0 = model.recipeForEdit;
-		if (_n0.$ === 'Just') {
-			var rec = _n0.a;
+		var _n2 = model.recipeForEdit;
+		if (_n2.$ === 'Just') {
+			var rec = _n2.a;
 			return rec;
 		} else {
 			return author$project$Devs$Objects$getEmptyRecipe;
+		}
+	}();
+	var editForm = function () {
+		var _n1 = model.showEditForm;
+		if (_n1.$ === 'Just') {
+			var ef = _n1.a;
+			return ef;
+		} else {
+			return author$project$Devs$Objects$None;
 		}
 	}();
 	var delBtn = (!_Utils_eq(recipeForEdit.id, elm$core$Maybe$Nothing)) ? A2(
@@ -11701,90 +11717,22 @@ var author$project$Pages$EditorView$viewEditForm = function (model) {
 					]),
 				_List_fromArray(
 					[
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('TabDiv')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$span,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$class(tab1BtnClass),
-										elm$html$Html$Events$onClick(
-										author$project$Devs$TypeObject$ToggleTab('Tab1'))
-									]),
-								_List_fromArray(
-									[
-										elm$html$Html$text('Grunddaten')
-									])),
-								A2(
-								elm$html$Html$span,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$class(tab2BtnClass),
-										elm$html$Html$Events$onClick(
-										author$project$Devs$TypeObject$ToggleTab('Tab2'))
-									]),
-								_List_fromArray(
-									[
-										elm$html$Html$text('Tags *')
-									])),
-								A2(
-								elm$html$Html$span,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$class(tab3BtnClass),
-										elm$html$Html$Events$onClick(
-										author$project$Devs$TypeObject$ToggleTab('Tab3'))
-									]),
-								_List_fromArray(
-									[
-										elm$html$Html$text('Zutaten *')
-									])),
-								A2(
-								elm$html$Html$span,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$class(tab4BtnClass),
-										elm$html$Html$Events$onClick(
-										author$project$Devs$TypeObject$ToggleTab('Tab4'))
-									]),
-								_List_fromArray(
-									[
-										elm$html$Html$text('Anweisungen *')
-									])),
-								A2(
-								elm$html$Html$span,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$class(tab5BtnClass),
-										elm$html$Html$Events$onClick(
-										author$project$Devs$TypeObject$ToggleTab('Tab5'))
-									]),
-								_List_fromArray(
-									[
-										elm$html$Html$text('Nährwerte')
-									]))
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('TabContentDiv')
-							]),
-						_List_fromArray(
-							[
-								author$project$Pages$EditorTabs$Tab1$showTab(model),
-								author$project$Pages$EditorTabs$Tab2$showTab(model),
-								author$project$Pages$EditorTabs$Tab3$showTab(model),
-								author$project$Pages$EditorTabs$Tab4$showTab(model),
-								author$project$Pages$EditorTabs$Tab5$showTab(model)
-							])),
-						A3(author$project$Pages$Utils$alert, author$project$Devs$TypeObject$CloseRecipeAlert, model.recAlertMessage, model),
+						function () {
+						switch (editForm.$) {
+							case 'BasicForm':
+								return author$project$Pages$EditorTabs$Tab1$showTab(model);
+							case 'TagForm':
+								return author$project$Pages$EditorTabs$Tab2$showTab(model);
+							case 'IngredientForm':
+								return author$project$Pages$EditorTabs$Tab3$showTab(model);
+							case 'TodoForm':
+								return author$project$Pages$EditorTabs$Tab4$showTab(model);
+							case 'FootValueForm':
+								return author$project$Pages$EditorTabs$Tab5$showTab(model);
+							default:
+								return elm$html$Html$text('');
+						}
+					}(),
 						A2(
 						elm$html$Html$div,
 						_List_fromArray(
@@ -11797,22 +11745,12 @@ var author$project$Pages$EditorView$viewEditForm = function (model) {
 								elm$html$Html$button,
 								_List_fromArray(
 									[
-										elm$html$Html$Events$onClick(author$project$Devs$TypeObject$SaveRecipe)
+										elm$html$Html$Events$onClick(
+										author$project$Devs$TypeObject$ToggleEditForm(author$project$Devs$Objects$None))
 									]),
 								_List_fromArray(
 									[
-										elm$html$Html$text('speichern')
-									])),
-								delBtn,
-								A2(
-								elm$html$Html$button,
-								_List_fromArray(
-									[
-										elm$html$Html$Events$onClick(author$project$Devs$TypeObject$CancelRecipeEdit)
-									]),
-								_List_fromArray(
-									[
-										elm$html$Html$text('abbrechen')
+										elm$html$Html$text('schließen')
 									]))
 							]))
 					]))
@@ -12210,8 +12148,21 @@ var author$project$Pages$RecipeListView$viewRecipesOfTag = function (model) {
 	}();
 	return A2(author$project$Pages$RecipeListView$showRecipeList, recipeList, selectedTagName);
 };
+var author$project$Devs$Objects$BasicForm = {$: 'BasicForm'};
+var author$project$Devs$Objects$IngredientForm = {$: 'IngredientForm'};
+var author$project$Devs$Objects$TagForm = {$: 'TagForm'};
+var author$project$Devs$Objects$TodoForm = {$: 'TodoForm'};
 var author$project$Devs$TypeObject$EditRecipe = {$: 'EditRecipe'};
+var author$project$Devs$TypeObject$NoOp = {$: 'NoOp'};
 var author$project$Devs$TypeObject$RemoveSelectedRecipe = {$: 'RemoveSelectedRecipe'};
+var author$project$Devs$Update$isLoggedIn = function (loginToken) {
+	if (loginToken.$ === 'Just') {
+		var log = loginToken.a;
+		return (elm$core$String$length(log) > 0) ? true : false;
+	} else {
+		return false;
+	}
+};
 var author$project$Pages$RecipeView$getTagName = function (tag) {
 	return tag.name + (' (' + (tag.tagType.name + ')'));
 };
@@ -12394,9 +12345,6 @@ var author$project$Pages$RecipeView$showTodoRow = F2(
 				]));
 	});
 var elm$html$Html$a = _VirtualDom_node('a');
-var elm$html$Html$figcaption = _VirtualDom_node('figcaption');
-var elm$html$Html$h2 = _VirtualDom_node('h2');
-var elm$html$Html$h4 = _VirtualDom_node('h4');
 var elm$html$Html$Attributes$height = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -12410,24 +12358,110 @@ var elm$html$Html$Attributes$href = function (url) {
 		_VirtualDom_noJavaScriptUri(url));
 };
 var elm$html$Html$Attributes$target = elm$html$Html$Attributes$stringProperty('target');
+var author$project$Pages$Utils$getEditButton = F6(
+	function (sp, isLoggedIn, bntImg, link, event, styles) {
+		var showBtn = function () {
+			if (isLoggedIn.$ === 'Just') {
+				var bool = isLoggedIn.a;
+				return bool;
+			} else {
+				return false;
+			}
+		}();
+		var btn = function () {
+			if (link.$ === 'Just') {
+				var href = link.a;
+				return A2(
+					elm$html$Html$a,
+					A2(
+						elm$core$List$append,
+						styles,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('amazonLink'),
+								elm$html$Html$Attributes$target('_blank'),
+								elm$html$Html$Attributes$href(href)
+							])),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$img,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$src(
+									_Utils_ap(sp.iconPath, bntImg)),
+									elm$html$Html$Attributes$height(20)
+								]),
+							_List_Nil)
+						]));
+			} else {
+				return A2(
+					elm$html$Html$button,
+					A2(
+						elm$core$List$append,
+						styles,
+						_List_fromArray(
+							[
+								elm$html$Html$Events$onClick(event)
+							])),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$img,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$src(
+									_Utils_ap(sp.iconPath, bntImg)),
+									elm$html$Html$Attributes$height(20)
+								]),
+							_List_Nil)
+						]));
+			}
+		}();
+		return showBtn ? btn : elm$html$Html$text('');
+	});
+var author$project$Pages$Utils$getEditHeader = F3(
+	function (isLoggedIn, headerTxt, event) {
+		return isLoggedIn ? A2(
+			elm$html$Html$span,
+			_List_fromArray(
+				[
+					elm$html$Html$Events$onClick(event),
+					elm$html$Html$Attributes$class('editHeader')
+				]),
+			_List_fromArray(
+				[
+					elm$html$Html$text(headerTxt)
+				])) : elm$html$Html$text(headerTxt);
+	});
+var elm$core$String$replace = F3(
+	function (before, after, string) {
+		return A2(
+			elm$core$String$join,
+			after,
+			A2(elm$core$String$split, before, string));
+	});
+var elm$html$Html$figcaption = _VirtualDom_node('figcaption');
+var elm$html$Html$h2 = _VirtualDom_node('h2');
+var elm$html$Html$h4 = _VirtualDom_node('h4');
 var author$project$Pages$RecipeView$viewRecipe = F3(
 	function (loginToken, rec, sp) {
 		var tagList = function () {
-			var _n15 = rec.tags;
-			if (_n15.$ === 'Just') {
-				var tags = _n15.a;
+			var _n14 = rec.tags;
+			if (_n14.$ === 'Just') {
+				var tags = _n14.a;
 				return tags;
 			} else {
 				return _List_Nil;
 			}
 		}();
 		var sourceYear = function () {
-			var _n13 = rec.source;
-			if (_n13.$ === 'Just') {
-				var source = _n13.a;
-				var _n14 = source.year;
-				if (_n14.$ === 'Just') {
-					var year = _n14.a;
+			var _n12 = rec.source;
+			if (_n12.$ === 'Just') {
+				var source = _n12.a;
+				var _n13 = source.year;
+				if (_n13.$ === 'Just') {
+					var year = _n13.a;
 					return '; Veröffentlicht am: ' + year;
 				} else {
 					return '';
@@ -12437,21 +12471,21 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 			}
 		}();
 		var sourcePage = function () {
-			var _n12 = rec.source_page;
-			if (_n12.$ === 'Just') {
-				var page = _n12.a;
+			var _n11 = rec.source_page;
+			if (_n11.$ === 'Just') {
+				var page = _n11.a;
 				return '; Seite: ' + elm$core$String$fromInt(page);
 			} else {
 				return '';
 			}
 		}();
 		var sourceIsbn = function () {
-			var _n10 = rec.source;
-			if (_n10.$ === 'Just') {
-				var source = _n10.a;
-				var _n11 = source.isbn;
-				if (_n11.$ === 'Just') {
-					var isbn = _n11.a;
+			var _n9 = rec.source;
+			if (_n9.$ === 'Just') {
+				var source = _n9.a;
+				var _n10 = source.isbn;
+				if (_n10.$ === 'Just') {
+					var isbn = _n10.a;
 					return '; ISBN: ' + isbn;
 				} else {
 					return '';
@@ -12461,36 +12495,36 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 			}
 		}();
 		var rec_todos = function () {
-			var _n9 = rec.todos;
-			if (_n9.$ === 'Just') {
-				var todos = _n9.a;
+			var _n8 = rec.todos;
+			if (_n8.$ === 'Just') {
+				var todos = _n8.a;
 				return todos;
 			} else {
 				return _List_Nil;
 			}
 		}();
 		var rec_source = function () {
-			var _n8 = rec.source;
-			if (_n8.$ === 'Just') {
-				var source = _n8.a;
+			var _n7 = rec.source;
+			if (_n7.$ === 'Just') {
+				var source = _n7.a;
 				return 'Quelle: ' + source.name;
 			} else {
 				return '';
 			}
 		}();
 		var rec_parts = function () {
-			var _n7 = rec.parts;
-			if (_n7.$ === 'Just') {
-				var parts = _n7.a;
+			var _n6 = rec.parts;
+			if (_n6.$ === 'Just') {
+				var parts = _n6.a;
 				return parts;
 			} else {
 				return _List_Nil;
 			}
 		}();
 		var recImage = function () {
-			var _n6 = rec.image;
-			if (_n6.$ === 'Just') {
-				var img = _n6.a;
+			var _n5 = rec.image;
+			if (_n5.$ === 'Just') {
+				var img = _n5.a;
 				return A2(
 					elm$html$Html$img,
 					_List_fromArray(
@@ -12505,29 +12539,21 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 			}
 		}();
 		var number_comment = function () {
-			var _n5 = rec.number_comment;
-			if (_n5.$ === 'Just') {
-				var comment = _n5.a;
+			var _n4 = rec.number_comment;
+			if (_n4.$ === 'Just') {
+				var comment = _n4.a;
 				return comment;
 			} else {
 				return 'Portionen';
 			}
 		}();
 		var rec_number = function () {
-			var _n4 = rec.number;
-			if (_n4.$ === 'Just') {
-				var number = _n4.a;
+			var _n3 = rec.number;
+			if (_n3.$ === 'Just') {
+				var number = _n3.a;
 				return elm$core$String$fromInt(number) + (' ' + number_comment);
 			} else {
 				return '';
-			}
-		}();
-		var isLoggedIn = function () {
-			if (loginToken.$ === 'Just') {
-				var log = loginToken.a;
-				return (elm$core$String$length(log) > 0) ? true : false;
-			} else {
-				return false;
 			}
 		}();
 		var header = function () {
@@ -12539,6 +12565,7 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 				return rec.name;
 			}
 		}();
+		var amazonUrl = 'https://www.amazon.de/gp/search?index=books&linkCode=qs&keywords=';
 		var amazonLink = function () {
 			var _n0 = rec.source;
 			if (_n0.$ === 'Just') {
@@ -12546,25 +12573,17 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 				var _n1 = source.isbn;
 				if (_n1.$ === 'Just') {
 					var isbn = _n1.a;
-					return A2(
-						elm$html$Html$a,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('amazonLink'),
-								elm$html$Html$Attributes$target('_blank'),
-								elm$html$Html$Attributes$href('https://www.amazon.de/gp/search/ref=sr_adv_b/?unfiltered=1&field-isbn=' + (isbn + '&sort=relevancerank'))
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$img,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$src(sp.iconPath + 'amazon.png'),
-										elm$html$Html$Attributes$height(20)
-									]),
-								_List_Nil)
-							]));
+					return A6(
+						author$project$Pages$Utils$getEditButton,
+						sp,
+						elm$core$Maybe$Just(true),
+						'amazon.png',
+						elm$core$Maybe$Just(
+							_Utils_ap(
+								amazonUrl,
+								A3(elm$core$String$replace, '-', '', isbn))),
+						author$project$Devs$TypeObject$NoOp,
+						_List_Nil);
 				} else {
 					return elm$html$Html$text('');
 				}
@@ -12572,7 +12591,7 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 				return elm$html$Html$text('');
 			}
 		}();
-		var actionButton = isLoggedIn ? A2(
+		var actionButton = author$project$Devs$Update$isLoggedIn(loginToken) ? A2(
 			elm$html$Html$button,
 			_List_fromArray(
 				[
@@ -12608,8 +12627,7 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 							_List_fromArray(
 								[
 									elm$html$Html$text('zur Liste zurück')
-								])),
-							actionButton
+								]))
 						])),
 					A2(
 					elm$html$Html$div,
@@ -12620,17 +12638,56 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 					_List_fromArray(
 						[
 							A2(
-							elm$html$Html$h2,
+							elm$html$Html$div,
 							_List_Nil,
 							_List_fromArray(
 								[
-									elm$html$Html$text(header)
+									A2(
+									elm$html$Html$h2,
+									_List_fromArray(
+										[
+											A2(elm$html$Html$Attributes$style, 'float', 'left'),
+											A2(elm$html$Html$Attributes$style, 'margin-right', '5px')
+										]),
+									_List_fromArray(
+										[
+											A3(
+											author$project$Pages$Utils$getEditHeader,
+											author$project$Devs$Update$isLoggedIn(loginToken),
+											header,
+											author$project$Devs$TypeObject$ToggleEditForm(author$project$Devs$Objects$BasicForm))
+										])),
+									A6(
+									author$project$Pages$Utils$getEditButton,
+									sp,
+									elm$core$Maybe$Just(
+										author$project$Devs$Update$isLoggedIn(loginToken)),
+									'save.png',
+									elm$core$Maybe$Nothing,
+									author$project$Devs$TypeObject$NoOp,
+									_List_fromArray(
+										[
+											A2(elm$html$Html$Attributes$style, 'margin-top', '10px')
+										])),
+									A6(
+									author$project$Pages$Utils$getEditButton,
+									sp,
+									elm$core$Maybe$Just(
+										author$project$Devs$Update$isLoggedIn(loginToken)),
+									'delete.png',
+									elm$core$Maybe$Nothing,
+									author$project$Devs$TypeObject$ConfirmDelete,
+									_List_fromArray(
+										[
+											A2(elm$html$Html$Attributes$style, 'margin-top', '10px')
+										]))
 								])),
 							A2(
 							elm$html$Html$div,
 							_List_fromArray(
 								[
-									elm$html$Html$Attributes$id('recipeSource')
+									elm$html$Html$Attributes$id('recipeSource'),
+									A2(elm$html$Html$Attributes$style, 'clear', 'both')
 								]),
 							_List_fromArray(
 								[
@@ -12650,8 +12707,13 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 								]),
 							_List_fromArray(
 								[
+									A3(
+									author$project$Pages$Utils$getEditHeader,
+									author$project$Devs$Update$isLoggedIn(loginToken),
+									'Tags:',
+									author$project$Devs$TypeObject$ToggleEditForm(author$project$Devs$Objects$TagForm)),
 									elm$html$Html$text(
-									'Tags: ' + A2(
+									' ' + A2(
 										elm$core$String$join,
 										', ',
 										A2(
@@ -12699,7 +12761,11 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 											_List_Nil,
 											_List_fromArray(
 												[
-													elm$html$Html$text('Zutaten')
+													A3(
+													author$project$Pages$Utils$getEditHeader,
+													author$project$Devs$Update$isLoggedIn(loginToken),
+													'Zutaten',
+													author$project$Devs$TypeObject$ToggleEditForm(author$project$Devs$Objects$IngredientForm))
 												])),
 											A2(
 											elm$html$Html$table,
@@ -12736,7 +12802,11 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 											_List_Nil,
 											_List_fromArray(
 												[
-													elm$html$Html$text('Zubereitung')
+													A3(
+													author$project$Pages$Utils$getEditHeader,
+													author$project$Devs$Update$isLoggedIn(loginToken),
+													'Zubereitung',
+													author$project$Devs$TypeObject$ToggleEditForm(author$project$Devs$Objects$TodoForm))
 												])),
 											A2(
 											elm$html$Html$div,
@@ -12949,7 +13019,7 @@ var author$project$Pages$OverViewPage$viewOverview = F2(
 			}
 		}();
 		var editForm = function () {
-			var _n2 = model.recipeForEdit;
+			var _n2 = model.showEditForm;
 			if (_n2.$ === 'Just') {
 				var rec = _n2.a;
 				return author$project$Pages$EditorView$viewEditForm(model);
@@ -16612,4 +16682,4 @@ var author$project$RecipeServer$main = elm$browser$Browser$element(
 		view: author$project$RecipeServer$view
 	});
 _Platform_export({'RecipeServer':{'init':author$project$RecipeServer$main(
-	elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.0"},"types":{"message":"Devs.TypeObject.Msg","aliases":{"Devs.Objects.ImagePortData":{"args":[],"type":"{ contents : String.String, filename : String.String }"},"Devs.Objects.Ingredient":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, comment : Maybe.Maybe String.String, part : Maybe.Maybe Devs.Objects.PartLight, quantity : Maybe.Maybe Basics.Float, sortorder : Basics.Int, unit : Maybe.Maybe Devs.Objects.Unit, uuid : String.String }"},"Devs.Objects.InitData":{"args":[],"type":"{ random : Basics.Int }"},"Devs.Objects.Part":{"args":[],"type":"{ id : Basics.Int, name : String.String, ingredients : List.List Devs.Objects.Ingredient, uuid : String.String }"},"Devs.Objects.PartLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Recipe":{"args":[],"type":"{ aikz : Basics.Int, id : Maybe.Maybe Basics.Int, image : Maybe.Maybe String.String, ingredients : Maybe.Maybe (List.List Devs.Objects.Ingredient), parts : Maybe.Maybe (List.List Devs.Objects.Part), name : String.String, translate : Maybe.Maybe String.String, number : Maybe.Maybe Basics.Int, number_comment : Maybe.Maybe String.String, nv_carbohydrates : Maybe.Maybe Basics.Float, nv_energy : Maybe.Maybe Basics.Float, nv_fat : Maybe.Maybe Basics.Float, nv_protein : Maybe.Maybe Basics.Float, nv_size : Maybe.Maybe Basics.Int, source : Maybe.Maybe Devs.Objects.Source, source_page : Maybe.Maybe Basics.Int, tags : Maybe.Maybe (List.List Devs.Objects.Tag), todos : Maybe.Maybe (List.List Devs.Objects.Todo), uuid : String.String }"},"Devs.Objects.RecipeLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Source":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, isbn : Maybe.Maybe String.String, name : String.String, year : Maybe.Maybe String.String, uuid : String.String }"},"Devs.Objects.Tag":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, tagType : Devs.Objects.TagtypeShort, uuid : String.String }"},"Devs.Objects.Tagtype":{"args":[],"type":"{ id : Basics.Int, name : String.String, tagList : List.List Devs.Objects.Tag, uuid : String.String }"},"Devs.Objects.TagtypeShort":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Todo":{"args":[],"type":"{ id : Basics.Int, image : Maybe.Maybe String.String, image_comment : Maybe.Maybe String.String, number : Basics.Int, text : String.String, uuid : String.String }"},"Devs.Objects.Unit":{"args":[],"type":"{ id : Basics.Int, name : String.String, unitCategory : Devs.Objects.UnitCategory, uuid : String.String }"},"Devs.Objects.UnitCategory":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"}},"unions":{"Devs.TypeObject.Msg":{"args":[],"tags":{"NoOp":[],"Initialize":["Devs.Objects.InitData"],"ImageSelected":[],"ImageRead":["Devs.Objects.ImagePortData"],"ShowOverView":[],"GetLoginForm":[],"SetUsernameForCheck":["String.String"],"SetPasswortForCheck":["String.String"],"Login":[],"HandleLogin":["Result.Result Http.Error String.String"],"ShowRecipesOfTag":["Maybe.Maybe Devs.Objects.Tag"],"ShowRecipe":["Maybe.Maybe Devs.Objects.RecipeLight"],"EditRecipe":[],"InsertRecipe":[],"SaveRecipe":[],"SavedRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"DeleteRecipe":[],"SetAikz":["Basics.Int"],"SetName":["String.String"],"SetTranslate":["String.String"],"SetNumber":["String.String"],"SetNumberComment":["String.String"],"SetRecImage":["String.String"],"RemoveImageFromRecipe":[],"SetCarbo":["String.String"],"SetEnergy":["String.String"],"SetFat":["String.String"],"SetProt":["String.String"],"SetSize":["String.String"],"SetSourcePage":["String.String"],"SetSource":["Basics.Int"],"AddNewSource":[],"SetSrcName":["String.String"],"SetSrcIsbn":["String.String"],"SetSrcYear":["String.String"],"CancelSourceEdit":[],"SaveNewSource":[],"SavedSource":["Result.Result Http.Error Devs.Objects.Source"],"ChooseNewTag":[],"SetChoosenTag":["Basics.Int"],"RemoveTagFromRec":["Basics.Int"],"CancelAddTag":[],"AddTagToRecipe":[],"AddIngreToRecipe":[],"SetIngreOrder":["Basics.Int","String.String"],"SetIngreName":["Basics.Int","String.String"],"SetIngrePart":["Basics.Int","Basics.Int"],"SetIngreUnit":["Basics.Int","Basics.Int"],"SetIngreQuant":["Basics.Int","String.String"],"SetIngreComment":["Basics.Int","String.String"],"RemoveIngreFromRecipe":[],"AddTodoToRecipe":[],"SetTodoNr":["Basics.Int","String.String"],"SetTodoText":["Basics.Int","String.String"],"SetTodoImg":["Basics.Int","String.String"],"SetTodoImgComment":["Basics.Int","String.String"],"RemoveTodoFromRecipe":[],"CancelRecipeEdit":[],"ConfirmDelete":[],"CancelDelete":[],"CancelLogin":[],"ToggleTab":["String.String"],"CloseAlert":[],"CloseLoginAlert":[],"CloseRecipeAlert":[],"RemoveSelectedTag":[],"RemoveSelectedRecipe":[],"ListTagtypes":["Result.Result Http.Error (List.List Devs.Objects.Tagtype)"],"ListRecipesForTag":["Result.Result Http.Error (List.List Devs.Objects.RecipeLight)"],"SetRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"SetUnitList":["Result.Result Http.Error (List.List Devs.Objects.Unit)"],"SetSourceList":["Result.Result Http.Error (List.List Devs.Objects.Source)"],"SetTagList":["Result.Result Http.Error (List.List Devs.Objects.Tag)"],"SetPartList":["Result.Result Http.Error (List.List Devs.Objects.PartLight)"],"SetSearchInput":["String.String"],"SearchRecipe":[],"UploadImage":["Result.Result Http.Error Basics.Bool"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}}}}})}});}(this));
+	elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.0"},"types":{"message":"Devs.TypeObject.Msg","aliases":{"Devs.Objects.ImagePortData":{"args":[],"type":"{ contents : String.String, filename : String.String }"},"Devs.Objects.Ingredient":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, comment : Maybe.Maybe String.String, part : Maybe.Maybe Devs.Objects.PartLight, quantity : Maybe.Maybe Basics.Float, sortorder : Basics.Int, unit : Maybe.Maybe Devs.Objects.Unit, uuid : String.String }"},"Devs.Objects.InitData":{"args":[],"type":"{ random : Basics.Int }"},"Devs.Objects.Part":{"args":[],"type":"{ id : Basics.Int, name : String.String, ingredients : List.List Devs.Objects.Ingredient, uuid : String.String }"},"Devs.Objects.PartLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Recipe":{"args":[],"type":"{ aikz : Basics.Int, id : Maybe.Maybe Basics.Int, image : Maybe.Maybe String.String, ingredients : Maybe.Maybe (List.List Devs.Objects.Ingredient), parts : Maybe.Maybe (List.List Devs.Objects.Part), name : String.String, translate : Maybe.Maybe String.String, number : Maybe.Maybe Basics.Int, number_comment : Maybe.Maybe String.String, nv_carbohydrates : Maybe.Maybe Basics.Float, nv_energy : Maybe.Maybe Basics.Float, nv_fat : Maybe.Maybe Basics.Float, nv_protein : Maybe.Maybe Basics.Float, nv_size : Maybe.Maybe Basics.Int, source : Maybe.Maybe Devs.Objects.Source, source_page : Maybe.Maybe Basics.Int, tags : Maybe.Maybe (List.List Devs.Objects.Tag), todos : Maybe.Maybe (List.List Devs.Objects.Todo), uuid : String.String }"},"Devs.Objects.RecipeLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Source":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, isbn : Maybe.Maybe String.String, name : String.String, year : Maybe.Maybe String.String, uuid : String.String }"},"Devs.Objects.Tag":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, tagType : Devs.Objects.TagtypeShort, uuid : String.String }"},"Devs.Objects.Tagtype":{"args":[],"type":"{ id : Basics.Int, name : String.String, tagList : List.List Devs.Objects.Tag, uuid : String.String }"},"Devs.Objects.TagtypeShort":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Todo":{"args":[],"type":"{ id : Basics.Int, image : Maybe.Maybe String.String, image_comment : Maybe.Maybe String.String, number : Basics.Int, text : String.String, uuid : String.String }"},"Devs.Objects.Unit":{"args":[],"type":"{ id : Basics.Int, name : String.String, unitCategory : Devs.Objects.UnitCategory, uuid : String.String }"},"Devs.Objects.UnitCategory":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"}},"unions":{"Devs.TypeObject.Msg":{"args":[],"tags":{"NoOp":[],"Initialize":["Devs.Objects.InitData"],"ImageSelected":[],"ImageRead":["Devs.Objects.ImagePortData"],"ShowOverView":[],"ToggleEditForm":["Devs.Objects.EditForm"],"GetLoginForm":[],"SetUsernameForCheck":["String.String"],"SetPasswortForCheck":["String.String"],"Login":[],"HandleLogin":["Result.Result Http.Error String.String"],"ShowRecipesOfTag":["Maybe.Maybe Devs.Objects.Tag"],"ShowRecipe":["Maybe.Maybe Devs.Objects.RecipeLight"],"EditRecipe":[],"InsertRecipe":[],"SaveRecipe":[],"SavedRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"DeleteRecipe":[],"SetAikz":["Basics.Int"],"SetName":["String.String"],"SetTranslate":["String.String"],"SetNumber":["String.String"],"SetNumberComment":["String.String"],"SetRecImage":["String.String"],"RemoveImageFromRecipe":[],"SetCarbo":["String.String"],"SetEnergy":["String.String"],"SetFat":["String.String"],"SetProt":["String.String"],"SetSize":["String.String"],"SetSourcePage":["String.String"],"SetSource":["Basics.Int"],"AddNewSource":[],"SetSrcName":["String.String"],"SetSrcIsbn":["String.String"],"SetSrcYear":["String.String"],"CancelSourceEdit":[],"SaveNewSource":[],"SavedSource":["Result.Result Http.Error Devs.Objects.Source"],"ChooseNewTag":[],"SetChoosenTag":["Basics.Int"],"RemoveTagFromRec":["Basics.Int"],"CancelAddTag":[],"AddTagToRecipe":[],"AddIngreToRecipe":[],"SetIngreOrder":["Basics.Int","String.String"],"SetIngreName":["Basics.Int","String.String"],"SetIngrePart":["Basics.Int","Basics.Int"],"SetIngreUnit":["Basics.Int","Basics.Int"],"SetIngreQuant":["Basics.Int","String.String"],"SetIngreComment":["Basics.Int","String.String"],"RemoveIngreFromRecipe":[],"AddTodoToRecipe":[],"SetTodoNr":["Basics.Int","String.String"],"SetTodoText":["Basics.Int","String.String"],"SetTodoImg":["Basics.Int","String.String"],"SetTodoImgComment":["Basics.Int","String.String"],"RemoveTodoFromRecipe":[],"CancelRecipeEdit":[],"ConfirmDelete":[],"CancelDelete":[],"CancelLogin":[],"ToggleTab":["String.String"],"CloseAlert":[],"CloseLoginAlert":[],"CloseRecipeAlert":[],"RemoveSelectedTag":[],"RemoveSelectedRecipe":[],"ListTagtypes":["Result.Result Http.Error (List.List Devs.Objects.Tagtype)"],"ListRecipesForTag":["Result.Result Http.Error (List.List Devs.Objects.RecipeLight)"],"SetRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"SetUnitList":["Result.Result Http.Error (List.List Devs.Objects.Unit)"],"SetSourceList":["Result.Result Http.Error (List.List Devs.Objects.Source)"],"SetTagList":["Result.Result Http.Error (List.List Devs.Objects.Tag)"],"SetPartList":["Result.Result Http.Error (List.List Devs.Objects.PartLight)"],"SetSearchInput":["String.String"],"SearchRecipe":[],"UploadImage":["Result.Result Http.Error Basics.Bool"]}},"Devs.Objects.EditForm":{"args":[],"tags":{"BasicForm":[],"TagForm":[],"IngredientForm":[],"TodoForm":[],"FootValueForm":[],"None":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}}}}})}});}(this));

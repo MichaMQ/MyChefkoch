@@ -5,6 +5,15 @@ import Random
 
 --import Video as VideoObj
 
+-- Enum
+type EditForm =
+  BasicForm
+  | TagForm
+  | IngredientForm
+  | TodoForm
+  | FootValueForm
+  | None
+
 -- Model
 type alias ServerParams = {serverProtokoll: String, serverHost: String, serverUrlPrefix: String, apiUrlPrefix: String, iconPath: String, imagePath: String}
 type alias KeyLists = {sourceList: Maybe (List Source), tagList: Maybe (List Tag), unitList: Maybe (List Unit), partList: Maybe (List PartLight)}
@@ -64,6 +73,7 @@ type alias Model = {
   , deleteRecipe: Bool
   , usernameForCheck: String
   , passwordForCheck: String
+  , showEditForm: Maybe EditForm
   }
 
 type alias InitData = {
@@ -108,6 +118,7 @@ initialModel = {
   , deleteRecipe = False
   , usernameForCheck = ""
   , passwordForCheck = ""
+  , showEditForm = Nothing
   }
 
 getEmptyTodo: Int -> Todo

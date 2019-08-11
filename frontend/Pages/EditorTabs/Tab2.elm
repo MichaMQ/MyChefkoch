@@ -13,8 +13,9 @@ import Devs.TypeObject as TO exposing (Msg)
 showTab: Model -> Html Msg
 showTab model =
   let
-    tab2Class = if model.selectedTab == "Tab2" then "showTabContent" else "hideTabContent"
-    recForEdit = case model.recipeForEdit of
+--    tab2Class = if model.selectedTab == "Tab2" then "showTabContent" else "hideTabContent"
+    tab2Class = "showTabContent"
+    recForEdit = case model.selectedRecipe of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
     tagListValue = case recForEdit.tags of

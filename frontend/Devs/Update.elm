@@ -8,7 +8,7 @@ import Http
 import UUID exposing (UUID)
 --import Debug exposing (log)
 
-import Devs.Objects as Objects exposing (..)
+import Devs.Objects as O exposing (..)
 import Devs.TypeObject as TO exposing (..)
 import Devs.Recipe as RecipeObj
 import Devs.BackendApi as Api
@@ -48,6 +48,11 @@ update msg model =
           ( { model | recAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
         ShowOverView ->
           ( { model | selectedRecipe = Nothing, selectedTag = Nothing }, Cmd.none )
+        ToggleEditForm formEnum ->
+          let
+            fe = if formEnum == O.None then Nothing else Just formEnum
+          in
+            ( { model | showEditForm = fe }, Cmd.none)
         ShowRecipe rec ->
           let
             selectedRecipe = case rec of
@@ -58,7 +63,7 @@ update msg model =
         EditRecipe ->
           ( { model | recipeForEdit = model.selectedRecipe }, Cmd.none )
         InsertRecipe ->
-          ( { model | recipeForEdit = Just Objects.getEmptyRecipe }, Cmd.none )
+          ( { model | recipeForEdit = Just O.getEmptyRecipe }, Cmd.none )
         SaveRecipe ->
           let
             errorMsg = case model.recipeForEdit of
@@ -104,10 +109,10 @@ update msg model =
                 ) sourceList
               ) of
               Just src -> src
-              Nothing -> Objects.getEmptySource
+              Nothing -> O.getEmptySource
           in
             ( { model | recipeForEdit = (RecipeObj.setSource model.recipeForEdit selectedSrc) } , Cmd.none)
-        AddNewSource -> ( { model | newSource = Just Objects.getEmptySource }, Cmd.none)
+        AddNewSource -> ( { model | newSource = Just O.getEmptySource }, Cmd.none)
         SetSrcName val -> ( { model | newSource = (RecipeObj.setSourceName model.newSource val) }, Cmd.none)
         SetSrcIsbn val -> ( { model | newSource = (RecipeObj.setSourceIsbn model.newSource val) }, Cmd.none)
         SetSrcYear val -> ( { model | newSource = (RecipeObj.setSourceYear model.newSource val) }, Cmd.none)
@@ -116,7 +121,7 @@ update msg model =
           let
             newSource = case model.newSource of
               Just src -> src
-              Nothing -> Objects.getEmptySource
+              Nothing -> O.getEmptySource
             alertMsg = if String.isEmpty newSource.name
               then Just "Bitte mindestens einen Namen für die Quelle eingeben."
               else Nothing
@@ -134,7 +139,7 @@ update msg model =
         SavedSource (Err error) ->
           ( { model | subAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
         ChooseNewTag ->
-          ( { model | addTag = Just Objects.getEmptyTag } , Cmd.none)
+          ( { model | addTag = Just O.getEmptyTag } , Cmd.none)
         SetChoosenTag idVal ->
           let
             tagList = case model.kl.tagList of
@@ -149,7 +154,7 @@ update msg model =
                 ) tagList
               ) of
               Just tag -> tag
-              Nothing -> Objects.getEmptyTag
+              Nothing -> O.getEmptyTag
           in
             ( { model | addTag = Just selectedTag } , Cmd.none)
         RemoveTagFromRec idx ->
@@ -188,11 +193,11 @@ update msg model =
               then case (ListE.getAt lastIdx ingreList) of
                 Just ingre -> case ingre.part of
                   Just part -> part
-                  Nothing -> Objects.getEmptyPart
-                Nothing -> Objects.getEmptyPart
-              else Objects.getEmptyPart
+                  Nothing -> O.getEmptyPart
+                Nothing -> O.getEmptyPart
+              else O.getEmptyPart
           in
-            ( { model | recipeForEdit = (RecipeObj.addToIngredients model.recipeForEdit (Objects.getEmptyIngre newOrder (Just newPart))) } , Cmd.none)
+            ( { model | recipeForEdit = (RecipeObj.addToIngredients model.recipeForEdit (O.getEmptyIngre newOrder (Just newPart))) } , Cmd.none)
         SetIngreOrder idx val ->
           let
 --            _ = Debug.log "idx: " idx
@@ -250,7 +255,7 @@ update msg model =
               Nothing -> []
             selectedPart = case ( ListE.find ( \part -> part.id == partId ) partList ) of
               Just part -> part
-              Nothing -> Objects.getEmptyPart
+              Nothing -> O.getEmptyPart
 --            newPart = Maybe.withDefault 0 <| String.toInt val
             ingreList = case model.recipeForEdit of
               Just rec -> case rec.ingredients of
@@ -269,7 +274,7 @@ update msg model =
               Nothing -> []
             selectedUnit = case ( ListE.find ( \unit -> unit.id == unitId ) unitList ) of
               Just tag -> tag
-              Nothing -> Objects.getEmptyUnit
+              Nothing -> O.getEmptyUnit
             ingreList = case model.recipeForEdit of
               Just rec -> case rec.ingredients of
                 Just list -> list
@@ -307,7 +312,7 @@ update msg model =
                 Nothing -> 0
               else 0
           in
-            ( { model | recipeForEdit = (RecipeObj.addToTodos model.recipeForEdit (Objects.getEmptyTodo newNumber)) } , Cmd.none)
+            ( { model | recipeForEdit = (RecipeObj.addToTodos model.recipeForEdit (O.getEmptyTodo newNumber)) } , Cmd.none)
         SetTodoNr idx val ->
           let
 --            _ = Debug.log "idx: " idx
@@ -461,13 +466,13 @@ getIngreForEdit: List Ingredient -> Int -> Ingredient
 getIngreForEdit ingreList idx =
     case ListE.getAt idx (sortBy .sortorder ingreList) of
       Just ingre -> ingre
-      Nothing -> Objects.getEmptyIngre 0 Nothing
+      Nothing -> O.getEmptyIngre 0 Nothing
 
 getTodoForEdit: List Todo -> Int -> Todo
 getTodoForEdit list idx =
     case ListE.getAt idx (sortBy .number list) of
       Just todo -> todo
-      Nothing -> Objects.getEmptyTodo 0
+      Nothing -> O.getEmptyTodo 0
 
 setInitialUnit: KeyLists -> List Unit -> KeyLists
 setInitialUnit keyList newList = { keyList | unitList = Just newList }
@@ -541,6 +546,15 @@ httpErrorToMessage error =
 --    Http.BadPayload message _ -> "Decoding Failed: " ++ message
     Http.BadUrl url -> "You defindes a wrong URL! " ++ url
     Http.Timeout -> "The time for request is out!"
+
+isLoggedIn: Maybe String -> Bool
+isLoggedIn loginToken =
+  case loginToken of
+    Just log -> if String.length log > 0
+      then True
+      else False
+    Nothing -> False
+
 
 isNotMember : ( List a, a ) -> Bool
 isNotMember a =

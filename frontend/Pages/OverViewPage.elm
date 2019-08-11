@@ -25,7 +25,7 @@ viewOverview model alertMsg =
       Nothing -> case model.recipesOfSelectedTag of
         Just recipeList -> RLW.viewRecipesOfTag model
         Nothing -> TtW.viewInitialTagtypeList model
-    editForm = case model.recipeForEdit of
+    editForm = case model.showEditForm of
       Just rec -> EW.viewEditForm model
       Nothing -> Html.text ""
     sourceForm = case model.newSource of

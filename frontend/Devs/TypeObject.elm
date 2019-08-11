@@ -11,6 +11,7 @@ type Msg =
   | ImageSelected
   | ImageRead ImagePortData
   | ShowOverView
+  | ToggleEditForm EditForm
   | GetLoginForm
   | SetUsernameForCheck String
   | SetPasswortForCheck String

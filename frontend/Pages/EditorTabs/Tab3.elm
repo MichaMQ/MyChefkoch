@@ -7,6 +7,7 @@ import Html.Events exposing (onClick, onInput, on)
 import List exposing (..)
 import List.Extra as ListE
 import Json.Decode as Json
+import Debug exposing (log)
 
 import Html.Events.Extra exposing (targetValueIntParse)
 
@@ -18,8 +19,9 @@ import Pages.Utils as PU exposing (getSelectOption)
 showTab: Model -> Html Msg
 showTab model =
   let
-    tab3Class = if model.selectedTab == "Tab3" then "showTabContent" else "hideTabContent"
-    recForEdit = case model.recipeForEdit of
+--    tab3Class = if model.selectedTab == "Tab3" then "showTabContent" else "hideTabContent"
+    tab3Class = "showTabContent"
+    recForEdit = case model.selectedRecipe of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
     initialUnitList = case model.kl.unitList of
@@ -31,6 +33,7 @@ showTab model =
     ingrListOfRec = case recForEdit.ingredients of
       Just ingre -> ingre
       Nothing -> []
+--    _ = Debug.log "recForEdit: " recForEdit
   in
         Html.div[ class tab3Class ] (
           List.concat [
@@ -54,10 +57,11 @@ getLabelRow =
   ]
 
 showIngreList: List Unit -> List PartLight -> (Int, Ingredient) -> Html Msg
-showIngreList unitList partList ingreObj =
+showIngreList unitList partList (idx, ingre) =
   let
-    idx = first ingreObj
-    ingre = second ingreObj
+--    idx = first ingreObj
+--    ingre = second ingreObj
+    _ = Debug.log "ingre: " ingre
     quant = case ingre.quantity of
       Just quantTmp -> (String.fromFloat quantTmp)
       Nothing -> ""

@@ -147,6 +147,11 @@ a:ACTIVE {
 	text-decoration: none;
 }
 
+.editHeader:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
 .alert {
   color: #797B74;
   padding: 10px;

@@ -18,8 +18,9 @@ import Pages.Utils as PU exposing (getSelectOption)
 showTab: Model -> Html Msg
 showTab model =
   let
-    tabClass = if model.selectedTab == "Tab4" then "showTabContent" else "hideTabContent"
-    recForEdit = case model.recipeForEdit of
+--    tabClass = if model.selectedTab == "Tab4" then "showTabContent" else "hideTabContent"
+    tabClass = "showTabContent"
+    recForEdit = case model.selectedRecipe of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
     todoListOfRec = case recForEdit.todos of

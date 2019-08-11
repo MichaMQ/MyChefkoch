@@ -18,7 +18,7 @@ showTab: Model -> Html Msg
 showTab model =
   let
     tabClass = if model.selectedTab == "Tab5" then "showTabContent" else "hideTabContent"
-    recForEdit = case model.recipeForEdit of
+    recForEdit = case model.selectedRecipe of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
     carboValue = case recForEdit.nv_carbohydrates of
