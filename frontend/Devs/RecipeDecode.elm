@@ -13,10 +13,11 @@ tagtypeShortDecoder = Decode.map2 TagtypeShort
   (field "name" Decode.string)
 
 tagDecoder : Decoder Tag
-tagDecoder = Decode.map3 Tag
+tagDecoder = Decode.map4 Tag
   (Decode.maybe <| field "id" Decode.int)
   (field "name" Decode.string)
   (field "tagtype" tagtypeShortDecoder)
+  (field "uuid" Decode.string)
 
 tagListDecoder : Decoder (List Tag)
 tagListDecoder =
@@ -24,13 +25,14 @@ tagListDecoder =
 
 tagtypeDecoder : Decoder Tagtype
 tagtypeDecoder =
-  Decode.map3 Tagtype
+  Decode.map4 Tagtype
     (field "id" Decode.int)
     (field "name" Decode.string)
     (field "tagList" tagListDecoder)
+    (field "uuid" Decode.string)
 
 ingrDecoder : Decoder Ingredient
-ingrDecoder = Decode.map7 Ingredient
+ingrDecoder = Decode.map8 Ingredient
   (Decode.maybe <| field "id" Decode.int)
   (field "name" Decode.string)
   (Decode.maybe <| field "comment" Decode.string)
@@ -38,6 +40,7 @@ ingrDecoder = Decode.map7 Ingredient
   (Decode.maybe <| field "quantity" Decode.float)
   (field "sortorder" Decode.int)
   (Decode.maybe <| field "unit" unitDecoder)
+  (field "uuid" Decode.string)
 
 ingrListDecoder : Decoder (List Ingredient)
 ingrListDecoder =
@@ -49,10 +52,11 @@ partListDecoder =
 
 partDecoder : Decoder Part
 partDecoder =
-  Decode.map3 Part
+  Decode.map4 Part
     (field "id" Decode.int)
     (field "name" Decode.string)
     (field "ingredients" ingrListDecoder)
+    (field "uuid" Decode.string)
 
 partLightDecoder : Decoder PartLight
 partLightDecoder =
@@ -61,30 +65,34 @@ partLightDecoder =
     (field "name" Decode.string)
 
 unitDecoder : Decoder Unit
-unitDecoder = Decode.map3 Unit
+unitDecoder = Decode.map4 Unit
   (field "id" Decode.int)
   (field "name" Decode.string)
   (field "unitCategory" unitCategoryDecoder)
+  (field "uuid" Decode.string)
 
 unitCategoryDecoder : Decoder UnitCategory
-unitCategoryDecoder = Decode.map2 UnitCategory
+unitCategoryDecoder = Decode.map3 UnitCategory
   (field "id" Decode.int)
   (field "name" Decode.string)
+  (field "uuid" Decode.string)
 
 sourceDecoder : Decoder Source
-sourceDecoder = Decode.map4 Source
+sourceDecoder = Decode.map5 Source
   (Decode.maybe <| field "id" Decode.int)
   (Decode.maybe <| field "isbn" Decode.string)
   (field "name" Decode.string)
   (Decode.maybe <| field "year" Decode.string)
+  (field "uuid" Decode.string)
 
 todoDecoder : Decoder Todo
-todoDecoder = Decode.map5 Todo
+todoDecoder = Decode.map6 Todo
   (field "id" Decode.int)
   (Decode.maybe <| field "image" Decode.string)
   (Decode.maybe <| field "image_comment" Decode.string)
   (field "number" Decode.int)
   (field "text" Decode.string)
+  (field "uuid" Decode.string)
 
 todoListDecoder : Decoder (List Todo)
 todoListDecoder = Decode.list todoDecoder
@@ -115,3 +123,4 @@ recipeDecoder =
     |> andMap (Decode.field "source_page" (Decode.maybe Decode.int))
     |> andMap (Decode.field "tags" (Decode.maybe tagListDecoder))
     |> andMap (Decode.field "todos" (Decode.maybe todoListDecoder))
+    |> andMap (Decode.field "uuid" Decode.string)

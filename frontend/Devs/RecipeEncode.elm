@@ -60,6 +60,7 @@ recipeEncoder rec =
           , ( "todos", case rec.todos of
             Just list3 -> Encode.list todoEncoder list3
             Nothing -> Encode.null )
+          , ( "uuid", Encode.string rec.uuid )
           ]
     in
       Encode.object list
@@ -71,6 +72,7 @@ todoEncoder td =
     , ( "text", Encode.string td.text )
     , ( "image", encodeString td.image )
     , ( "image_comment", encodeString td.image_comment )
+    , ( "uuid", Encode.string td.uuid )
     ]
 
 tagEncoder: Tag -> Encode.Value
@@ -80,6 +82,7 @@ tagEncoder tag =
           [ ( "id", encodeInt tag.id )
           , ( "name", Encode.string tag.name )
           , ( "tagtype", tagtypeEncoder tag.tagType )
+          , ( "uuid", Encode.string tag.uuid )
           ]
     in
       Encode.object list
@@ -105,6 +108,7 @@ ingreEncoder ingre =
           , ( "unit", case ingre.unit of
             Just val -> unitEncoder val
             Nothing -> Encode.null )
+          , ( "uuid", Encode.string ingre.uuid )
           ]
     in
       Encode.object list
@@ -114,6 +118,7 @@ partEncoder p =
     Encode.object [ ( "id", Encode.int p.id )
     , ( "name", Encode.string p.name )
     , ( "ingredients", Encode.list ingreEncoder p.ingredients)
+    , ( "uuid", Encode.string p.uuid )
     ]
 
 partLightEncoder: PartLight -> Encode.Value
@@ -127,6 +132,7 @@ unitEncoder unit =
     Encode.object [ ( "id", Encode.int unit.id )
     , ( "name", Encode.string unit.name )
     , ( "unitCategory", unitCatEncoder unit.unitCategory )
+    , ( "uuid", Encode.string unit.uuid )
     ]
 
 unitCatEncoder: UnitCategory -> Encode.Value
@@ -135,6 +141,7 @@ unitCatEncoder uc =
       list =
           [ ( "id", Encode.int uc.id )
           , ( "name", Encode.string uc.name )
+          , ( "uuid", Encode.string uc.uuid )
           ]
     in
       Encode.object list
@@ -147,6 +154,7 @@ sourceEncoder src =
           , ( "name", Encode.string src.name )
           , ( "isbn", encodeString src.isbn )
           , ( "year", encodeString src.year )
+          , ( "uuid", Encode.string src.uuid )
           ]
     in
       Encode.object list
