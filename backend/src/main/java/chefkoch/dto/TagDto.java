@@ -17,6 +17,7 @@ public class TagDto extends GenericDto {
 
 	public TagDto(Tag tag) {
 		this.setId(tag.getId());
+		this.setUuid(tag.getUuid());
 		this.setName(tag.getName());
 		this.setTagtype(new TagtypeDto(tag.getTagType(), new LinkedList<Tag>()));
 	}

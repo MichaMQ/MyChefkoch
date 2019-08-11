@@ -16,6 +16,7 @@ public class SourceDto extends GenericDto {
 
 	public SourceDto(Source source) {
 		this.setId(source.getId());
+		this.setUuid(source.getUuid());
 		this.setName(source.getName());
 		this.setYear(source.getYear());
 		this.setIsbn(source.getIsbn());

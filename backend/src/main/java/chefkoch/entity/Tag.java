@@ -23,13 +23,15 @@ public class Tag {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+	private String uuid;
 
-	@NotNull
-	private String name;
+	public String getUuid() {
+		return uuid;
+	}
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "tag_type_id")
-	private Tag_Type tagType;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 
 	public Integer getId() {
 		return id;
@@ -38,6 +40,13 @@ public class Tag {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	@NotNull
+	private String name;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "tag_type_id")
+	private Tag_Type tagType;
 
 	public String getName() {
 		return name;

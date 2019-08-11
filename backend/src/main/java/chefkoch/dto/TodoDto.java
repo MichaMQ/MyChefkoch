@@ -9,6 +9,7 @@ import chefkoch.util.StringUtil;
 
 public class TodoDto implements Comparable<TodoDto> {
 	private Integer id;
+	private String uuid;
 	private Long number;
 	private String text;
 	private String image;
@@ -19,6 +20,7 @@ public class TodoDto implements Comparable<TodoDto> {
 
 	public TodoDto(Todo todo) {
 		this.setId(todo.getId());
+		this.setUuid(todo.getUuid());
 		this.setNumber(todo.getNumber());
 		this.setText(todo.getText());
 		this.setImage(todo.getImage());
@@ -72,5 +74,13 @@ public class TodoDto implements Comparable<TodoDto> {
 	    Long myNumber = this.getNumber();
 	    Long oNumber = o.getNumber();
 	    return myNumber.compareTo(oNumber);
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 }

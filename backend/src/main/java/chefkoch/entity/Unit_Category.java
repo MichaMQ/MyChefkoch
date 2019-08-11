@@ -19,9 +19,15 @@ public class Unit_Category {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+	private String uuid;
 
-	@NotNull
-	private String name;
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 
 	public Integer getId() {
 		return id;
@@ -30,6 +36,9 @@ public class Unit_Category {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	@NotNull
+	private String name;
 
 	public String getName() {
 		return name;

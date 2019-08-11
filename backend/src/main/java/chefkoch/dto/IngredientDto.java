@@ -19,6 +19,7 @@ public class IngredientDto extends GenericDto {
 
 	public IngredientDto(Ingredient ingredient) {
 		this.setId(ingredient.getId());
+		this.setUuid(ingredient.getUuid());
 		this.setName(ingredient.getName());
 		this.setQuantity(ingredient.getQuantity());
 		this.setComment(ingredient.getComment());

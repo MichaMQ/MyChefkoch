@@ -16,6 +16,7 @@ public class TagtypeDto extends GenericDto {
 
 	public TagtypeDto(Tag_Type tagtype, List<Tag> tagObjList) {
 		this.setId(tagtype.getId());
+		this.setUuid(tagtype.getUuid());
 		this.setName(tagtype.getName());
 		for(Tag tagObj : tagObjList) {
 			this.getTagList().add(new TagDto(tagObj));

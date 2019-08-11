@@ -12,6 +12,7 @@ public class UnitDto extends GenericDto {
 
 	public UnitDto(Unit unit) {
 		this.setId(unit.getId());
+		this.setUuid(unit.getUuid());
 		this.setName(unit.getName());
 		this.setUnitCategory(new UnitCategoryDto(unit.getUnitCategory()));
 	}

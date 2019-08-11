@@ -2,6 +2,7 @@ package chefkoch.dto;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import org.jdom2.Element;
 
@@ -18,9 +19,11 @@ public class PartDto extends GenericDto {
 	public PartDto(Part part) {
 		if(part == null) {
 			this.setId(Integer.valueOf(-2));
+			this.setUuid(UUID.randomUUID().toString());
 			this.setName("Sonstige Zutaten");
 		} else {
 			this.setId(part.getId());
+			this.setUuid(part.getUuid());
 			this.setName(part.getName());
 		}
 	}

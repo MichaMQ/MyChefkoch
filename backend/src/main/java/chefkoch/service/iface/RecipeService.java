@@ -45,4 +45,6 @@ public interface RecipeService {
 	public String login(String username, String password);
 
 	public Boolean isTokenValid(HttpServletRequest request);
+
+	public void initUuids();
 }

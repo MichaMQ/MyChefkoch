@@ -43,6 +43,7 @@ public class RecipeDto extends GenericDto {
 	
 	public RecipeDto(Recipe recipe) {
 		this.setId(recipe.getId());
+		this.setUuid(recipe.getUuid());
 		this.setName(recipe.getName());
 		this.setTranslate(recipe.getTranslate());
 		this.setNumber(recipe.getNumber());

@@ -22,13 +22,15 @@ public class Unit {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+	private String uuid;
 
-	@NotNull
-	private String name;
+	public String getUuid() {
+		return uuid;
+	}
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "unit_category_id")
-	private Unit_Category unitCategory;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 
 	public Integer getId() {
 		return id;
@@ -37,6 +39,13 @@ public class Unit {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	@NotNull
+	private String name;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "unit_category_id")
+	private Unit_Category unitCategory;
 
 	public String getName() {
 		return name;

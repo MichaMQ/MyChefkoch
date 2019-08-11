@@ -26,15 +26,15 @@ public class Source {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+	private String uuid;
 
-	@NotNull
-	private String name;
+	public String getUuid() {
+		return uuid;
+	}
 
-	@NotNull
-	private String year;
-
-	@NotNull
-	private String isbn;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 
 	public Integer getId() {
 		return id;
@@ -43,6 +43,13 @@ public class Source {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	@NotNull
+	private String name;
+
+	private String year;
+
+	private String isbn;
 
 	public String getName() {
 		return name;

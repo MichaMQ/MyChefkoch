@@ -22,14 +22,29 @@ public class Ingredient {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+	private String uuid;
 
-	@NotNull
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 	private Double quantity;
 
 	@NotNull
 	private String name;
 
-	@NotNull
 	private String comment;
 
 	@NotNull
@@ -47,14 +62,6 @@ public class Ingredient {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "unit_id")
 	private Unit unit;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;

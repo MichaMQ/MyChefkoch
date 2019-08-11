@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -46,20 +47,24 @@ import chefkoch.entity.Account;
 import chefkoch.entity.Ingredient;
 import chefkoch.entity.Part;
 import chefkoch.entity.Recipe;
+import chefkoch.entity.Recipe_Tag;
 import chefkoch.entity.Source;
 import chefkoch.entity.Tag;
 import chefkoch.entity.Tag_Type;
 import chefkoch.entity.Todo;
 import chefkoch.entity.Unit;
+import chefkoch.entity.Unit_Category;
 import chefkoch.fop.FopInterface;
 import chefkoch.repo.iface.AccountRepository;
 import chefkoch.repo.iface.IngredientRepository;
 import chefkoch.repo.iface.PartRepository;
 import chefkoch.repo.iface.RecipeRepository;
+import chefkoch.repo.iface.RecipeTagRepository;
 import chefkoch.repo.iface.SourceRepository;
 import chefkoch.repo.iface.TagRepository;
 import chefkoch.repo.iface.TagtypeRepository;
 import chefkoch.repo.iface.TodoRepository;
+import chefkoch.repo.iface.UnitCategoryRepository;
 import chefkoch.repo.iface.UnitRepository;
 import chefkoch.service.enums.AccountType;
 import chefkoch.service.enums.BookPrintType;
@@ -98,7 +103,136 @@ public class RecipeServiceImpl implements RecipeService {
 	private PartRepository partRepository;
 	@Autowired
 	private AccountRepository accountRepository;
+	@Autowired
+	private RecipeTagRepository recipeTagRepository;
+	@Autowired
+	private UnitCategoryRepository unitCategoryRepository;
 
+	@Override
+	public void initUuids() {
+		Iterable<Recipe> list1 = recipeRepository.findAll();
+		boolean toSave = false;
+		for(Recipe e : list1) {
+			if(e.getUuid() == null) {
+				e.setUuid(UUID.randomUUID().toString());
+				toSave = true;
+			}
+		}
+		if(toSave) {
+			recipeRepository.saveAll(list1);
+		}
+		Iterable<Account> list2 = accountRepository.findAll();
+		toSave = false;
+		for(Account e : list2) {
+			if(e.getUuid() == null) {
+				e.setUuid(UUID.randomUUID().toString());
+				toSave = true;
+			}
+		}
+		if(toSave) {
+			accountRepository.saveAll(list2);
+		}
+		Iterable<Ingredient> list3 = ingredientRepository.findAll();
+		toSave = false;
+		for(Ingredient e : list3) {
+			if(e.getUuid() == null) {
+				e.setUuid(UUID.randomUUID().toString());
+				toSave = true;
+			}
+		}
+		if(toSave) {
+			ingredientRepository.saveAll(list3);
+		}
+		Iterable<Part> list4 = partRepository.findAll();
+		toSave = false;
+		for(Part e : list4) {
+			if(e.getUuid() == null) {
+				e.setUuid(UUID.randomUUID().toString());
+				toSave = true;
+			}
+		}
+		if(toSave) {
+			partRepository.saveAll(list4);
+		}
+		Iterable<Recipe_Tag> list5 = recipeTagRepository.findAll();
+		toSave = false;
+		for(Recipe_Tag e : list5) {
+			if(e.getUuid() == null) {
+				e.setUuid(UUID.randomUUID().toString());
+				toSave = true;
+			}
+		}
+		if(toSave) {
+			recipeTagRepository.saveAll(list5);
+		}
+		Iterable<Source> list6 = sourceRepository.findAll();
+		toSave = false;
+		for(Source e : list6) {
+			if(e.getUuid() == null) {
+				e.setUuid(UUID.randomUUID().toString());
+				toSave = true;
+			}
+		}
+		if(toSave) {
+			sourceRepository.saveAll(list6);
+		}
+		Iterable<Tag_Type> list7 = tagtypeRepository.findAll();
+		toSave = false;
+		for(Tag_Type e : list7) {
+			if(e.getUuid() == null) {
+				e.setUuid(UUID.randomUUID().toString());
+				toSave = true;
+			}
+		}
+		if(toSave) {
+			tagtypeRepository.saveAll(list7);
+		}
+		Iterable<Tag> list8 = tagRepository.findAll();
+		toSave = false;
+		for(Tag e : list8) {
+			if(e.getUuid() == null) {
+				e.setUuid(UUID.randomUUID().toString());
+				toSave = true;
+			}
+		}
+		if(toSave) {
+			tagRepository.saveAll(list8);
+		}
+		Iterable<Todo> list9 = todoRepository.findAll();
+		toSave = false;
+		for(Todo e : list9) {
+			if(e.getUuid() == null) {
+				e.setUuid(UUID.randomUUID().toString());
+				toSave = true;
+			}
+		}
+		if(toSave) {
+			todoRepository.saveAll(list9);
+		}
+		Iterable<Unit_Category> list10 = unitCategoryRepository.findAll();
+		toSave = false;
+		for(Unit_Category e : list10) {
+			if(e.getUuid() == null) {
+				e.setUuid(UUID.randomUUID().toString());
+				toSave = true;
+			}
+		}
+		if(toSave) {
+			unitCategoryRepository.saveAll(list10);
+		}
+		Iterable<Unit> list11 = unitRepository.findAll();
+		toSave = false;
+		for(Unit e : list11) {
+			if(e.getUuid() == null) {
+				e.setUuid(UUID.randomUUID().toString());
+				toSave = true;
+			}
+		}
+		if(toSave) {
+			unitRepository.saveAll(list11);
+		}
+	}
+	
 	@Override
 	public Boolean isTokenValid(HttpServletRequest request) {
 		Boolean tokenIsValid = Boolean.FALSE;
@@ -550,5 +684,21 @@ public class RecipeServiceImpl implements RecipeService {
 
 	public void setIngredientRepository(IngredientRepository ingredientRepository) {
 		this.ingredientRepository = ingredientRepository;
+	}
+
+	public RecipeTagRepository getRecipeTagRepository() {
+		return recipeTagRepository;
+	}
+
+	public void setRecipeTagRepository(RecipeTagRepository recipeTagRepository) {
+		this.recipeTagRepository = recipeTagRepository;
+	}
+
+	public UnitCategoryRepository getUnitCategoryRepository() {
+		return unitCategoryRepository;
+	}
+
+	public void setUnitCategoryRepository(UnitCategoryRepository unitCategoryRepository) {
+		this.unitCategoryRepository = unitCategoryRepository;
 	}
 }
