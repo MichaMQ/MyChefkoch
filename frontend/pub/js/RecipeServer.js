@@ -80,6 +80,43 @@ function A9(fun, a, b, c, d, e, f, g, h, i) {
 console.warn('Compiled in DEBUG mode. Follow the advice at https://elm-lang.org/0.19.0/optimize for better performance and smaller assets.');
 
 
+var _Bitwise_and = F2(function(a, b)
+{
+	return a & b;
+});
+
+var _Bitwise_or = F2(function(a, b)
+{
+	return a | b;
+});
+
+var _Bitwise_xor = F2(function(a, b)
+{
+	return a ^ b;
+});
+
+function _Bitwise_complement(a)
+{
+	return ~a;
+};
+
+var _Bitwise_shiftLeftBy = F2(function(offset, a)
+{
+	return a << offset;
+});
+
+var _Bitwise_shiftRightBy = F2(function(offset, a)
+{
+	return a >> offset;
+});
+
+var _Bitwise_shiftRightZfBy = F2(function(offset, a)
+{
+	return a >>> offset;
+});
+
+
+
 var _JsArray_empty = [];
 
 function _JsArray_singleton(value)
@@ -1162,43 +1199,6 @@ function _String_fromList(chars)
 	return _List_toArray(chars).join('');
 }
 
-
-
-
-var _Bitwise_and = F2(function(a, b)
-{
-	return a & b;
-});
-
-var _Bitwise_or = F2(function(a, b)
-{
-	return a | b;
-});
-
-var _Bitwise_xor = F2(function(a, b)
-{
-	return a ^ b;
-});
-
-function _Bitwise_complement(a)
-{
-	return ~a;
-};
-
-var _Bitwise_shiftLeftBy = F2(function(offset, a)
-{
-	return a << offset;
-});
-
-var _Bitwise_shiftRightBy = F2(function(offset, a)
-{
-	return a >> offset;
-});
-
-var _Bitwise_shiftRightZfBy = F2(function(offset, a)
-{
-	return a >>> offset;
-});
 
 
 
@@ -5048,8 +5048,31 @@ function _Browser_load(url)
 var TSFoster$elm_uuid$UUID$UUID = function (a) {
 	return {$: 'UUID', a: a};
 };
+var elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
 var elm$core$Basics$identity = function (x) {
 	return x;
+};
+var elm$core$Bitwise$and = _Bitwise_and;
+var elm$core$Bitwise$or = _Bitwise_or;
+var TSFoster$elm_uuid$UUID$setVariantBits = function (v) {
+	switch (v) {
+		case 1:
+			return A2(
+				elm$core$Basics$composeR,
+				elm$core$Bitwise$and(63),
+				elm$core$Bitwise$or(128));
+		case 2:
+			return A2(
+				elm$core$Basics$composeR,
+				elm$core$Bitwise$and(31),
+				elm$core$Bitwise$or(192));
+		default:
+			return elm$core$Basics$identity;
+	}
 };
 var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
 var elm$core$Array$foldr = F3(
@@ -5131,36 +5154,31 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
+var elm$core$Basics$append = _Utils_append;
+var elm$core$Basics$lt = _Utils_lt;
 var elm$core$Basics$le = _Utils_le;
 var elm$core$Basics$sub = _Basics_sub;
-var elm$core$List$repeatHelp = F3(
-	function (result, n, value) {
-		repeatHelp:
+var elm$core$List$drop = F2(
+	function (n, list) {
+		drop:
 		while (true) {
 			if (n <= 0) {
-				return result;
+				return list;
 			} else {
-				var $temp$result = A2(elm$core$List$cons, value, result),
-					$temp$n = n - 1,
-					$temp$value = value;
-				result = $temp$result;
-				n = $temp$n;
-				value = $temp$value;
-				continue repeatHelp;
+				if (!list.b) {
+					return list;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs;
+					n = $temp$n;
+					list = $temp$list;
+					continue drop;
+				}
 			}
 		}
 	});
-var elm$core$List$repeat = F2(
-	function (n, value) {
-		return A3(elm$core$List$repeatHelp, _List_Nil, n, value);
-	});
-var TSFoster$elm_uuid$UUID$nil = TSFoster$elm_uuid$UUID$UUID(
-	A2(elm$core$List$repeat, 16, 0));
-var elm$core$Basics$apR = F2(
-	function (x, f) {
-		return f(x);
-	});
-var elm$core$Basics$append = _Utils_append;
 var elm$core$Basics$add = _Basics_add;
 var elm$core$Basics$gt = _Utils_gt;
 var elm$core$List$foldl = F3(
@@ -5185,6 +5203,317 @@ var elm$core$List$foldl = F3(
 var elm$core$List$reverse = function (list) {
 	return A3(elm$core$List$foldl, elm$core$List$cons, _List_Nil, list);
 };
+var elm$core$List$takeReverse = F3(
+	function (n, list, kept) {
+		takeReverse:
+		while (true) {
+			if (n <= 0) {
+				return kept;
+			} else {
+				if (!list.b) {
+					return kept;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs,
+						$temp$kept = A2(elm$core$List$cons, x, kept);
+					n = $temp$n;
+					list = $temp$list;
+					kept = $temp$kept;
+					continue takeReverse;
+				}
+			}
+		}
+	});
+var elm$core$List$takeTailRec = F2(
+	function (n, list) {
+		return elm$core$List$reverse(
+			A3(elm$core$List$takeReverse, n, list, _List_Nil));
+	});
+var elm$core$List$takeFast = F3(
+	function (ctr, n, list) {
+		if (n <= 0) {
+			return _List_Nil;
+		} else {
+			var _n0 = _Utils_Tuple2(n, list);
+			_n0$1:
+			while (true) {
+				_n0$5:
+				while (true) {
+					if (!_n0.b.b) {
+						return list;
+					} else {
+						if (_n0.b.b.b) {
+							switch (_n0.a) {
+								case 1:
+									break _n0$1;
+								case 2:
+									var _n2 = _n0.b;
+									var x = _n2.a;
+									var _n3 = _n2.b;
+									var y = _n3.a;
+									return _List_fromArray(
+										[x, y]);
+								case 3:
+									if (_n0.b.b.b.b) {
+										var _n4 = _n0.b;
+										var x = _n4.a;
+										var _n5 = _n4.b;
+										var y = _n5.a;
+										var _n6 = _n5.b;
+										var z = _n6.a;
+										return _List_fromArray(
+											[x, y, z]);
+									} else {
+										break _n0$5;
+									}
+								default:
+									if (_n0.b.b.b.b && _n0.b.b.b.b.b) {
+										var _n7 = _n0.b;
+										var x = _n7.a;
+										var _n8 = _n7.b;
+										var y = _n8.a;
+										var _n9 = _n8.b;
+										var z = _n9.a;
+										var _n10 = _n9.b;
+										var w = _n10.a;
+										var tl = _n10.b;
+										return (ctr > 1000) ? A2(
+											elm$core$List$cons,
+											x,
+											A2(
+												elm$core$List$cons,
+												y,
+												A2(
+													elm$core$List$cons,
+													z,
+													A2(
+														elm$core$List$cons,
+														w,
+														A2(elm$core$List$takeTailRec, n - 4, tl))))) : A2(
+											elm$core$List$cons,
+											x,
+											A2(
+												elm$core$List$cons,
+												y,
+												A2(
+													elm$core$List$cons,
+													z,
+													A2(
+														elm$core$List$cons,
+														w,
+														A3(elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
+									} else {
+										break _n0$5;
+									}
+							}
+						} else {
+							if (_n0.a === 1) {
+								break _n0$1;
+							} else {
+								break _n0$5;
+							}
+						}
+					}
+				}
+				return list;
+			}
+			var _n1 = _n0.b;
+			var x = _n1.a;
+			return _List_fromArray(
+				[x]);
+		}
+	});
+var elm$core$List$take = F2(
+	function (n, list) {
+		return A3(elm$core$List$takeFast, 0, n, list);
+	});
+var elm_community$list_extra$List$Extra$updateAt = F3(
+	function (index, fn, list) {
+		if (index < 0) {
+			return list;
+		} else {
+			var tail = A2(elm$core$List$drop, index, list);
+			var head = A2(elm$core$List$take, index, list);
+			if (tail.b) {
+				var x = tail.a;
+				var xs = tail.b;
+				return _Utils_ap(
+					head,
+					A2(
+						elm$core$List$cons,
+						fn(x),
+						xs));
+			} else {
+				return list;
+			}
+		}
+	});
+var TSFoster$elm_uuid$UUID$toVariant = F2(
+	function (v, _n0) {
+		var bytes = _n0.a;
+		return TSFoster$elm_uuid$UUID$UUID(
+			A3(
+				elm_community$list_extra$List$Extra$updateAt,
+				8,
+				TSFoster$elm_uuid$UUID$setVariantBits(v),
+				bytes));
+	});
+var elm$core$Basics$apR = F2(
+	function (x, f) {
+		return f(x);
+	});
+var elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
+var TSFoster$elm_uuid$UUID$toVersion = F2(
+	function (v, _n0) {
+		var bytes = _n0.a;
+		var updateFn = A2(
+			elm_community$list_extra$List$Extra$updateAt,
+			6,
+			A2(
+				elm$core$Basics$composeR,
+				elm$core$Bitwise$and(15),
+				elm$core$Bitwise$or((15 & v) << 4)));
+		return TSFoster$elm_uuid$UUID$UUID(
+			updateFn(bytes));
+	});
+var elm$core$Basics$eq = _Utils_equal;
+var elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var elm$core$Basics$remainderBy = _Basics_remainderBy;
+var elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
+var elm$random$Random$Generator = function (a) {
+	return {$: 'Generator', a: a};
+};
+var elm$core$Basics$mul = _Basics_mul;
+var elm$random$Random$Seed = F2(
+	function (a, b) {
+		return {$: 'Seed', a: a, b: b};
+	});
+var elm$random$Random$next = function (_n0) {
+	var state0 = _n0.a;
+	var incr = _n0.b;
+	return A2(elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
+};
+var elm$core$Bitwise$xor = _Bitwise_xor;
+var elm$random$Random$peel = function (_n0) {
+	var state = _n0.a;
+	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
+	return ((word >>> 22) ^ word) >>> 0;
+};
+var elm$random$Random$int = F2(
+	function (a, b) {
+		return elm$random$Random$Generator(
+			function (seed0) {
+				var _n0 = (_Utils_cmp(a, b) < 0) ? _Utils_Tuple2(a, b) : _Utils_Tuple2(b, a);
+				var lo = _n0.a;
+				var hi = _n0.b;
+				var range = (hi - lo) + 1;
+				if (!((range - 1) & range)) {
+					return _Utils_Tuple2(
+						(((range - 1) & elm$random$Random$peel(seed0)) >>> 0) + lo,
+						elm$random$Random$next(seed0));
+				} else {
+					var threshhold = (((-range) >>> 0) % range) >>> 0;
+					var accountForBias = function (seed) {
+						accountForBias:
+						while (true) {
+							var x = elm$random$Random$peel(seed);
+							var seedN = elm$random$Random$next(seed);
+							if (_Utils_cmp(x, threshhold) < 0) {
+								var $temp$seed = seedN;
+								seed = $temp$seed;
+								continue accountForBias;
+							} else {
+								return _Utils_Tuple2((x % range) + lo, seedN);
+							}
+						}
+					};
+					return accountForBias(seed0);
+				}
+			});
+	});
+var elm$random$Random$listHelp = F4(
+	function (revList, n, gen, seed) {
+		listHelp:
+		while (true) {
+			if (n < 1) {
+				return _Utils_Tuple2(revList, seed);
+			} else {
+				var _n0 = gen(seed);
+				var value = _n0.a;
+				var newSeed = _n0.b;
+				var $temp$revList = A2(elm$core$List$cons, value, revList),
+					$temp$n = n - 1,
+					$temp$gen = gen,
+					$temp$seed = newSeed;
+				revList = $temp$revList;
+				n = $temp$n;
+				gen = $temp$gen;
+				seed = $temp$seed;
+				continue listHelp;
+			}
+		}
+	});
+var elm$random$Random$list = F2(
+	function (n, _n0) {
+		var gen = _n0.a;
+		return elm$random$Random$Generator(
+			function (seed) {
+				return A4(elm$random$Random$listHelp, _List_Nil, n, gen, seed);
+			});
+	});
+var elm$random$Random$map = F2(
+	function (func, _n0) {
+		var genA = _n0.a;
+		return elm$random$Random$Generator(
+			function (seed0) {
+				var _n1 = genA(seed0);
+				var a = _n1.a;
+				var seed1 = _n1.b;
+				return _Utils_Tuple2(
+					func(a),
+					seed1);
+			});
+	});
+var TSFoster$elm_uuid$UUID$generator = A2(
+	elm$random$Random$map,
+	TSFoster$elm_uuid$UUID$toVariant(1),
+	A2(
+		elm$random$Random$map,
+		TSFoster$elm_uuid$UUID$toVersion(4),
+		A2(
+			elm$random$Random$map,
+			TSFoster$elm_uuid$UUID$UUID,
+			A2(
+				elm$random$Random$list,
+				16,
+				A2(elm$random$Random$int, 0, 255)))));
+var elm$core$List$repeatHelp = F3(
+	function (result, n, value) {
+		repeatHelp:
+		while (true) {
+			if (n <= 0) {
+				return result;
+			} else {
+				var $temp$result = A2(elm$core$List$cons, value, result),
+					$temp$n = n - 1,
+					$temp$value = value;
+				result = $temp$result;
+				n = $temp$n;
+				value = $temp$value;
+				continue repeatHelp;
+			}
+		}
+	});
+var elm$core$List$repeat = F2(
+	function (n, value) {
+		return A3(elm$core$List$repeatHelp, _List_Nil, n, value);
+	});
+var TSFoster$elm_uuid$UUID$nil = TSFoster$elm_uuid$UUID$UUID(
+	A2(elm$core$List$repeat, 16, 0));
 var elm$core$List$foldrHelper = F4(
 	function (fn, acc, ctr, ls) {
 		if (!ls.b) {
@@ -5277,8 +5606,6 @@ var elm$core$Basics$apL = F2(
 	function (f, x) {
 		return f(x);
 	});
-var elm$core$Basics$eq = _Utils_equal;
-var elm$core$Bitwise$and = _Bitwise_and;
 var elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
 var elm$core$String$repeatHelp = F3(
 	function (n, chunk, result) {
@@ -5302,7 +5629,6 @@ var elm$core$String$padLeft = F3(
 			string);
 	});
 var elm$core$Basics$or = _Basics_or;
-var elm$core$Basics$lt = _Utils_lt;
 var elm$core$String$slice = _String_slice;
 var elm$core$String$dropLeft = F2(
 	function (n, string) {
@@ -5337,9 +5663,6 @@ var elm_community$string_extra$String$Extra$break = F2(
 		return ((!width) || (string === '')) ? _List_fromArray(
 			[string]) : A3(elm_community$string_extra$String$Extra$breaker, width, string, _List_Nil);
 	});
-var elm$core$Basics$negate = function (n) {
-	return -n;
-};
 var elm$core$String$fromList = _String_fromList;
 var elm$core$Basics$idiv = _Basics_idiv;
 var elm$core$Basics$modBy = _Basics_modBy;
@@ -5473,7 +5796,7 @@ var author$project$Devs$Objects$getEmptyRecipe = {
 	aikz: 1,
 	id: elm$core$Maybe$Nothing,
 	image: elm$core$Maybe$Nothing,
-	ingredients: elm$core$Maybe$Nothing,
+	ingredients: _List_Nil,
 	name: '',
 	number: elm$core$Maybe$Nothing,
 	number_comment: elm$core$Maybe$Nothing,
@@ -5482,11 +5805,11 @@ var author$project$Devs$Objects$getEmptyRecipe = {
 	nv_fat: elm$core$Maybe$Nothing,
 	nv_protein: elm$core$Maybe$Nothing,
 	nv_size: elm$core$Maybe$Nothing,
-	parts: elm$core$Maybe$Nothing,
+	parts: _List_Nil,
 	source: elm$core$Maybe$Nothing,
 	source_page: elm$core$Maybe$Nothing,
-	tags: elm$core$Maybe$Nothing,
-	todos: elm$core$Maybe$Nothing,
+	tags: _List_Nil,
+	todos: _List_Nil,
 	translate: elm$core$Maybe$Nothing,
 	uuid: TSFoster$elm_uuid$UUID$toString(TSFoster$elm_uuid$UUID$nil)
 };
@@ -5597,7 +5920,6 @@ var elm$core$Basics$max = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) > 0) ? x : y;
 	});
-var elm$core$Basics$mul = _Basics_mul;
 var elm$core$Elm$JsArray$length = _JsArray_length;
 var elm$core$Array$builderToArray = F2(
 	function (reverseNodeList, builder) {
@@ -5650,7 +5972,6 @@ var elm$core$Array$initializeHelp = F5(
 			}
 		}
 	});
-var elm$core$Basics$remainderBy = _Basics_remainderBy;
 var elm$core$Array$initialize = F2(
 	function (len, fn) {
 		if (len <= 0) {
@@ -5889,27 +6210,17 @@ var author$project$Devs$Recipe$addToIngredients = F2(
 	function (recipe, newIngre) {
 		if (recipe.$ === 'Just') {
 			var rec = recipe.a;
-			var ingreList = function () {
-				var _n1 = rec.ingredients;
-				if (_n1.$ === 'Just') {
-					var ingre = _n1.a;
-					return ingre;
-				} else {
-					return _List_Nil;
-				}
-			}();
 			return elm$core$Maybe$Just(
 				_Utils_update(
 					rec,
 					{
-						ingredients: elm$core$Maybe$Just(
-							elm$core$List$concat(
-								_List_fromArray(
-									[
-										ingreList,
-										_List_fromArray(
-										[newIngre])
-									])))
+						ingredients: elm$core$List$concat(
+							_List_fromArray(
+								[
+									rec.ingredients,
+									_List_fromArray(
+									[newIngre])
+								]))
 					}));
 		} else {
 			return elm$core$Maybe$Nothing;
@@ -5919,27 +6230,17 @@ var author$project$Devs$Recipe$addToTags = F2(
 	function (recipe, newTag) {
 		if (recipe.$ === 'Just') {
 			var rec = recipe.a;
-			var tagList = function () {
-				var _n1 = rec.tags;
-				if (_n1.$ === 'Just') {
-					var tags = _n1.a;
-					return tags;
-				} else {
-					return _List_Nil;
-				}
-			}();
 			return elm$core$Maybe$Just(
 				_Utils_update(
 					rec,
 					{
-						tags: elm$core$Maybe$Just(
-							elm$core$List$concat(
-								_List_fromArray(
-									[
-										tagList,
-										_List_fromArray(
-										[newTag])
-									])))
+						tags: elm$core$List$concat(
+							_List_fromArray(
+								[
+									rec.tags,
+									_List_fromArray(
+									[newTag])
+								]))
 					}));
 		} else {
 			return elm$core$Maybe$Nothing;
@@ -5949,27 +6250,17 @@ var author$project$Devs$Recipe$addToTodos = F2(
 	function (recipe, newTodo) {
 		if (recipe.$ === 'Just') {
 			var rec = recipe.a;
-			var todoList = function () {
-				var _n1 = rec.todos;
-				if (_n1.$ === 'Just') {
-					var todo = _n1.a;
-					return todo;
-				} else {
-					return _List_Nil;
-				}
-			}();
 			return elm$core$Maybe$Just(
 				_Utils_update(
 					rec,
 					{
-						todos: elm$core$Maybe$Just(
-							elm$core$List$concat(
-								_List_fromArray(
-									[
-										todoList,
-										_List_fromArray(
-										[newTodo])
-									])))
+						todos: elm$core$List$concat(
+							_List_fromArray(
+								[
+									rec.todos,
+									_List_fromArray(
+									[newTodo])
+								]))
 					}));
 		} else {
 			return elm$core$Maybe$Nothing;
@@ -6107,19 +6398,60 @@ var author$project$Devs$Recipe$setIngreUnit = F2(
 				unit: elm$core$Maybe$Just(newVal)
 			});
 	});
+var author$project$Devs$Recipe$hasIngreWithThisPart = F2(
+	function (ingre, pUuid) {
+		var _n0 = ingre.part;
+		if (_n0.$ === 'Just') {
+			var pl = _n0.a;
+			return _Utils_eq(pl.uuid, pUuid) ? true : false;
+		} else {
+			return false;
+		}
+	});
+var elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var author$project$Devs$Recipe$setIngreToPart = F2(
+	function (ingreList, part) {
+		return _Utils_update(
+			part,
+			{
+				ingredients: A2(
+					elm$core$List$filter,
+					function (item) {
+						return A2(author$project$Devs$Recipe$hasIngreWithThisPart, item, part.uuid);
+					},
+					ingreList)
+			});
+	});
 var author$project$Devs$Recipe$setIngredients = F2(
 	function (recipe, newIngreList) {
-		if (recipe.$ === 'Just') {
-			var rec = recipe.a;
-			return elm$core$Maybe$Just(
-				_Utils_update(
-					rec,
-					{
-						ingredients: elm$core$Maybe$Just(newIngreList)
-					}));
-		} else {
-			return elm$core$Maybe$Nothing;
-		}
+		var rec = function () {
+			if (recipe.$ === 'Just') {
+				var r = recipe.a;
+				return _Utils_update(
+					r,
+					{ingredients: newIngreList});
+			} else {
+				return author$project$Devs$Objects$getEmptyRecipe;
+			}
+		}();
+		var newPartList = A2(
+			elm$core$List$map,
+			author$project$Devs$Recipe$setIngreToPart(rec.ingredients),
+			rec.parts);
+		return elm$core$Maybe$Just(
+			_Utils_update(
+				rec,
+				{parts: newPartList}));
 	});
 var author$project$Devs$Recipe$setName = F2(
 	function (recipe, newVal) {
@@ -6165,6 +6497,37 @@ var author$project$Devs$Recipe$setNumberComment = F2(
 		} else {
 			return elm$core$Maybe$Nothing;
 		}
+	});
+var author$project$Devs$Objects$getPartOfPartLight = function (pl) {
+	return {id: pl.id, ingredients: _List_Nil, name: pl.name, uuid: pl.uuid};
+};
+var author$project$Devs$Recipe$setParts = F2(
+	function (recipe, part) {
+		var rec = function () {
+			if (recipe.$ === 'Just') {
+				var r = recipe.a;
+				return r;
+			} else {
+				return author$project$Devs$Objects$getEmptyRecipe;
+			}
+		}();
+		var pl = (elm$core$List$length(
+			A2(
+				elm$core$List$filter,
+				function (item) {
+					return A2(author$project$Devs$Recipe$hasIngreWithThisPart, item, part.uuid);
+				},
+				rec.ingredients)) > 0) ? rec.parts : A2(
+			elm$core$List$append,
+			rec.parts,
+			_List_fromArray(
+				[
+					author$project$Devs$Objects$getPartOfPartLight(part)
+				]));
+		return elm$core$Maybe$Just(
+			_Utils_update(
+				rec,
+				{parts: pl}));
 	});
 var author$project$Devs$Recipe$setProt = F2(
 	function (recipe, newVal) {
@@ -6281,9 +6644,7 @@ var author$project$Devs$Recipe$setTags = F2(
 			return elm$core$Maybe$Just(
 				_Utils_update(
 					rec,
-					{
-						tags: elm$core$Maybe$Just(newTagList)
-					}));
+					{tags: newTagList}));
 		} else {
 			return elm$core$Maybe$Nothing;
 		}
@@ -6323,9 +6684,7 @@ var author$project$Devs$Recipe$setTodos = F2(
 			return elm$core$Maybe$Just(
 				_Utils_update(
 					rec,
-					{
-						todos: elm$core$Maybe$Just(newTodoList)
-					}));
+					{todos: newTodoList}));
 		} else {
 			return elm$core$Maybe$Nothing;
 		}
@@ -6345,27 +6704,6 @@ var author$project$Devs$Recipe$setTranslate = F2(
 		}
 	});
 var elm$core$List$sortBy = _List_sortBy;
-var elm$core$List$drop = F2(
-	function (n, list) {
-		drop:
-		while (true) {
-			if (n <= 0) {
-				return list;
-			} else {
-				if (!list.b) {
-					return list;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs;
-					n = $temp$n;
-					list = $temp$list;
-					continue drop;
-				}
-			}
-		}
-	});
 var elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -7135,11 +7473,6 @@ var elm$http$Http$cmdMap = F2(
 				});
 		}
 	});
-var elm$core$Basics$composeR = F3(
-	function (f, g, x) {
-		return g(
-			f(x));
-	});
 var elm$http$Http$MySub = F2(
 	function (a, b) {
 		return {$: 'MySub', a: a, b: b};
@@ -7371,16 +7704,10 @@ var author$project$Devs$RecipeDecode$recipeDecoder = A2(
 	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string),
 	A2(
 		elm_community$json_extra$Json$Decode$Extra$andMap,
-		A2(
-			elm$json$Json$Decode$field,
-			'todos',
-			elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$todoListDecoder)),
+		A2(elm$json$Json$Decode$field, 'todos', author$project$Devs$RecipeDecode$todoListDecoder),
 		A2(
 			elm_community$json_extra$Json$Decode$Extra$andMap,
-			A2(
-				elm$json$Json$Decode$field,
-				'tags',
-				elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$tagListDecoder)),
+			A2(elm$json$Json$Decode$field, 'tags', author$project$Devs$RecipeDecode$tagListDecoder),
 			A2(
 				elm_community$json_extra$Json$Decode$Extra$andMap,
 				A2(
@@ -7446,16 +7773,10 @@ var author$project$Devs$RecipeDecode$recipeDecoder = A2(
 														A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
 														A2(
 															elm_community$json_extra$Json$Decode$Extra$andMap,
-															A2(
-																elm$json$Json$Decode$field,
-																'parts',
-																elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$partListDecoder)),
+															A2(elm$json$Json$Decode$field, 'parts', author$project$Devs$RecipeDecode$partListDecoder),
 															A2(
 																elm_community$json_extra$Json$Decode$Extra$andMap,
-																A2(
-																	elm$json$Json$Decode$field,
-																	'ingredients',
-																	elm$json$Json$Decode$maybe(author$project$Devs$RecipeDecode$ingrListDecoder)),
+																A2(elm$json$Json$Decode$field, 'ingredients', author$project$Devs$RecipeDecode$ingrListDecoder),
 																A2(
 																	elm_community$json_extra$Json$Decode$Extra$andMap,
 																	A2(
@@ -7620,6 +7941,24 @@ var author$project$Devs$Update$getRecipeListForTag = F2(
 			model.loginToken,
 			model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + ('/getAllRecipeByTagWithoutMeta/?id=' + elm$core$String$fromInt(tagId))))));
 	});
+var elm$random$Random$initialSeed = function (x) {
+	var _n0 = elm$random$Random$next(
+		A2(elm$random$Random$Seed, 0, 1013904223));
+	var state1 = _n0.a;
+	var incr = _n0.b;
+	var state2 = (state1 + x) >>> 0;
+	return elm$random$Random$next(
+		A2(elm$random$Random$Seed, state2, incr));
+};
+var author$project$Devs$Update$getSeed = function (model) {
+	var _n0 = model.currentSeed;
+	if (_n0.$ === 'Just') {
+		var seed = _n0.a;
+		return seed;
+	} else {
+		return elm$random$Random$initialSeed(model.random);
+	}
+};
 var author$project$Devs$Update$getTodoForEdit = F2(
 	function (list, idx) {
 		var _n0 = A2(
@@ -7966,37 +8305,13 @@ var author$project$Devs$RecipeEncode$recipeEncoder = function (rec) {
 			}()),
 			_Utils_Tuple2(
 			'ingredients',
-			function () {
-				var _n2 = rec.ingredients;
-				if (_n2.$ === 'Just') {
-					var list1 = _n2.a;
-					return A2(elm$json$Json$Encode$list, author$project$Devs$RecipeEncode$ingreEncoder, list1);
-				} else {
-					return elm$json$Json$Encode$null;
-				}
-			}()),
+			A2(elm$json$Json$Encode$list, author$project$Devs$RecipeEncode$ingreEncoder, rec.ingredients)),
 			_Utils_Tuple2(
 			'tags',
-			function () {
-				var _n3 = rec.tags;
-				if (_n3.$ === 'Just') {
-					var list2 = _n3.a;
-					return A2(elm$json$Json$Encode$list, author$project$Devs$RecipeEncode$tagEncoder, list2);
-				} else {
-					return elm$json$Json$Encode$null;
-				}
-			}()),
+			A2(elm$json$Json$Encode$list, author$project$Devs$RecipeEncode$tagEncoder, rec.tags)),
 			_Utils_Tuple2(
 			'todos',
-			function () {
-				var _n4 = rec.todos;
-				if (_n4.$ === 'Just') {
-					var list3 = _n4.a;
-					return A2(elm$json$Json$Encode$list, author$project$Devs$RecipeEncode$todoEncoder, list3);
-				} else {
-					return elm$json$Json$Encode$null;
-				}
-			}()),
+			A2(elm$json$Json$Encode$list, author$project$Devs$RecipeEncode$todoEncoder, rec.todos)),
 			_Utils_Tuple2(
 			'uuid',
 			elm$json$Json$Encode$string(rec.uuid))
@@ -8134,40 +8449,13 @@ var elm$core$List$isEmpty = function (xs) {
 	}
 };
 var author$project$Devs$Update$validateRecipe = function (rec) {
-	var todoList = function () {
-		var _n3 = rec.todos;
-		if (_n3.$ === 'Just') {
-			var list = _n3.a;
-			return list;
-		} else {
-			return _List_Nil;
-		}
-	}();
-	var tagList = function () {
-		var _n2 = rec.tags;
-		if (_n2.$ === 'Just') {
-			var list = _n2.a;
-			return list;
-		} else {
-			return _List_Nil;
-		}
-	}();
-	var ingreList = function () {
-		var _n1 = rec.ingredients;
-		if (_n1.$ === 'Just') {
-			var list = _n1.a;
-			return list;
-		} else {
-			return _List_Nil;
-		}
-	}();
 	if (elm$core$String$isEmpty(rec.name)) {
 		return elm$core$Maybe$Just('Es muss ein Namen eingegeben werden.');
 	} else {
 		var _n0 = rec.source;
 		if (_n0.$ === 'Just') {
 			var src = _n0.a;
-			return elm$core$List$isEmpty(ingreList) ? elm$core$Maybe$Just('Es muss mindestens eine Zutat eingegeben werden.') : (elm$core$List$isEmpty(todoList) ? elm$core$Maybe$Just('Es muss mindestens eine Anweisung eingegeben werden.') : (elm$core$List$isEmpty(tagList) ? elm$core$Maybe$Just('Es muss mindestens ein Tag eingegeben werden.') : elm$core$Maybe$Nothing));
+			return elm$core$List$isEmpty(rec.ingredients) ? elm$core$Maybe$Just('Es muss mindestens eine Zutat eingegeben werden.') : (elm$core$List$isEmpty(rec.todos) ? elm$core$Maybe$Just('Es muss mindestens eine Anweisung eingegeben werden.') : (elm$core$List$isEmpty(rec.tags) ? elm$core$Maybe$Just('Es muss mindestens ein Tag eingegeben werden.') : elm$core$Maybe$Nothing));
 		} else {
 			return elm$core$Maybe$Just('Es muss eine Quelle angegeben werden.');
 		}
@@ -8175,6 +8463,11 @@ var author$project$Devs$Update$validateRecipe = function (rec) {
 };
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
+var elm$random$Random$step = F2(
+	function (_n0, seed) {
+		var generator = _n0.a;
+		return generator(seed);
+	});
 var elm_community$list_extra$List$Extra$find = F2(
 	function (predicate, list) {
 		find:
@@ -8205,132 +8498,6 @@ var elm$core$List$tail = function (list) {
 		return elm$core$Maybe$Nothing;
 	}
 };
-var elm$core$List$takeReverse = F3(
-	function (n, list, kept) {
-		takeReverse:
-		while (true) {
-			if (n <= 0) {
-				return kept;
-			} else {
-				if (!list.b) {
-					return kept;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs,
-						$temp$kept = A2(elm$core$List$cons, x, kept);
-					n = $temp$n;
-					list = $temp$list;
-					kept = $temp$kept;
-					continue takeReverse;
-				}
-			}
-		}
-	});
-var elm$core$List$takeTailRec = F2(
-	function (n, list) {
-		return elm$core$List$reverse(
-			A3(elm$core$List$takeReverse, n, list, _List_Nil));
-	});
-var elm$core$List$takeFast = F3(
-	function (ctr, n, list) {
-		if (n <= 0) {
-			return _List_Nil;
-		} else {
-			var _n0 = _Utils_Tuple2(n, list);
-			_n0$1:
-			while (true) {
-				_n0$5:
-				while (true) {
-					if (!_n0.b.b) {
-						return list;
-					} else {
-						if (_n0.b.b.b) {
-							switch (_n0.a) {
-								case 1:
-									break _n0$1;
-								case 2:
-									var _n2 = _n0.b;
-									var x = _n2.a;
-									var _n3 = _n2.b;
-									var y = _n3.a;
-									return _List_fromArray(
-										[x, y]);
-								case 3:
-									if (_n0.b.b.b.b) {
-										var _n4 = _n0.b;
-										var x = _n4.a;
-										var _n5 = _n4.b;
-										var y = _n5.a;
-										var _n6 = _n5.b;
-										var z = _n6.a;
-										return _List_fromArray(
-											[x, y, z]);
-									} else {
-										break _n0$5;
-									}
-								default:
-									if (_n0.b.b.b.b && _n0.b.b.b.b.b) {
-										var _n7 = _n0.b;
-										var x = _n7.a;
-										var _n8 = _n7.b;
-										var y = _n8.a;
-										var _n9 = _n8.b;
-										var z = _n9.a;
-										var _n10 = _n9.b;
-										var w = _n10.a;
-										var tl = _n10.b;
-										return (ctr > 1000) ? A2(
-											elm$core$List$cons,
-											x,
-											A2(
-												elm$core$List$cons,
-												y,
-												A2(
-													elm$core$List$cons,
-													z,
-													A2(
-														elm$core$List$cons,
-														w,
-														A2(elm$core$List$takeTailRec, n - 4, tl))))) : A2(
-											elm$core$List$cons,
-											x,
-											A2(
-												elm$core$List$cons,
-												y,
-												A2(
-													elm$core$List$cons,
-													z,
-													A2(
-														elm$core$List$cons,
-														w,
-														A3(elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
-									} else {
-										break _n0$5;
-									}
-							}
-						} else {
-							if (_n0.a === 1) {
-								break _n0$1;
-							} else {
-								break _n0$5;
-							}
-						}
-					}
-				}
-				return list;
-			}
-			var _n1 = _n0.b;
-			var x = _n1.a;
-			return _List_fromArray(
-				[x]);
-		}
-	});
-var elm$core$List$take = F2(
-	function (n, list) {
-		return A3(elm$core$List$takeFast, 0, n, list);
-	});
 var elm_community$list_extra$List$Extra$removeAt = F2(
 	function (index, l) {
 		if (index < 0) {
@@ -8344,27 +8511,6 @@ var elm_community$list_extra$List$Extra$removeAt = F2(
 			} else {
 				var t = tail.a;
 				return A2(elm$core$List$append, head, t);
-			}
-		}
-	});
-var elm_community$list_extra$List$Extra$updateAt = F3(
-	function (index, fn, list) {
-		if (index < 0) {
-			return list;
-		} else {
-			var tail = A2(elm$core$List$drop, index, list);
-			var head = A2(elm$core$List$take, index, list);
-			if (tail.b) {
-				var x = tail.a;
-				var xs = tail.b;
-				return _Utils_ap(
-					head,
-					A2(
-						elm$core$List$cons,
-						fn(x),
-						xs));
-			} else {
-				return list;
 			}
 		}
 	});
@@ -8502,18 +8648,31 @@ var author$project$Devs$Update$update = F2(
 						{selectedRecipe: model.selectedRecipe}),
 					elm$core$Platform$Cmd$none);
 			case 'InsertRecipe':
+				var newRec = author$project$Devs$Objects$getEmptyRecipe;
+				var _n2 = A2(
+					elm$random$Random$step,
+					TSFoster$elm_uuid$UUID$generator,
+					author$project$Devs$Update$getSeed(model));
+				var newUuid = _n2.a;
+				var newSeed = _n2.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
-							selectedRecipe: elm$core$Maybe$Just(author$project$Devs$Objects$getEmptyRecipe)
+							currentSeed: elm$core$Maybe$Just(newSeed),
+							selectedRecipe: elm$core$Maybe$Just(
+								_Utils_update(
+									newRec,
+									{
+										uuid: TSFoster$elm_uuid$UUID$toString(newUuid)
+									}))
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SaveRecipe':
 				var errorMsg = function () {
-					var _n4 = model.selectedRecipe;
-					if (_n4.$ === 'Just') {
-						var rec = _n4.a;
+					var _n5 = model.selectedRecipe;
+					if (_n5.$ === 'Just') {
+						var rec = _n5.a;
 						return author$project$Devs$Update$validateRecipe(rec);
 					} else {
 						return elm$core$Maybe$Nothing;
@@ -8529,9 +8688,9 @@ var author$project$Devs$Update$update = F2(
 							}),
 						elm$core$Platform$Cmd$none);
 				} else {
-					var _n3 = model.selectedRecipe;
-					if (_n3.$ === 'Just') {
-						var newRecipe = _n3.a;
+					var _n4 = model.selectedRecipe;
+					if (_n4.$ === 'Just') {
+						var newRecipe = _n4.a;
 						return _Utils_Tuple2(
 							model,
 							A2(author$project$Devs$Update$saveRecipe, model, newRecipe));
@@ -8696,29 +8855,29 @@ var author$project$Devs$Update$update = F2(
 			case 'SetSource':
 				var val = msg.a;
 				var sourceList = function () {
-					var _n7 = model.kl.sourceList;
-					if (_n7.$ === 'Just') {
-						var srcList = _n7.a;
+					var _n8 = model.kl.sourceList;
+					if (_n8.$ === 'Just') {
+						var srcList = _n8.a;
 						return srcList;
 					} else {
 						return _List_Nil;
 					}
 				}();
 				var selectedSrc = function () {
-					var _n5 = A2(
+					var _n6 = A2(
 						elm_community$list_extra$List$Extra$find,
 						function (src) {
-							var _n6 = src.id;
-							if (_n6.$ === 'Just') {
-								var id = _n6.a;
+							var _n7 = src.id;
+							if (_n7.$ === 'Just') {
+								var id = _n7.a;
 								return _Utils_eq(id, val);
 							} else {
 								return false;
 							}
 						},
 						sourceList);
-					if (_n5.$ === 'Just') {
-						var src = _n5.a;
+					if (_n6.$ === 'Just') {
+						var src = _n6.a;
 						return src;
 					} else {
 						return author$project$Devs$Objects$getEmptySource;
@@ -8732,11 +8891,24 @@ var author$project$Devs$Update$update = F2(
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'AddNewSource':
+				var newSource = author$project$Devs$Objects$getEmptySource;
+				var _n9 = A2(
+					elm$random$Random$step,
+					TSFoster$elm_uuid$UUID$generator,
+					author$project$Devs$Update$getSeed(model));
+				var newUuid = _n9.a;
+				var newSeed = _n9.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
-							newSource: elm$core$Maybe$Just(author$project$Devs$Objects$getEmptySource)
+							currentSeed: elm$core$Maybe$Just(newSeed),
+							newSource: elm$core$Maybe$Just(
+								_Utils_update(
+									newSource,
+									{
+										uuid: TSFoster$elm_uuid$UUID$toString(newUuid)
+									}))
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetSrcName':
@@ -8774,9 +8946,9 @@ var author$project$Devs$Update$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'SaveNewSource':
 				var newSource = function () {
-					var _n9 = model.newSource;
-					if (_n9.$ === 'Just') {
-						var src = _n9.a;
+					var _n11 = model.newSource;
+					if (_n11.$ === 'Just') {
+						var src = _n11.a;
 						return src;
 					} else {
 						return author$project$Devs$Objects$getEmptySource;
@@ -8801,9 +8973,9 @@ var author$project$Devs$Update$update = F2(
 				if (msg.a.$ === 'Ok') {
 					var savedSource = msg.a.a;
 					var newSourceList = function () {
-						var _n10 = model.kl.sourceList;
-						if (_n10.$ === 'Just') {
-							var srcList = _n10.a;
+						var _n12 = model.kl.sourceList;
+						if (_n12.$ === 'Just') {
+							var srcList = _n12.a;
 							return A2(
 								elm$core$List$append,
 								srcList,
@@ -8844,29 +9016,29 @@ var author$project$Devs$Update$update = F2(
 			case 'SetChoosenTag':
 				var idVal = msg.a;
 				var tagList = function () {
-					var _n13 = model.kl.tagList;
-					if (_n13.$ === 'Just') {
-						var tagListTmp = _n13.a;
+					var _n15 = model.kl.tagList;
+					if (_n15.$ === 'Just') {
+						var tagListTmp = _n15.a;
 						return tagListTmp;
 					} else {
 						return _List_Nil;
 					}
 				}();
 				var selectedTag = function () {
-					var _n11 = A2(
+					var _n13 = A2(
 						elm_community$list_extra$List$Extra$find,
 						function (tag) {
-							var _n12 = tag.id;
-							if (_n12.$ === 'Just') {
-								var id = _n12.a;
+							var _n14 = tag.id;
+							if (_n14.$ === 'Just') {
+								var id = _n14.a;
 								return _Utils_eq(id, idVal);
 							} else {
 								return false;
 							}
 						},
 						tagList);
-					if (_n11.$ === 'Just') {
-						var tag = _n11.a;
+					if (_n13.$ === 'Just') {
+						var tag = _n13.a;
 						return tag;
 					} else {
 						return author$project$Devs$Objects$getEmptyTag;
@@ -8882,16 +9054,10 @@ var author$project$Devs$Update$update = F2(
 			case 'RemoveTagFromRec':
 				var idx = msg.a;
 				var tagList = function () {
-					var _n14 = model.selectedRecipe;
-					if (_n14.$ === 'Just') {
-						var rec = _n14.a;
-						var _n15 = rec.tags;
-						if (_n15.$ === 'Just') {
-							var list = _n15.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
+					var _n16 = model.selectedRecipe;
+					if (_n16.$ === 'Just') {
+						var rec = _n16.a;
+						return rec.tags;
 					} else {
 						return _List_Nil;
 					}
@@ -8905,12 +9071,12 @@ var author$project$Devs$Update$update = F2(
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'AddTagToRecipe':
-				var _n16 = model.addTag;
-				if (_n16.$ === 'Just') {
-					var newTag = _n16.a;
-					var _n17 = newTag.id;
-					if (_n17.$ === 'Just') {
-						var id = _n17.a;
+				var _n17 = model.addTag;
+				if (_n17.$ === 'Just') {
+					var newTag = _n17.a;
+					var _n18 = newTag.id;
+					if (_n18.$ === 'Just') {
+						var id = _n18.a;
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -8946,21 +9112,15 @@ var author$project$Devs$Update$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'AddIngreToRecipe':
 				var ingreList = function () {
-					var _n21 = model.selectedRecipe;
-					if (_n21.$ === 'Just') {
-						var rec = _n21.a;
-						var _n22 = rec.ingredients;
-						if (_n22.$ === 'Just') {
-							var ingre = _n22.a;
-							return A2(
-								elm$core$List$sortBy,
-								function ($) {
-									return $.sortorder;
-								},
-								ingre);
-						} else {
-							return _List_Nil;
-						}
+					var _n23 = model.selectedRecipe;
+					if (_n23.$ === 'Just') {
+						var rec = _n23.a;
+						return A2(
+							elm$core$List$sortBy,
+							function ($) {
+								return $.sortorder;
+							},
+							rec.ingredients);
 					} else {
 						return _List_Nil;
 					}
@@ -8968,9 +9128,9 @@ var author$project$Devs$Update$update = F2(
 				var lastIdx = elm$core$List$length(ingreList) - 1;
 				var newOrder = function () {
 					if (_Utils_cmp(lastIdx, -1) > 0) {
-						var _n20 = A2(elm_community$list_extra$List$Extra$getAt, lastIdx, ingreList);
-						if (_n20.$ === 'Just') {
-							var ingre = _n20.a;
+						var _n22 = A2(elm_community$list_extra$List$Extra$getAt, lastIdx, ingreList);
+						if (_n22.$ === 'Just') {
+							var ingre = _n22.a;
 							return ingre.sortorder + 1;
 						} else {
 							return 0;
@@ -8981,12 +9141,12 @@ var author$project$Devs$Update$update = F2(
 				}();
 				var newPart = function () {
 					if (_Utils_cmp(lastIdx, -1) > 0) {
-						var _n18 = A2(elm_community$list_extra$List$Extra$getAt, lastIdx, ingreList);
-						if (_n18.$ === 'Just') {
-							var ingre = _n18.a;
-							var _n19 = ingre.part;
-							if (_n19.$ === 'Just') {
-								var part = _n19.a;
+						var _n20 = A2(elm_community$list_extra$List$Extra$getAt, lastIdx, ingreList);
+						if (_n20.$ === 'Just') {
+							var ingre = _n20.a;
+							var _n21 = ingre.part;
+							if (_n21.$ === 'Just') {
+								var part = _n21.a;
 								return part;
 							} else {
 								return author$project$Devs$Objects$getEmptyPart;
@@ -8998,17 +9158,29 @@ var author$project$Devs$Update$update = F2(
 						return author$project$Devs$Objects$getEmptyPart;
 					}
 				}();
+				var newIngre = A2(
+					author$project$Devs$Objects$getEmptyIngre,
+					newOrder,
+					elm$core$Maybe$Just(newPart));
+				var _n19 = A2(
+					elm$random$Random$step,
+					TSFoster$elm_uuid$UUID$generator,
+					author$project$Devs$Update$getSeed(model));
+				var newUuid = _n19.a;
+				var newSeed = _n19.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
+							currentSeed: elm$core$Maybe$Just(newSeed),
 							selectedRecipe: A2(
 								author$project$Devs$Recipe$addToIngredients,
 								model.selectedRecipe,
-								A2(
-									author$project$Devs$Objects$getEmptyIngre,
-									newOrder,
-									elm$core$Maybe$Just(newPart)))
+								_Utils_update(
+									newIngre,
+									{
+										uuid: TSFoster$elm_uuid$UUID$toString(newUuid)
+									}))
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetIngreOrder':
@@ -9019,16 +9191,10 @@ var author$project$Devs$Update$update = F2(
 					0,
 					elm$core$String$toInt(val));
 				var ingreList = function () {
-					var _n23 = model.selectedRecipe;
-					if (_n23.$ === 'Just') {
-						var rec = _n23.a;
-						var _n24 = rec.ingredients;
-						if (_n24.$ === 'Just') {
-							var list = _n24.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
+					var _n24 = model.selectedRecipe;
+					if (_n24.$ === 'Just') {
+						var rec = _n24.a;
+						return rec.ingredients;
 					} else {
 						return _List_Nil;
 					}
@@ -9058,13 +9224,7 @@ var author$project$Devs$Update$update = F2(
 					var _n25 = model.selectedRecipe;
 					if (_n25.$ === 'Just') {
 						var rec = _n25.a;
-						var _n26 = rec.ingredients;
-						if (_n26.$ === 'Just') {
-							var list = _n26.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
+						return rec.ingredients;
 					} else {
 						return _List_Nil;
 					}
@@ -9091,16 +9251,10 @@ var author$project$Devs$Update$update = F2(
 				var idx = msg.a;
 				var val = msg.b;
 				var ingreList = function () {
-					var _n27 = model.selectedRecipe;
-					if (_n27.$ === 'Just') {
-						var rec = _n27.a;
-						var _n28 = rec.ingredients;
-						if (_n28.$ === 'Just') {
-							var list = _n28.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
+					var _n26 = model.selectedRecipe;
+					if (_n26.$ === 'Just') {
+						var rec = _n26.a;
+						return rec.ingredients;
 					} else {
 						return _List_Nil;
 					}
@@ -9131,16 +9285,10 @@ var author$project$Devs$Update$update = F2(
 					0,
 					elm$core$String$toFloat(val));
 				var ingreList = function () {
-					var _n29 = model.selectedRecipe;
-					if (_n29.$ === 'Just') {
-						var rec = _n29.a;
-						var _n30 = rec.ingredients;
-						if (_n30.$ === 'Just') {
-							var list = _n30.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
+					var _n27 = model.selectedRecipe;
+					if (_n27.$ === 'Just') {
+						var rec = _n27.a;
+						return rec.ingredients;
 					} else {
 						return _List_Nil;
 					}
@@ -9166,40 +9314,35 @@ var author$project$Devs$Update$update = F2(
 			case 'SetIngrePart':
 				var idx = msg.a;
 				var partId = msg.b;
-				var partList = function () {
-					var _n34 = model.kl.partList;
-					if (_n34.$ === 'Just') {
-						var list = _n34.a;
+				var partKeyList = function () {
+					var _n30 = model.kl.partList;
+					if (_n30.$ === 'Just') {
+						var list = _n30.a;
 						return list;
 					} else {
 						return _List_Nil;
 					}
 				}();
 				var selectedPart = function () {
-					var _n33 = A2(
+					var _n29 = A2(
 						elm_community$list_extra$List$Extra$find,
 						function (part) {
 							return _Utils_eq(part.id, partId);
 						},
-						partList);
-					if (_n33.$ === 'Just') {
-						var part = _n33.a;
+						partKeyList);
+					if (_n29.$ === 'Just') {
+						var part = _n29.a;
 						return part;
 					} else {
 						return author$project$Devs$Objects$getEmptyPart;
 					}
 				}();
+				var selRec = A2(author$project$Devs$Recipe$setParts, model.selectedRecipe, selectedPart);
 				var ingreList = function () {
-					var _n31 = model.selectedRecipe;
-					if (_n31.$ === 'Just') {
-						var rec = _n31.a;
-						var _n32 = rec.ingredients;
-						if (_n32.$ === 'Just') {
-							var list = _n32.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
+					var _n28 = model.selectedRecipe;
+					if (_n28.$ === 'Just') {
+						var rec = _n28.a;
+						return rec.ingredients;
 					} else {
 						return _List_Nil;
 					}
@@ -9219,46 +9362,40 @@ var author$project$Devs$Update$update = F2(
 					_Utils_update(
 						model,
 						{
-							selectedRecipe: A2(author$project$Devs$Recipe$setIngredients, model.selectedRecipe, newIngreList)
+							selectedRecipe: A2(author$project$Devs$Recipe$setIngredients, selRec, newIngreList)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetIngreUnit':
 				var idx = msg.a;
 				var unitId = msg.b;
 				var unitList = function () {
-					var _n38 = model.kl.unitList;
-					if (_n38.$ === 'Just') {
-						var list = _n38.a;
+					var _n33 = model.kl.unitList;
+					if (_n33.$ === 'Just') {
+						var list = _n33.a;
 						return list;
 					} else {
 						return _List_Nil;
 					}
 				}();
 				var selectedUnit = function () {
-					var _n37 = A2(
+					var _n32 = A2(
 						elm_community$list_extra$List$Extra$find,
 						function (unit) {
 							return _Utils_eq(unit.id, unitId);
 						},
 						unitList);
-					if (_n37.$ === 'Just') {
-						var tag = _n37.a;
+					if (_n32.$ === 'Just') {
+						var tag = _n32.a;
 						return tag;
 					} else {
 						return author$project$Devs$Objects$getEmptyUnit;
 					}
 				}();
 				var ingreList = function () {
-					var _n35 = model.selectedRecipe;
-					if (_n35.$ === 'Just') {
-						var rec = _n35.a;
-						var _n36 = rec.ingredients;
-						if (_n36.$ === 'Just') {
-							var list = _n36.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
+					var _n31 = model.selectedRecipe;
+					if (_n31.$ === 'Just') {
+						var rec = _n31.a;
+						return rec.ingredients;
 					} else {
 						return _List_Nil;
 					}
@@ -9283,21 +9420,15 @@ var author$project$Devs$Update$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'RemoveIngreFromRecipe':
 				var ingreList = function () {
-					var _n39 = model.selectedRecipe;
-					if (_n39.$ === 'Just') {
-						var rec = _n39.a;
-						var _n40 = rec.ingredients;
-						if (_n40.$ === 'Just') {
-							var ingre = _n40.a;
-							return A2(
-								elm$core$List$sortBy,
-								function ($) {
-									return $.sortorder;
-								},
-								ingre);
-						} else {
-							return _List_Nil;
-						}
+					var _n34 = model.selectedRecipe;
+					if (_n34.$ === 'Just') {
+						var rec = _n34.a;
+						return A2(
+							elm$core$List$sortBy,
+							function ($) {
+								return $.sortorder;
+							},
+							rec.ingredients);
 					} else {
 						return _List_Nil;
 					}
@@ -9313,21 +9444,15 @@ var author$project$Devs$Update$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'AddTodoToRecipe':
 				var todoList = function () {
-					var _n42 = model.selectedRecipe;
-					if (_n42.$ === 'Just') {
-						var rec = _n42.a;
-						var _n43 = rec.todos;
-						if (_n43.$ === 'Just') {
-							var todos = _n43.a;
-							return A2(
-								elm$core$List$sortBy,
-								function ($) {
-									return $.number;
-								},
-								todos);
-						} else {
-							return _List_Nil;
-						}
+					var _n37 = model.selectedRecipe;
+					if (_n37.$ === 'Just') {
+						var rec = _n37.a;
+						return A2(
+							elm$core$List$sortBy,
+							function ($) {
+								return $.number;
+							},
+							rec.todos);
 					} else {
 						return _List_Nil;
 					}
@@ -9335,9 +9460,9 @@ var author$project$Devs$Update$update = F2(
 				var lastIdx = elm$core$List$length(todoList) - 1;
 				var newNumber = function () {
 					if (_Utils_cmp(lastIdx, -1) > 0) {
-						var _n41 = A2(elm_community$list_extra$List$Extra$getAt, lastIdx, todoList);
-						if (_n41.$ === 'Just') {
-							var todo = _n41.a;
+						var _n36 = A2(elm_community$list_extra$List$Extra$getAt, lastIdx, todoList);
+						if (_n36.$ === 'Just') {
+							var todo = _n36.a;
 							return todo.number + 1;
 						} else {
 							return 0;
@@ -9346,30 +9471,36 @@ var author$project$Devs$Update$update = F2(
 						return 0;
 					}
 				}();
+				var newTodo = author$project$Devs$Objects$getEmptyTodo(newNumber);
+				var _n35 = A2(
+					elm$random$Random$step,
+					TSFoster$elm_uuid$UUID$generator,
+					author$project$Devs$Update$getSeed(model));
+				var newUuid = _n35.a;
+				var newSeed = _n35.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
+							currentSeed: elm$core$Maybe$Just(newSeed),
 							selectedRecipe: A2(
 								author$project$Devs$Recipe$addToTodos,
 								model.selectedRecipe,
-								author$project$Devs$Objects$getEmptyTodo(newNumber))
+								_Utils_update(
+									newTodo,
+									{
+										uuid: TSFoster$elm_uuid$UUID$toString(newUuid)
+									}))
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'SetTodoNr':
 				var idx = msg.a;
 				var val = msg.b;
 				var todoList = function () {
-					var _n44 = model.selectedRecipe;
-					if (_n44.$ === 'Just') {
-						var rec = _n44.a;
-						var _n45 = rec.todos;
-						if (_n45.$ === 'Just') {
-							var list = _n45.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
+					var _n38 = model.selectedRecipe;
+					if (_n38.$ === 'Just') {
+						var rec = _n38.a;
+						return rec.todos;
 					} else {
 						return _List_Nil;
 					}
@@ -9400,16 +9531,10 @@ var author$project$Devs$Update$update = F2(
 				var idx = msg.a;
 				var val = msg.b;
 				var todoList = function () {
-					var _n46 = model.selectedRecipe;
-					if (_n46.$ === 'Just') {
-						var rec = _n46.a;
-						var _n47 = rec.todos;
-						if (_n47.$ === 'Just') {
-							var list = _n47.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
+					var _n39 = model.selectedRecipe;
+					if (_n39.$ === 'Just') {
+						var rec = _n39.a;
+						return rec.todos;
 					} else {
 						return _List_Nil;
 					}
@@ -9436,16 +9561,10 @@ var author$project$Devs$Update$update = F2(
 				var idx = msg.a;
 				var val = msg.b;
 				var todoList = function () {
-					var _n48 = model.selectedRecipe;
-					if (_n48.$ === 'Just') {
-						var rec = _n48.a;
-						var _n49 = rec.todos;
-						if (_n49.$ === 'Just') {
-							var list = _n49.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
+					var _n40 = model.selectedRecipe;
+					if (_n40.$ === 'Just') {
+						var rec = _n40.a;
+						return rec.todos;
 					} else {
 						return _List_Nil;
 					}
@@ -9472,16 +9591,10 @@ var author$project$Devs$Update$update = F2(
 				var idx = msg.a;
 				var val = msg.b;
 				var todoList = function () {
-					var _n50 = model.selectedRecipe;
-					if (_n50.$ === 'Just') {
-						var rec = _n50.a;
-						var _n51 = rec.todos;
-						if (_n51.$ === 'Just') {
-							var list = _n51.a;
-							return list;
-						} else {
-							return _List_Nil;
-						}
+					var _n41 = model.selectedRecipe;
+					if (_n41.$ === 'Just') {
+						var rec = _n41.a;
+						return rec.todos;
 					} else {
 						return _List_Nil;
 					}
@@ -9506,21 +9619,15 @@ var author$project$Devs$Update$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'RemoveTodoFromRecipe':
 				var todoList = function () {
-					var _n52 = model.selectedRecipe;
-					if (_n52.$ === 'Just') {
-						var rec = _n52.a;
-						var _n53 = rec.todos;
-						if (_n53.$ === 'Just') {
-							var todos = _n53.a;
-							return A2(
-								elm$core$List$sortBy,
-								function ($) {
-									return $.number;
-								},
-								todos);
-						} else {
-							return _List_Nil;
-						}
+					var _n42 = model.selectedRecipe;
+					if (_n42.$ === 'Just') {
+						var rec = _n42.a;
+						return A2(
+							elm$core$List$sortBy,
+							function ($) {
+								return $.number;
+							},
+							rec.todos);
 					} else {
 						return _List_Nil;
 					}
@@ -10755,21 +10862,12 @@ var elm$core$Tuple$pair = F2(
 var elm$html$Html$table = _VirtualDom_node('table');
 var author$project$Pages$EditorTabs$Tab2$showTab = function (model) {
 	var recForEdit = function () {
-		var _n2 = model.selectedRecipe;
-		if (_n2.$ === 'Just') {
-			var rec = _n2.a;
+		var _n1 = model.selectedRecipe;
+		if (_n1.$ === 'Just') {
+			var rec = _n1.a;
 			return rec;
 		} else {
 			return author$project$Devs$Objects$getEmptyRecipe;
-		}
-	}();
-	var tagListValue = function () {
-		var _n1 = recForEdit.tags;
-		if (_n1.$ === 'Just') {
-			var tagList = _n1.a;
-			return tagList;
-		} else {
-			return _List_Nil;
 		}
 	}();
 	var initialTagList = function () {
@@ -10808,7 +10906,7 @@ var author$project$Pages$EditorTabs$Tab2$showTab = function (model) {
 									function ($) {
 										return $.name;
 									},
-									tagListValue))))
+									recForEdit.tags))))
 					])),
 				A2(
 				elm$html$Html$div,
@@ -11118,25 +11216,16 @@ var author$project$Pages$EditorTabs$Tab3$showIngreList = F3(
 	});
 var author$project$Pages$EditorTabs$Tab3$showTab = function (model) {
 	var recForEdit = function () {
-		var _n3 = model.selectedRecipe;
-		if (_n3.$ === 'Just') {
-			var rec = _n3.a;
+		var _n2 = model.selectedRecipe;
+		if (_n2.$ === 'Just') {
+			var rec = _n2.a;
 			return rec;
 		} else {
 			return author$project$Devs$Objects$getEmptyRecipe;
 		}
 	}();
 	var initialUnitList = function () {
-		var _n2 = model.kl.unitList;
-		if (_n2.$ === 'Just') {
-			var src = _n2.a;
-			return src;
-		} else {
-			return _List_Nil;
-		}
-	}();
-	var initialPartList = function () {
-		var _n1 = model.kl.partList;
+		var _n1 = model.kl.unitList;
 		if (_n1.$ === 'Just') {
 			var src = _n1.a;
 			return src;
@@ -11144,11 +11233,11 @@ var author$project$Pages$EditorTabs$Tab3$showTab = function (model) {
 			return _List_Nil;
 		}
 	}();
-	var ingrListOfRec = function () {
-		var _n0 = recForEdit.ingredients;
+	var initialPartList = function () {
+		var _n0 = model.kl.partList;
 		if (_n0.$ === 'Just') {
-			var ingre = _n0.a;
-			return ingre;
+			var src = _n0.a;
+			return src;
 		} else {
 			return _List_Nil;
 		}
@@ -11175,7 +11264,7 @@ var author$project$Pages$EditorTabs$Tab3$showTab = function (model) {
 							function ($) {
 								return $.sortorder;
 							},
-							ingrListOfRec))),
+							recForEdit.ingredients))),
 					_List_fromArray(
 					[
 						A2(
@@ -11376,21 +11465,12 @@ var author$project$Pages$EditorTabs$Tab4$showTodoList = function (todoObj) {
 };
 var author$project$Pages$EditorTabs$Tab4$showTab = function (model) {
 	var recForEdit = function () {
-		var _n1 = model.selectedRecipe;
-		if (_n1.$ === 'Just') {
-			var rec = _n1.a;
+		var _n0 = model.selectedRecipe;
+		if (_n0.$ === 'Just') {
+			var rec = _n0.a;
 			return rec;
 		} else {
 			return author$project$Devs$Objects$getEmptyRecipe;
-		}
-	}();
-	var todoListOfRec = function () {
-		var _n0 = recForEdit.todos;
-		if (_n0.$ === 'Just') {
-			var td = _n0.a;
-			return td;
-		} else {
-			return _List_Nil;
 		}
 	}();
 	return A2(
@@ -11415,7 +11495,7 @@ var author$project$Pages$EditorTabs$Tab4$showTab = function (model) {
 							function ($) {
 								return $.number;
 							},
-							todoListOfRec))),
+							recForEdit.todos))),
 					_List_fromArray(
 					[
 						A2(
@@ -12416,22 +12496,13 @@ var elm$html$Html$h2 = _VirtualDom_node('h2');
 var elm$html$Html$h4 = _VirtualDom_node('h4');
 var author$project$Pages$RecipeView$viewRecipe = F3(
 	function (loginToken, rec, sp) {
-		var tagList = function () {
-			var _n14 = rec.tags;
-			if (_n14.$ === 'Just') {
-				var tags = _n14.a;
-				return tags;
-			} else {
-				return _List_Nil;
-			}
-		}();
 		var sourceYear = function () {
-			var _n12 = rec.source;
-			if (_n12.$ === 'Just') {
-				var source = _n12.a;
-				var _n13 = source.year;
-				if (_n13.$ === 'Just') {
-					var year = _n13.a;
+			var _n10 = rec.source;
+			if (_n10.$ === 'Just') {
+				var source = _n10.a;
+				var _n11 = source.year;
+				if (_n11.$ === 'Just') {
+					var year = _n11.a;
 					return '; Veröffentlicht am: ' + year;
 				} else {
 					return '';
@@ -12441,21 +12512,21 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 			}
 		}();
 		var sourcePage = function () {
-			var _n11 = rec.source_page;
-			if (_n11.$ === 'Just') {
-				var page = _n11.a;
+			var _n9 = rec.source_page;
+			if (_n9.$ === 'Just') {
+				var page = _n9.a;
 				return '; Seite: ' + elm$core$String$fromInt(page);
 			} else {
 				return '';
 			}
 		}();
 		var sourceIsbn = function () {
-			var _n9 = rec.source;
-			if (_n9.$ === 'Just') {
-				var source = _n9.a;
-				var _n10 = source.isbn;
-				if (_n10.$ === 'Just') {
-					var isbn = _n10.a;
+			var _n7 = rec.source;
+			if (_n7.$ === 'Just') {
+				var source = _n7.a;
+				var _n8 = source.isbn;
+				if (_n8.$ === 'Just') {
+					var isbn = _n8.a;
 					return '; ISBN: ' + isbn;
 				} else {
 					return '';
@@ -12464,31 +12535,13 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 				return '';
 			}
 		}();
-		var rec_todos = function () {
-			var _n8 = rec.todos;
-			if (_n8.$ === 'Just') {
-				var todos = _n8.a;
-				return todos;
-			} else {
-				return _List_Nil;
-			}
-		}();
 		var rec_source = function () {
-			var _n7 = rec.source;
-			if (_n7.$ === 'Just') {
-				var source = _n7.a;
+			var _n6 = rec.source;
+			if (_n6.$ === 'Just') {
+				var source = _n6.a;
 				return 'Quelle: ' + source.name;
 			} else {
 				return '';
-			}
-		}();
-		var rec_parts = function () {
-			var _n6 = rec.parts;
-			if (_n6.$ === 'Just') {
-				var parts = _n6.a;
-				return parts;
-			} else {
-				return _List_Nil;
 			}
 		}();
 		var recImage = function () {
@@ -12694,7 +12747,7 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 												function ($) {
 													return $.name;
 												},
-												tagList))))
+												rec.tags))))
 								])),
 							A2(
 							elm$html$Html$figure,
@@ -12756,7 +12809,7 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 															function ($) {
 																return $.name;
 															},
-															rec_parts)))
+															rec.parts)))
 												]))
 										])),
 									A2(
@@ -12789,7 +12842,7 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 													function ($) {
 														return $.number;
 													},
-													rec_todos)))
+													rec.todos)))
 										])),
 									A2(
 									elm$html$Html$div,
@@ -15600,7 +15653,6 @@ var elm$browser$Debugger$History$addRecent = F3(
 				A2(elm$core$List$cons, msg, messages),
 				numMessages + 1));
 	});
-var elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
 var elm$core$Array$bitMask = 4294967295 >>> (32 - elm$core$Array$shiftStep);
 var elm$core$Basics$ge = _Utils_ge;
 var elm$core$Elm$JsArray$push = _JsArray_push;
@@ -15642,7 +15694,6 @@ var elm$core$Array$insertTailInTree = F4(
 			}
 		}
 	});
-var elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
 var elm$core$Array$unsafeReplaceTail = F2(
 	function (newTail, _n0) {
 		var len = _n0.a;
@@ -16653,4 +16704,4 @@ var author$project$RecipeServer$main = elm$browser$Browser$element(
 		view: author$project$RecipeServer$view
 	});
 _Platform_export({'RecipeServer':{'init':author$project$RecipeServer$main(
-	elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.0"},"types":{"message":"Devs.TypeObject.Msg","aliases":{"Devs.Objects.ImagePortData":{"args":[],"type":"{ contents : String.String, filename : String.String }"},"Devs.Objects.Ingredient":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, comment : Maybe.Maybe String.String, part : Maybe.Maybe Devs.Objects.PartLight, quantity : Maybe.Maybe Basics.Float, sortorder : Basics.Int, unit : Maybe.Maybe Devs.Objects.Unit, uuid : String.String }"},"Devs.Objects.InitData":{"args":[],"type":"{ random : Basics.Int }"},"Devs.Objects.Part":{"args":[],"type":"{ id : Basics.Int, name : String.String, ingredients : List.List Devs.Objects.Ingredient, uuid : String.String }"},"Devs.Objects.PartLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Recipe":{"args":[],"type":"{ aikz : Basics.Int, id : Maybe.Maybe Basics.Int, image : Maybe.Maybe String.String, ingredients : Maybe.Maybe (List.List Devs.Objects.Ingredient), parts : Maybe.Maybe (List.List Devs.Objects.Part), name : String.String, translate : Maybe.Maybe String.String, number : Maybe.Maybe Basics.Int, number_comment : Maybe.Maybe String.String, nv_carbohydrates : Maybe.Maybe Basics.Float, nv_energy : Maybe.Maybe Basics.Float, nv_fat : Maybe.Maybe Basics.Float, nv_protein : Maybe.Maybe Basics.Float, nv_size : Maybe.Maybe Basics.Int, source : Maybe.Maybe Devs.Objects.Source, source_page : Maybe.Maybe Basics.Int, tags : Maybe.Maybe (List.List Devs.Objects.Tag), todos : Maybe.Maybe (List.List Devs.Objects.Todo), uuid : String.String }"},"Devs.Objects.RecipeLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Source":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, isbn : Maybe.Maybe String.String, name : String.String, year : Maybe.Maybe String.String, uuid : String.String }"},"Devs.Objects.Tag":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, tagType : Devs.Objects.TagtypeShort, uuid : String.String }"},"Devs.Objects.Tagtype":{"args":[],"type":"{ id : Basics.Int, name : String.String, tagList : List.List Devs.Objects.Tag, uuid : String.String }"},"Devs.Objects.TagtypeShort":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Todo":{"args":[],"type":"{ id : Basics.Int, image : Maybe.Maybe String.String, image_comment : Maybe.Maybe String.String, number : Basics.Int, text : String.String, uuid : String.String }"},"Devs.Objects.Unit":{"args":[],"type":"{ id : Basics.Int, name : String.String, unitCategory : Devs.Objects.UnitCategory, uuid : String.String }"},"Devs.Objects.UnitCategory":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"}},"unions":{"Devs.TypeObject.Msg":{"args":[],"tags":{"NoOp":[],"Initialize":["Devs.Objects.InitData"],"ImageSelected":[],"ImageRead":["Devs.Objects.ImagePortData"],"ShowOverView":[],"ToggleEditForm":["Devs.Objects.EditForm"],"GetLoginForm":[],"SetUsernameForCheck":["String.String"],"SetPasswortForCheck":["String.String"],"Login":[],"HandleLogin":["Result.Result Http.Error String.String"],"ShowRecipesOfTag":["Maybe.Maybe Devs.Objects.Tag"],"ShowRecipe":["Maybe.Maybe Devs.Objects.RecipeLight"],"EditRecipe":[],"InsertRecipe":[],"SaveRecipe":[],"SavedRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"DeleteRecipe":[],"SetAikz":["Basics.Int"],"SetName":["String.String"],"SetTranslate":["String.String"],"SetNumber":["String.String"],"SetNumberComment":["String.String"],"SetRecImage":["String.String"],"RemoveImageFromRecipe":[],"SetCarbo":["String.String"],"SetEnergy":["String.String"],"SetFat":["String.String"],"SetProt":["String.String"],"SetSize":["String.String"],"SetSourcePage":["String.String"],"SetSource":["Basics.Int"],"AddNewSource":[],"SetSrcName":["String.String"],"SetSrcIsbn":["String.String"],"SetSrcYear":["String.String"],"CancelSourceEdit":[],"SaveNewSource":[],"SavedSource":["Result.Result Http.Error Devs.Objects.Source"],"ChooseNewTag":[],"SetChoosenTag":["Basics.Int"],"RemoveTagFromRec":["Basics.Int"],"CancelAddTag":[],"AddTagToRecipe":[],"AddIngreToRecipe":[],"SetIngreOrder":["Basics.Int","String.String"],"SetIngreName":["Basics.Int","String.String"],"SetIngrePart":["Basics.Int","Basics.Int"],"SetIngreUnit":["Basics.Int","Basics.Int"],"SetIngreQuant":["Basics.Int","String.String"],"SetIngreComment":["Basics.Int","String.String"],"RemoveIngreFromRecipe":[],"AddTodoToRecipe":[],"SetTodoNr":["Basics.Int","String.String"],"SetTodoText":["Basics.Int","String.String"],"SetTodoImg":["Basics.Int","String.String"],"SetTodoImgComment":["Basics.Int","String.String"],"RemoveTodoFromRecipe":[],"CancelRecipeEdit":[],"ConfirmDelete":[],"CancelDelete":[],"CancelLogin":[],"CloseAlert":[],"CloseLoginAlert":[],"CloseRecipeAlert":[],"RemoveSelectedTag":[],"RemoveSelectedRecipe":[],"ListTagtypes":["Result.Result Http.Error (List.List Devs.Objects.Tagtype)"],"ListRecipesForTag":["Result.Result Http.Error (List.List Devs.Objects.RecipeLight)"],"SetRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"SetUnitList":["Result.Result Http.Error (List.List Devs.Objects.Unit)"],"SetSourceList":["Result.Result Http.Error (List.List Devs.Objects.Source)"],"SetTagList":["Result.Result Http.Error (List.List Devs.Objects.Tag)"],"SetPartList":["Result.Result Http.Error (List.List Devs.Objects.PartLight)"],"SetSearchInput":["String.String"],"SearchRecipe":[],"UploadImage":["Result.Result Http.Error Basics.Bool"]}},"Devs.Objects.EditForm":{"args":[],"tags":{"BasicForm":[],"TagForm":[],"IngredientForm":[],"TodoForm":[],"FootValueForm":[],"None":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}}}}})}});}(this));
+	elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.0"},"types":{"message":"Devs.TypeObject.Msg","aliases":{"Devs.Objects.ImagePortData":{"args":[],"type":"{ contents : String.String, filename : String.String }"},"Devs.Objects.Ingredient":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, comment : Maybe.Maybe String.String, part : Maybe.Maybe Devs.Objects.PartLight, quantity : Maybe.Maybe Basics.Float, sortorder : Basics.Int, unit : Maybe.Maybe Devs.Objects.Unit, uuid : String.String }"},"Devs.Objects.InitData":{"args":[],"type":"{ random : Basics.Int }"},"Devs.Objects.Part":{"args":[],"type":"{ id : Basics.Int, name : String.String, ingredients : List.List Devs.Objects.Ingredient, uuid : String.String }"},"Devs.Objects.PartLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Recipe":{"args":[],"type":"{ aikz : Basics.Int, id : Maybe.Maybe Basics.Int, image : Maybe.Maybe String.String, ingredients : List.List Devs.Objects.Ingredient, parts : List.List Devs.Objects.Part, name : String.String, translate : Maybe.Maybe String.String, number : Maybe.Maybe Basics.Int, number_comment : Maybe.Maybe String.String, nv_carbohydrates : Maybe.Maybe Basics.Float, nv_energy : Maybe.Maybe Basics.Float, nv_fat : Maybe.Maybe Basics.Float, nv_protein : Maybe.Maybe Basics.Float, nv_size : Maybe.Maybe Basics.Int, source : Maybe.Maybe Devs.Objects.Source, source_page : Maybe.Maybe Basics.Int, tags : List.List Devs.Objects.Tag, todos : List.List Devs.Objects.Todo, uuid : String.String }"},"Devs.Objects.RecipeLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Source":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, isbn : Maybe.Maybe String.String, name : String.String, year : Maybe.Maybe String.String, uuid : String.String }"},"Devs.Objects.Tag":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, tagType : Devs.Objects.TagtypeShort, uuid : String.String }"},"Devs.Objects.Tagtype":{"args":[],"type":"{ id : Basics.Int, name : String.String, tagList : List.List Devs.Objects.Tag, uuid : String.String }"},"Devs.Objects.TagtypeShort":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Todo":{"args":[],"type":"{ id : Basics.Int, image : Maybe.Maybe String.String, image_comment : Maybe.Maybe String.String, number : Basics.Int, text : String.String, uuid : String.String }"},"Devs.Objects.Unit":{"args":[],"type":"{ id : Basics.Int, name : String.String, unitCategory : Devs.Objects.UnitCategory, uuid : String.String }"},"Devs.Objects.UnitCategory":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"}},"unions":{"Devs.TypeObject.Msg":{"args":[],"tags":{"NoOp":[],"Initialize":["Devs.Objects.InitData"],"ImageSelected":[],"ImageRead":["Devs.Objects.ImagePortData"],"ShowOverView":[],"ToggleEditForm":["Devs.Objects.EditForm"],"GetLoginForm":[],"SetUsernameForCheck":["String.String"],"SetPasswortForCheck":["String.String"],"Login":[],"HandleLogin":["Result.Result Http.Error String.String"],"ShowRecipesOfTag":["Maybe.Maybe Devs.Objects.Tag"],"ShowRecipe":["Maybe.Maybe Devs.Objects.RecipeLight"],"EditRecipe":[],"InsertRecipe":[],"SaveRecipe":[],"SavedRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"DeleteRecipe":[],"SetAikz":["Basics.Int"],"SetName":["String.String"],"SetTranslate":["String.String"],"SetNumber":["String.String"],"SetNumberComment":["String.String"],"SetRecImage":["String.String"],"RemoveImageFromRecipe":[],"SetCarbo":["String.String"],"SetEnergy":["String.String"],"SetFat":["String.String"],"SetProt":["String.String"],"SetSize":["String.String"],"SetSourcePage":["String.String"],"SetSource":["Basics.Int"],"AddNewSource":[],"SetSrcName":["String.String"],"SetSrcIsbn":["String.String"],"SetSrcYear":["String.String"],"CancelSourceEdit":[],"SaveNewSource":[],"SavedSource":["Result.Result Http.Error Devs.Objects.Source"],"ChooseNewTag":[],"SetChoosenTag":["Basics.Int"],"RemoveTagFromRec":["Basics.Int"],"CancelAddTag":[],"AddTagToRecipe":[],"AddIngreToRecipe":[],"SetIngreOrder":["Basics.Int","String.String"],"SetIngreName":["Basics.Int","String.String"],"SetIngrePart":["Basics.Int","Basics.Int"],"SetIngreUnit":["Basics.Int","Basics.Int"],"SetIngreQuant":["Basics.Int","String.String"],"SetIngreComment":["Basics.Int","String.String"],"RemoveIngreFromRecipe":[],"AddTodoToRecipe":[],"SetTodoNr":["Basics.Int","String.String"],"SetTodoText":["Basics.Int","String.String"],"SetTodoImg":["Basics.Int","String.String"],"SetTodoImgComment":["Basics.Int","String.String"],"RemoveTodoFromRecipe":[],"CancelRecipeEdit":[],"ConfirmDelete":[],"CancelDelete":[],"CancelLogin":[],"CloseAlert":[],"CloseLoginAlert":[],"CloseRecipeAlert":[],"RemoveSelectedTag":[],"RemoveSelectedRecipe":[],"ListTagtypes":["Result.Result Http.Error (List.List Devs.Objects.Tagtype)"],"ListRecipesForTag":["Result.Result Http.Error (List.List Devs.Objects.RecipeLight)"],"SetRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"SetUnitList":["Result.Result Http.Error (List.List Devs.Objects.Unit)"],"SetSourceList":["Result.Result Http.Error (List.List Devs.Objects.Source)"],"SetTagList":["Result.Result Http.Error (List.List Devs.Objects.Tag)"],"SetPartList":["Result.Result Http.Error (List.List Devs.Objects.PartLight)"],"SetSearchInput":["String.String"],"SearchRecipe":[],"UploadImage":["Result.Result Http.Error Basics.Bool"]}},"Devs.Objects.EditForm":{"args":[],"tags":{"BasicForm":[],"TagForm":[],"IngredientForm":[],"TodoForm":[],"FootValueForm":[],"None":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}}}}})}});}(this));

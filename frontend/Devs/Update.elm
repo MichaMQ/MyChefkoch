@@ -6,6 +6,7 @@ import List exposing (..)
 import List.Extra as ListE
 import Http
 import UUID exposing (UUID)
+import Random
 --import Debug exposing (log)
 
 import Devs.Objects as O exposing (..)
@@ -43,10 +44,8 @@ update msg model =
             if String.length loginToken > 0 then
               ( { model | subAlertMessage = Nothing, loginToken = Just loginToken } , Cmd.none )
             else ( { model | subAlertMessage = Just "Mindestens eine der eingegeben Daten ist falsch!" }, Cmd.none )
-        HandleLogin (Err error) ->
-          ( { model | recAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
-        ShowOverView ->
-          ( { model | selectedRecipe = Nothing, selectedTag = Nothing }, Cmd.none )
+        HandleLogin (Err error) -> ( { model | recAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
+        ShowOverView -> ( { model | selectedRecipe = Nothing, selectedTag = Nothing }, Cmd.none )
         ToggleEditForm formEnum ->
           let
             fe = if formEnum == O.None then Nothing else Just formEnum
@@ -59,10 +58,13 @@ update msg model =
               Nothing -> {id = -1, name = "", uuid=UUID.toString UUID.nil}
           in
             ( model, getRecipe model selectedRecipe )
-        EditRecipe ->
-          ( { model | selectedRecipe = model.selectedRecipe }, Cmd.none )
+        EditRecipe -> ( { model | selectedRecipe = model.selectedRecipe }, Cmd.none )
         InsertRecipe ->
-          ( { model | selectedRecipe = Just O.getEmptyRecipe }, Cmd.none )
+          let
+            ( newUuid, newSeed ) = Random.step UUID.generator (getSeed model)
+            newRec = O.getEmptyRecipe
+          in
+            ( { model | currentSeed = Just newSeed, selectedRecipe = Just {newRec | uuid = UUID.toString newUuid} }, Cmd.none )
         SaveRecipe ->
           let
             errorMsg = case model.selectedRecipe of
@@ -74,12 +76,9 @@ update msg model =
               Nothing -> case model.selectedRecipe of
                 Just newRecipe -> ( model, saveRecipe model newRecipe )
                 Nothing -> ( model, Cmd.none )
-        SavedRecipe (Ok savedRecipe) ->
-          ( { model | selectedRecipe = Just savedRecipe, recAlertMessage = Nothing }, Cmd.none )
-        SavedRecipe (Err error) ->
-          ( { model | recAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
-        DeleteRecipe ->
-          ( { model | deleteRecipe = False, selectedTag = Nothing, recipesOfSelectedTag = Nothing, selectedRecipe = Nothing, newSource = Nothing }, Cmd.none )
+        SavedRecipe (Ok savedRecipe) -> ( { model | selectedRecipe = Just savedRecipe, recAlertMessage = Nothing }, Cmd.none )
+        SavedRecipe (Err error) -> ( { model | recAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
+        DeleteRecipe -> ( { model | deleteRecipe = False, selectedTag = Nothing, recipesOfSelectedTag = Nothing, selectedRecipe = Nothing, newSource = Nothing }, Cmd.none )
         CloseRecipeAlert -> ( { model | recAlertMessage = Nothing }, Cmd.none )
         SetAikz val ->           ( { model | selectedRecipe = (RecipeObj.setAikz model.selectedRecipe val) } , Cmd.none)
         SetName val ->           ( { model | selectedRecipe = (RecipeObj.setName model.selectedRecipe val) } , Cmd.none)
@@ -111,7 +110,12 @@ update msg model =
               Nothing -> O.getEmptySource
           in
             ( { model | selectedRecipe = (RecipeObj.setSource model.selectedRecipe selectedSrc) } , Cmd.none)
-        AddNewSource -> ( { model | newSource = Just O.getEmptySource }, Cmd.none)
+        AddNewSource ->
+          let
+            ( newUuid, newSeed ) = Random.step UUID.generator (getSeed model)
+            newSource = O.getEmptySource
+          in
+            ( { model | currentSeed = Just newSeed, newSource = Just { newSource | uuid = UUID.toString newUuid } }, Cmd.none)
         SetSrcName val -> ( { model | newSource = (RecipeObj.setSourceName model.newSource val) }, Cmd.none)
         SetSrcIsbn val -> ( { model | newSource = (RecipeObj.setSourceIsbn model.newSource val) }, Cmd.none)
         SetSrcYear val -> ( { model | newSource = (RecipeObj.setSourceYear model.newSource val) }, Cmd.none)
@@ -135,10 +139,8 @@ update msg model =
               Nothing -> [savedSource]
           in
             ( { model | newSource = Nothing, kl = (setInitialSource model.kl newSourceList) } , Cmd.none)
-        SavedSource (Err error) ->
-          ( { model | subAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
-        ChooseNewTag ->
-          ( { model | addTag = Just O.getEmptyTag } , Cmd.none)
+        SavedSource (Err error) -> ( { model | subAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
+        ChooseNewTag -> ( { model | addTag = Just O.getEmptyTag } , Cmd.none)
         SetChoosenTag idVal ->
           let
             tagList = case model.kl.tagList of
@@ -160,9 +162,7 @@ update msg model =
           let
 --            _ = Debug.log "idx: " idx
             tagList = case model.selectedRecipe of
-              Just rec -> case rec.tags of
-                Just list -> list
-                Nothing -> []
+              Just rec -> rec.tags
               Nothing -> []
             newTagList = ListE.removeAt idx tagList
           in
@@ -177,10 +177,9 @@ update msg model =
           ( { model | addTag = Nothing, subAlertMessage = Nothing } , Cmd.none)
         AddIngreToRecipe ->
           let
+            ( newUuid, newSeed ) = Random.step UUID.generator (getSeed model)
             ingreList = case model.selectedRecipe of
-              Just rec -> case rec.ingredients of
-                Just ingre -> List.sortBy .sortorder ingre
-                Nothing -> []
+              Just rec -> List.sortBy .sortorder rec.ingredients
               Nothing -> []
             lastIdx = (List.length ingreList) - 1
             newOrder = if lastIdx > -1
@@ -195,16 +194,15 @@ update msg model =
                   Nothing -> O.getEmptyPart
                 Nothing -> O.getEmptyPart
               else O.getEmptyPart
+            newIngre = O.getEmptyIngre newOrder (Just newPart)
           in
-            ( { model | selectedRecipe = (RecipeObj.addToIngredients model.selectedRecipe (O.getEmptyIngre newOrder (Just newPart))) } , Cmd.none)
+            ( { model | currentSeed = Just newSeed, selectedRecipe = (RecipeObj.addToIngredients model.selectedRecipe { newIngre | uuid = UUID.toString newUuid }) } , Cmd.none)
         SetIngreOrder idx val ->
           let
 --            _ = Debug.log "idx: " idx
             newOrder = Maybe.withDefault 0 <| String.toInt val
             ingreList = case model.selectedRecipe of
-              Just rec -> case rec.ingredients of
-                Just list -> list
-                Nothing -> []
+              Just rec -> rec.ingredients
               Nothing -> []
             ingreForEdit = RecipeObj.setIngreOrder (getIngreForEdit ingreList idx) newOrder
             newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
@@ -214,9 +212,7 @@ update msg model =
           let
 --            _ = Debug.log "idx: " idx
             ingreList = case model.selectedRecipe of
-              Just rec -> case rec.ingredients of
-                Just list -> list
-                Nothing -> []
+              Just rec -> rec.ingredients
               Nothing -> []
             ingreForEdit = RecipeObj.setIngreName (getIngreForEdit ingreList idx) val
             newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
@@ -226,9 +222,7 @@ update msg model =
           let
 --            _ = Debug.log "idx: " idx
             ingreList = case model.selectedRecipe of
-              Just rec -> case rec.ingredients of
-                Just list -> list
-                Nothing -> []
+              Just rec -> rec.ingredients
               Nothing -> []
             ingreForEdit = RecipeObj.setIngreComment (getIngreForEdit ingreList idx) val
             newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
@@ -238,9 +232,7 @@ update msg model =
           let
             newQuant = Maybe.withDefault 0 <| String.toFloat val
             ingreList = case model.selectedRecipe of
-              Just rec -> case rec.ingredients of
-                Just list -> list
-                Nothing -> []
+              Just rec -> rec.ingredients
               Nothing -> []
             ingreForEdit = RecipeObj.setIngreQuant (getIngreForEdit ingreList idx) newQuant
             newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
@@ -249,22 +241,22 @@ update msg model =
         SetIngrePart idx partId ->
           let
 --            _ = Debug.log "idx: " idx
-            partList = case model.kl.partList of
+            partKeyList = case model.kl.partList of
               Just list -> list
               Nothing -> []
-            selectedPart = case ( ListE.find ( \part -> part.id == partId ) partList ) of
+            selectedPart = case ( ListE.find ( \part -> part.id == partId ) partKeyList ) of
               Just part -> part
               Nothing -> O.getEmptyPart
 --            newPart = Maybe.withDefault 0 <| String.toInt val
             ingreList = case model.selectedRecipe of
-              Just rec -> case rec.ingredients of
-                Just list -> list
-                Nothing -> []
+              Just rec -> rec.ingredients
               Nothing -> []
+            selRec = RecipeObj.setParts model.selectedRecipe selectedPart
+            _ = Debug.log "selRec: " selRec
             ingreForEdit = RecipeObj.setIngrePart (getIngreForEdit ingreList idx) selectedPart
             newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
           in
-            ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
+            ( { model | selectedRecipe = (RecipeObj.setIngredients selRec newIngreList) } , Cmd.none)
         SetIngreUnit idx unitId ->
           let
 --            _ = Debug.log "idx: " idx
@@ -275,9 +267,7 @@ update msg model =
               Just tag -> tag
               Nothing -> O.getEmptyUnit
             ingreList = case model.selectedRecipe of
-              Just rec -> case rec.ingredients of
-                Just list -> list
-                Nothing -> []
+              Just rec -> rec.ingredients
               Nothing -> []
             ingreForEdit = RecipeObj.setIngreUnit (getIngreForEdit ingreList idx) selectedUnit
             newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
@@ -286,9 +276,7 @@ update msg model =
         RemoveIngreFromRecipe ->
           let
             ingreList = case model.selectedRecipe of
-              Just rec -> case rec.ingredients of
-                Just ingre -> List.sortBy .sortorder ingre
-                Nothing -> []
+              Just rec -> List.sortBy .sortorder rec.ingredients
               Nothing -> []
             lastIdx = (List.length ingreList) - 1
             newIngreList = if List.length ingreList > 0
@@ -299,10 +287,9 @@ update msg model =
             ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
         AddTodoToRecipe ->
           let
+            ( newUuid, newSeed ) = Random.step UUID.generator (getSeed model)
             todoList = case model.selectedRecipe of
-              Just rec -> case rec.todos of
-                Just todos -> List.sortBy .number todos
-                Nothing -> []
+              Just rec -> List.sortBy .number rec.todos
               Nothing -> []
             lastIdx = (List.length todoList) - 1
             newNumber = if lastIdx > -1
@@ -310,16 +297,15 @@ update msg model =
                 Just todo -> (todo.number + 1)
                 Nothing -> 0
               else 0
+            newTodo = O.getEmptyTodo newNumber
           in
-            ( { model | selectedRecipe = (RecipeObj.addToTodos model.selectedRecipe (O.getEmptyTodo newNumber)) } , Cmd.none)
+            ( { model | currentSeed = Just newSeed, selectedRecipe = (RecipeObj.addToTodos model.selectedRecipe {newTodo | uuid = UUID.toString newUuid}) } , Cmd.none)
         SetTodoNr idx val ->
           let
 --            _ = Debug.log "idx: " idx
             newNr = Maybe.withDefault 0 <| String.toInt val
             todoList = case model.selectedRecipe of
-              Just rec -> case rec.todos of
-                Just list -> list
-                Nothing -> []
+              Just rec -> rec.todos
               Nothing -> []
             todoForEdit = RecipeObj.setTodoNr (getTodoForEdit todoList idx) newNr
             newTodoList = ListE.updateAt idx (\todo -> todoForEdit) todoList
@@ -329,9 +315,7 @@ update msg model =
           let
 --            _ = Debug.log "idx: " idx
             todoList = case model.selectedRecipe of
-              Just rec -> case rec.todos of
-                Just list -> list
-                Nothing -> []
+              Just rec -> rec.todos
               Nothing -> []
             todoForEdit = RecipeObj.setTodoText (getTodoForEdit todoList idx) val
             newTodoList = ListE.updateAt idx (\todo -> todoForEdit) todoList
@@ -341,9 +325,7 @@ update msg model =
           let
 --            _ = Debug.log "idx: " idx
             todoList = case model.selectedRecipe of
-              Just rec -> case rec.todos of
-                Just list -> list
-                Nothing -> []
+              Just rec -> rec.todos
               Nothing -> []
             todoForEdit = RecipeObj.setTodoImg (getTodoForEdit todoList idx) val
             newTodoList = ListE.updateAt idx (\todo -> todoForEdit) todoList
@@ -353,9 +335,7 @@ update msg model =
           let
 --            _ = Debug.log "idx: " idx
             todoList = case model.selectedRecipe of
-              Just rec -> case rec.todos of
-                Just list -> list
-                Nothing -> []
+              Just rec -> rec.todos
               Nothing -> []
             todoForEdit = RecipeObj.setTodoImgComment (getTodoForEdit todoList idx) val
             newTodoList = ListE.updateAt idx (\todo -> todoForEdit) todoList
@@ -364,9 +344,7 @@ update msg model =
         RemoveTodoFromRecipe ->
           let
             todoList = case model.selectedRecipe of
-              Just rec -> case rec.todos of
-                Just todos -> List.sortBy .number todos
-                Nothing -> []
+              Just rec -> List.sortBy .number rec.todos
               Nothing -> []
             lastIdx = (List.length todoList) - 1
             newTodoList = if List.length todoList > 0
@@ -436,28 +414,23 @@ update msg model =
 -- Functions
 validateRecipe: Recipe -> Maybe String
 validateRecipe rec =
-  let
-    ingreList = case rec.ingredients of
-      Just list -> list
-      Nothing -> []
-    todoList = case rec.todos of
-      Just list -> list
-      Nothing -> []
-    tagList = case rec.tags of
-      Just list -> list
-      Nothing -> []
-  in
     if String.isEmpty rec.name
       then Just "Es muss ein Namen eingegeben werden."
       else case rec.source of
-        Just src -> if List.isEmpty ingreList
+        Just src -> if List.isEmpty rec.ingredients
           then Just "Es muss mindestens eine Zutat eingegeben werden."
-          else if List.isEmpty todoList
+          else if List.isEmpty rec.todos
             then Just "Es muss mindestens eine Anweisung eingegeben werden."
-            else if List.isEmpty tagList
+            else if List.isEmpty rec.tags
               then Just "Es muss mindestens ein Tag eingegeben werden."
               else Nothing
         Nothing -> Just "Es muss eine Quelle angegeben werden."
+
+getSeed: Model -> Random.Seed
+getSeed model =
+  case model.currentSeed of
+      Just seed ->  seed
+      Nothing -> Random.initialSeed model.random
 
 getIngreForEdit: List Ingredient -> Int -> Ingredient
 getIngreForEdit ingreList idx =

@@ -132,58 +132,66 @@ setSource recipe newSource =
     Just rec -> Just { rec | source = Just newSource }
     Nothing -> Nothing
 
+setParts: Maybe Recipe -> PartLight -> Maybe Recipe
+setParts recipe part =
+  let
+    rec = case recipe of
+      Just r -> r
+      Nothing -> Objects.getEmptyRecipe
+    pl = if List.length (List.filter (\item -> (hasIngreWithThisPart item part.uuid)) rec.ingredients) > 0
+      then rec.parts
+      else List.append rec.parts [Objects.getPartOfPartLight part]
+  in
+    Just { rec | parts = pl }
+
+hasIngreWithThisPart: Ingredient -> String -> Bool
+hasIngreWithThisPart ingre pUuid =
+  case ingre.part of
+      Just pl -> if pl.uuid == pUuid then True else False
+      Nothing -> False
+
 setIngredients: Maybe Recipe -> List Ingredient -> Maybe Recipe
 setIngredients recipe newIngreList =
-  case recipe of
-    Just rec -> Just { rec | ingredients = Just newIngreList }
-    Nothing -> Nothing
+  let
+    rec = case recipe of
+      Just r -> { r | ingredients = newIngreList }
+      Nothing -> Objects.getEmptyRecipe
+    newPartList = List.map (setIngreToPart rec.ingredients) rec.parts
+  in
+    Just { rec | parts = newPartList }
+
+setIngreToPart: (List Ingredient) -> Part -> Part
+setIngreToPart ingreList part =
+  { part | ingredients = List.filter (\item -> (hasIngreWithThisPart item part.uuid)) ingreList}
 
 addToIngredients: Maybe Recipe -> Ingredient -> Maybe Recipe
 addToIngredients recipe newIngre =
   case recipe of
-    Just rec ->
-      let
-        ingreList = case rec.ingredients of
-          Just ingre -> ingre
-          Nothing -> []
-      in
-        Just { rec | ingredients = Just (List.concat [ ingreList, [newIngre] ]) }
+    Just rec -> Just { rec | ingredients = List.concat [ rec.ingredients, [newIngre] ] }
     Nothing -> Nothing
 
 setTodos: Maybe Recipe -> List Todo -> Maybe Recipe
 setTodos recipe newTodoList =
   case recipe of
-    Just rec -> Just { rec | todos = Just newTodoList }
+    Just rec -> Just { rec | todos = newTodoList }
     Nothing -> Nothing
 
 addToTodos: Maybe Recipe -> Todo -> Maybe Recipe
 addToTodos recipe newTodo =
   case recipe of
-    Just rec ->
-      let
-        todoList = case rec.todos of
-          Just todo -> todo
-          Nothing -> []
-      in
-        Just { rec | todos = Just (List.concat [ todoList, [newTodo] ]) }
+    Just rec -> Just { rec | todos = List.concat [ rec.todos, [newTodo] ] }
     Nothing -> Nothing
 
 setTags: Maybe Recipe -> List Tag -> Maybe Recipe
 setTags recipe newTagList =
   case recipe of
-    Just rec -> Just { rec | tags = Just newTagList }
+    Just rec -> Just { rec | tags = newTagList }
     Nothing -> Nothing
 
 addToTags: Maybe Recipe -> Tag -> Maybe Recipe
 addToTags recipe newTag =
   case recipe of
-    Just rec ->
-      let
-        tagList = case rec.tags of
-          Just tags -> tags
-          Nothing -> []
-      in
-        Just { rec | tags = Just (List.concat [ tagList, [newTag] ]) }
+    Just rec -> Just { rec | tags = List.concat [ rec.tags, [newTag] ] }
     Nothing -> Nothing
 
 {-

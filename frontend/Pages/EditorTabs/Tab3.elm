@@ -28,15 +28,12 @@ showTab model =
     initialPartList = case model.kl.partList of
       Just src -> src
       Nothing -> []
-    ingrListOfRec = case recForEdit.ingredients of
-      Just ingre -> ingre
-      Nothing -> []
 --    _ = Debug.log "recForEdit: " recForEdit
   in
         Html.div[ class "showTabContent" ](
           List.concat [
             [getLabelRow],
-            ( List.map (showIngreList initialUnitList initialPartList) (indexedMap Tuple.pair (sortBy .sortorder ingrListOfRec)) ),
+            ( List.map (showIngreList initialUnitList initialPartList) (indexedMap Tuple.pair (sortBy .sortorder recForEdit.ingredients)) ),
             [Html.div[][
               Html.button [ onClick TO.AddIngreToRecipe ][ Html.text "Zutat hinzufügen" ]
             ]]

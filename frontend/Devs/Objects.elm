@@ -32,8 +32,8 @@ type alias Recipe = {
   aikz: Int,
   id: Maybe Int,
   image: Maybe String,
-  ingredients: Maybe (List Ingredient),
-  parts: Maybe (List Part),
+  ingredients: List Ingredient,
+  parts: List Part,
   name: String,
   translate: Maybe String,
   number: Maybe Int,
@@ -45,8 +45,8 @@ type alias Recipe = {
   nv_size: Maybe Int,
   source: Maybe Source,
   source_page: Maybe Int,
-  tags: Maybe (List Tag),
-  todos: Maybe (List Todo),
+  tags: List Tag,
+  todos: List Todo,
   uuid: String}
 type alias ImagePortData = { contents : String, filename : String }
 
@@ -166,6 +166,9 @@ getEmptyTagtype = {id=0, name="", tagList=[], uuid=UUID.toString UUID.nil}
 getEmptyPart: PartLight
 getEmptyPart = {id=-2, name="Sonstige Zutaten", uuid=UUID.toString UUID.nil}
 
+getPartOfPartLight: PartLight -> Part
+getPartOfPartLight pl = {id=pl.id, name=pl.name, ingredients=[], uuid=pl.uuid}
+
 getEmptyTag: Tag
 getEmptyTag = {id=Nothing, name="", tagType={id=Nothing, name="", uuid=UUID.toString UUID.nil}, uuid=UUID.toString UUID.nil}
 
@@ -174,8 +177,8 @@ getEmptyRecipe = {
     aikz=1
     , id=Nothing
     , image=Nothing
-    , ingredients=Nothing
-    , parts=Nothing
+    , ingredients=[]
+    , parts=[]
     , name=""
     , translate = Nothing
     , number=Nothing
@@ -187,7 +190,7 @@ getEmptyRecipe = {
     , nv_size=Nothing
     , source=Nothing
     , source_page=Nothing
-    , tags=Nothing
-    , todos=Nothing
+    , tags=[]
+    , todos=[]
     , uuid=UUID.toString UUID.nil
   }

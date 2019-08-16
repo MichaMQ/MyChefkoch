@@ -16,16 +16,13 @@ showTab model =
     recForEdit = case model.selectedRecipe of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
-    tagListValue = case recForEdit.tags of
-      Just tagList -> tagList
-      Nothing -> []
     initialTagList = case model.kl.tagList of
       Just tags -> tags
       Nothing -> []
   in
         Html.div[ class "showTabContent" ][
           Html.div[][
-            Html.table [ ]( List.map (showTagDiv initialTagList) (indexedMap Tuple.pair (sortBy .name tagListValue)) )
+            Html.table [ ]( List.map (showTagDiv initialTagList) (indexedMap Tuple.pair (sortBy .name recForEdit.tags)) )
           ],
           Html.div[][
             Html.button [ onClick TO.ChooseNewTag ][ Html.text "Tag hinzufügen" ]

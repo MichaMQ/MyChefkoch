@@ -51,15 +51,9 @@ recipeEncoder rec =
           , ( "source", case rec.source of
             Just val -> sourceEncoder val
             Nothing -> Encode.null )
-          , ( "ingredients", case rec.ingredients of
-            Just list1 -> Encode.list ingreEncoder list1
-            Nothing -> Encode.null )
-          , ( "tags", case rec.tags of
-            Just list2 -> Encode.list tagEncoder list2
-            Nothing -> Encode.null )
-          , ( "todos", case rec.todos of
-            Just list3 -> Encode.list todoEncoder list3
-            Nothing -> Encode.null )
+          , ( "ingredients", Encode.list ingreEncoder rec.ingredients )
+          , ( "tags", Encode.list tagEncoder rec.tags )
+          , ( "todos", Encode.list todoEncoder rec.todos )
           , ( "uuid", Encode.string rec.uuid )
           ]
     in

@@ -43,9 +43,6 @@ viewRecipe loginToken rec sp =
         Just isbn -> PU.getEditButton sp (Just True) "amazon.png" (Just (amazonUrl ++ (String.replace "-" "" isbn))) TO.NoOp []
         Nothing -> Html.text ""
       Nothing -> Html.text ""
-    tagList = case rec.tags of
-      Just tags -> tags
-      Nothing -> []
     number_comment = case rec.number_comment of
       Just comment -> comment
       Nothing -> "Portionen"
@@ -55,15 +52,6 @@ viewRecipe loginToken rec sp =
     recImage = case rec.image of
       Just img -> Html.img [ class "recipeImg", src (sp.imagePath ++ img) ][]
       Nothing -> Html.text ""
-    rec_parts = case rec.parts of
-      Just parts -> parts
-      Nothing -> []
---    rec_ingredients = case rec.ingredients of
---      Just ingredients -> ingredients
---      Nothing -> []
-    rec_todos = case rec.todos of
-      Just todos -> todos
-      Nothing -> []
   in
     Html.div [ id "contentDiv", class "cf" ] [
       Html.div[ class "noprint" ][
@@ -79,7 +67,7 @@ viewRecipe loginToken rec sp =
         , Html.div [ id "recipeSource", Attr.style "clear" "both" ][ Html.text (rec_source ++ sourcePage ++ sourceYear ++ sourceIsbn), amazonLink ]
         , Html.div [ id "recipeTags" ][
           PU.getEditHeader (U.isLoggedIn loginToken) "Tags:" (TO.ToggleEditForm O.TagForm)
-          , Html.text (" " ++ (String.join ", " (List.map getTagName (sortBy .name tagList))))
+          , Html.text (" " ++ (String.join ", " (List.map getTagName (sortBy .name rec.tags))))
         ]
         , Html.figure [][ recImage, Html.figcaption [][ Html.text rec_number ] ],
         Html.div [ id "recipe" ][
@@ -87,13 +75,13 @@ viewRecipe loginToken rec sp =
             Html.h4 [][
               PU.getEditHeader (U.isLoggedIn loginToken) "Zutaten" (TO.ToggleEditForm O.IngredientForm)
             ]
-            , Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showPartRow (sortBy .name rec_parts) ) ]
+            , Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showPartRow (sortBy .name rec.parts) ) ]
           ],
           Html.div [ id "todosDiv" ][
             Html.h4 [][
               PU.getEditHeader (U.isLoggedIn loginToken) "Zubereitung" (TO.ToggleEditForm O.TodoForm)
             ]
-            , Html.div [] (List.map (showTodoRow sp) (sortBy .number rec_todos))
+            , Html.div [] (List.map (showTodoRow sp) (sortBy .number rec.todos))
           ],
           Html.div [ class "clear" ][]
         ]

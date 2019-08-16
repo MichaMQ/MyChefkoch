@@ -21,14 +21,11 @@ showTab model =
     recForEdit = case model.selectedRecipe of
       Just rec -> rec
       Nothing -> Objects.getEmptyRecipe
-    todoListOfRec = case recForEdit.todos of
-      Just td -> td
-      Nothing -> []
   in
         Html.div[ class "showTabContent" ](
           List.concat [
             [getLabelRow],
-            ( List.map showTodoList (indexedMap Tuple.pair (sortBy .number todoListOfRec)) ),
+            ( List.map showTodoList (indexedMap Tuple.pair (sortBy .number recForEdit.todos)) ),
             [Html.div[][
               Html.button [ onClick TO.AddTodoToRecipe ][ Html.text "Anweisung hinzufügen" ]
             ]]
