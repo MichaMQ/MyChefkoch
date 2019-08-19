@@ -2,9 +2,7 @@ module Devs.Update exposing (..)
 
 import Devs.Ports as Ports exposing (fileSelected)
 
-import List exposing (..)
 import List.Extra as ListE
-import Http
 import UUID exposing (UUID)
 import Random
 --import Debug exposing (log)
@@ -12,7 +10,7 @@ import Random
 import Devs.Objects as O exposing (..)
 import Devs.TypeObject as TO exposing (..)
 import Devs.Recipe as RecipeObj
-import Devs.BackendApi as Api
+import Devs.Utils as DU exposing (..)
 
 -- Update
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -28,23 +26,23 @@ update msg model =
               , filename = imagePortData.filename
               }
           in
-            ( { model | recImage = Just newImage, selectedRecipe = (RecipeObj.setImage model.selectedRecipe (Just imagePortData.filename)) }, uploadImage model newImage )
+            ( { model | recImage = Just newImage, selectedRecipe = (RecipeObj.setImage model.selectedRecipe (Just imagePortData.filename)) }, DU.uploadImage model newImage )
         GetLoginForm -> ( { model | loginToken = Just "" } , Cmd.none)
         SetUsernameForCheck val -> ( { model | usernameForCheck = val } , Cmd.none)
         SetPasswortForCheck val -> ( { model | passwordForCheck = val } , Cmd.none)
         Login ->
             if String.isEmpty model.passwordForCheck then
-                ( { model | subAlertMessage = Just "Bitte gib einen Passwort ein!" }, Cmd.none )
+                ( { model | alertMessage = Just "Bitte gib einen Passwort ein!" }, Cmd.none )
             else
               if String.isEmpty model.usernameForCheck then
-                ( { model | subAlertMessage = Just "Bitte gib einen Benutzername ein!" }, Cmd.none )
+                ( { model | alertMessage = Just "Bitte gib einen Benutzername ein!" }, Cmd.none )
               else
-                ( model, login model )
+                ( model, DU.login model )
         HandleLogin (Ok loginToken) ->
             if String.length loginToken > 0 then
-              ( { model | subAlertMessage = Nothing, loginToken = Just loginToken } , Cmd.none )
-            else ( { model | subAlertMessage = Just "Mindestens eine der eingegeben Daten ist falsch!" }, Cmd.none )
-        HandleLogin (Err error) -> ( { model | recAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
+              ( { model | alertMessage = Nothing, loginToken = Just loginToken } , Cmd.none )
+            else ( { model | alertMessage = Just "Mindestens eine der eingegeben Daten ist falsch!" }, Cmd.none )
+        HandleLogin (Err error) -> ( { model | recAlertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
         ShowOverView -> ( { model | selectedRecipe = Nothing, selectedTag = Nothing }, Cmd.none )
         ToggleEditForm formEnum ->
           let
@@ -57,27 +55,27 @@ update msg model =
               Just recipe -> recipe
               Nothing -> {id = -1, name = "", uuid=UUID.toString UUID.nil}
           in
-            ( model, getRecipe model selectedRecipe )
+            ( model, DU.getRecipe model selectedRecipe )
         EditRecipe -> ( { model | selectedRecipe = model.selectedRecipe }, Cmd.none )
         InsertRecipe ->
           let
-            ( newUuid, newSeed ) = Random.step UUID.generator (getSeed model)
+            ( newUuid, newSeed ) = Random.step UUID.generator (DU.getSeed model)
             newRec = O.getEmptyRecipe
           in
             ( { model | currentSeed = Just newSeed, selectedRecipe = Just {newRec | uuid = UUID.toString newUuid} }, Cmd.none )
         SaveRecipe ->
           let
             errorMsg = case model.selectedRecipe of
-              Just rec -> validateRecipe rec
+              Just rec -> DU.validateRecipe rec
               Nothing -> Nothing
           in
             case errorMsg of
               Just msg1 -> ( { model | recAlertMessage = Just msg1 }, Cmd.none )
               Nothing -> case model.selectedRecipe of
-                Just newRecipe -> ( model, saveRecipe model newRecipe )
+                Just newRecipe -> ( model, DU.saveRecipe model newRecipe )
                 Nothing -> ( model, Cmd.none )
         SavedRecipe (Ok savedRecipe) -> ( { model | selectedRecipe = Just savedRecipe, recAlertMessage = Nothing }, Cmd.none )
-        SavedRecipe (Err error) -> ( { model | recAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
+        SavedRecipe (Err error) -> ( { model | recAlertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
         DeleteRecipe -> ( { model | deleteRecipe = False, selectedTag = Nothing, recipesOfSelectedTag = Nothing, selectedRecipe = Nothing, newSource = Nothing }, Cmd.none )
         CloseRecipeAlert -> ( { model | recAlertMessage = Nothing }, Cmd.none )
         SetAikz val ->           ( { model | selectedRecipe = (RecipeObj.setAikz model.selectedRecipe val) } , Cmd.none)
@@ -93,29 +91,21 @@ update msg model =
         SetProt val ->           ( { model | selectedRecipe = (RecipeObj.setProt model.selectedRecipe val) } , Cmd.none)
         SetSize val ->           ( { model | selectedRecipe = (RecipeObj.setSize model.selectedRecipe val) } , Cmd.none)
         SetSourcePage val ->     ( { model | selectedRecipe = (RecipeObj.setSourcePage model.selectedRecipe val) } , Cmd.none)
-        SetSource val ->
+        SetSource sUuid ->
           let
             sourceList = case model.kl.sourceList of
               Just srcList -> srcList
               Nothing -> []
-            selectedSrc = case (
-                ListE.find (
-                  \src ->
-                    case src.id of
-                      Just id -> id == val
-                      Nothing -> False
-                ) sourceList
-              ) of
-              Just src -> src
-              Nothing -> O.getEmptySource
+            newRec = case ( ListE.find ( \item -> item.uuid == sUuid ) sourceList ) of
+              Just src -> (RecipeObj.setSource model.selectedRecipe src)
+              Nothing -> model.selectedRecipe
           in
-            ( { model | selectedRecipe = (RecipeObj.setSource model.selectedRecipe selectedSrc) } , Cmd.none)
+            ( { model | selectedRecipe = newRec } , Cmd.none)
         AddNewSource ->
           let
-            ( newUuid, newSeed ) = Random.step UUID.generator (getSeed model)
-            newSource = O.getEmptySource
+            ( newUuid, newSeed ) = Random.step UUID.generator (DU.getSeed model)
           in
-            ( { model | currentSeed = Just newSeed, newSource = Just { newSource | uuid = UUID.toString newUuid } }, Cmd.none)
+            ( { model | currentSeed = Just newSeed, newSource = Just { getEmptySource | uuid = UUID.toString newUuid } }, Cmd.none)
         SetSrcName val -> ( { model | newSource = (RecipeObj.setSourceName model.newSource val) }, Cmd.none)
         SetSrcIsbn val -> ( { model | newSource = (RecipeObj.setSourceIsbn model.newSource val) }, Cmd.none)
         SetSrcYear val -> ( { model | newSource = (RecipeObj.setSourceYear model.newSource val) }, Cmd.none)
@@ -125,234 +115,150 @@ update msg model =
             newSource = case model.newSource of
               Just src -> src
               Nothing -> O.getEmptySource
-            alertMsg = if String.isEmpty newSource.name
-              then Just "Bitte mindestens einen Namen für die Quelle eingeben."
-              else Nothing
           in
-            case alertMsg of
-              Just msg2 -> ( { model | subAlertMessage = Just msg2 }, Cmd.none)
-              Nothing -> ( model, saveSource model newSource)
+            if String.isEmpty newSource.name
+              then ( { model | alertMessage = Just "Bitte mindestens einen Namen für die Quelle eingeben." }, Cmd.none)
+              else ( model, DU.saveSource model newSource)
         SavedSource (Ok savedSource) ->
           let
             newSourceList = case model.kl.sourceList of
               Just srcList -> (List.append srcList [savedSource])
               Nothing -> [savedSource]
           in
-            ( { model | newSource = Nothing, kl = (setInitialSource model.kl newSourceList) } , Cmd.none)
-        SavedSource (Err error) -> ( { model | subAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
+            ( { model | newSource = Nothing, kl = (DU.setInitialSource model.kl newSourceList) } , Cmd.none)
+        SavedSource (Err error) -> ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
         ChooseNewTag -> ( { model | addTag = Just O.getEmptyTag } , Cmd.none)
-        SetChoosenTag idVal ->
+        SetChoosenTag tUuid ->
           let
             tagList = case model.kl.tagList of
               Just tagListTmp -> tagListTmp
               Nothing -> []
-            selectedTag = case (
-                ListE.find (
-                  \tag ->
-                    case tag.id of
-                      Just id -> id == idVal
-                      Nothing -> False
-                ) tagList
-              ) of
-              Just tag -> tag
-              Nothing -> O.getEmptyTag
+            newModel = case ( ListE.find ( \item -> item.uuid == tUuid ) tagList ) of
+              Just item -> { model | addTag = Just item }
+              Nothing -> model
           in
-            ( { model | addTag = Just selectedTag } , Cmd.none)
-        RemoveTagFromRec idx ->
+            ( newModel , Cmd.none)
+        RemoveTagFromRec tUuid ->
           let
---            _ = Debug.log "idx: " idx
-            tagList = case model.selectedRecipe of
-              Just rec -> rec.tags
+            newTagList = case model.selectedRecipe of
+              Just rec -> List.filter (\item -> (item.uuid /= tUuid)) rec.tags
               Nothing -> []
-            newTagList = ListE.removeAt idx tagList
           in
             ( { model | selectedRecipe = (RecipeObj.setTags model.selectedRecipe newTagList) } , Cmd.none)
         AddTagToRecipe ->
           case model.addTag of
-            Just newTag -> case newTag.id of
-              Just id -> ( { model | addTag = Nothing, subAlertMessage = Nothing, selectedRecipe = (RecipeObj.addToTags model.selectedRecipe newTag) } , Cmd.none)
-              Nothing -> ( { model | subAlertMessage = Just "Bitte einen Tag auswählen." }, Cmd.none)
-            Nothing -> ( { model | subAlertMessage = Just "Bitte einen Tag auswählen." }, Cmd.none)
+            Just newTag -> ( { model | addTag = Nothing, alertMessage = Nothing, selectedRecipe = (RecipeObj.addToTags model.selectedRecipe newTag) } , Cmd.none)
+            Nothing -> ( { model | alertMessage = Just "Bitte einen Tag auswählen." }, Cmd.none)
         CancelAddTag ->
-          ( { model | addTag = Nothing, subAlertMessage = Nothing } , Cmd.none)
+          ( { model | addTag = Nothing, alertMessage = Nothing } , Cmd.none)
         AddIngreToRecipe ->
           let
-            ( newUuid, newSeed ) = Random.step UUID.generator (getSeed model)
-            ingreList = case model.selectedRecipe of
-              Just rec -> List.sortBy .sortorder rec.ingredients
-              Nothing -> []
-            lastIdx = (List.length ingreList) - 1
-            newOrder = if lastIdx > -1
-              then case (ListE.getAt lastIdx ingreList) of
-                Just ingre -> (ingre.sortorder + 1)
-                Nothing -> 0
-              else 0
-            newPart = if lastIdx > -1
-              then case (ListE.getAt lastIdx ingreList) of
-                Just ingre -> case ingre.part of
-                  Just part -> part
-                  Nothing -> O.getEmptyPart
-                Nothing -> O.getEmptyPart
-              else O.getEmptyPart
-            newIngre = O.getEmptyIngre newOrder (Just newPart)
+            ( newUuid, newSeed ) = Random.step UUID.generator (DU.getSeed model)
+            newIngre = DU.getNewIngre model newUuid
           in
-            ( { model | currentSeed = Just newSeed, selectedRecipe = (RecipeObj.addToIngredients model.selectedRecipe { newIngre | uuid = UUID.toString newUuid }) } , Cmd.none)
-        SetIngreOrder idx val ->
+            ( { model | currentSeed = Just newSeed, selectedRecipe = (RecipeObj.addToIngredients model.selectedRecipe newIngre) } , Cmd.none)
+        SetIngreOrder iUuid val ->
           let
---            _ = Debug.log "idx: " idx
             newOrder = Maybe.withDefault 0 <| String.toInt val
-            ingreList = case model.selectedRecipe of
-              Just rec -> rec.ingredients
+            newIngreList = case model.selectedRecipe of
+              Just rec -> ListE.updateIf (\item -> item.uuid == iUuid) (\item -> {item | sortorder = newOrder}) rec.ingredients
               Nothing -> []
-            ingreForEdit = RecipeObj.setIngreOrder (getIngreForEdit ingreList idx) newOrder
-            newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
           in
             ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
-        SetIngreName idx val ->
+        SetIngreName iUuid val ->
           let
---            _ = Debug.log "idx: " idx
-            ingreList = case model.selectedRecipe of
-              Just rec -> rec.ingredients
+            newIngreList = case model.selectedRecipe of
+              Just rec -> ListE.updateIf (\item -> item.uuid == iUuid) (\item -> {item | name = val}) rec.ingredients
               Nothing -> []
-            ingreForEdit = RecipeObj.setIngreName (getIngreForEdit ingreList idx) val
-            newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
           in
             ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
-        SetIngreComment idx val ->
+        SetIngreComment iUuid val ->
           let
---            _ = Debug.log "idx: " idx
-            ingreList = case model.selectedRecipe of
-              Just rec -> rec.ingredients
+            newIngreList = case model.selectedRecipe of
+              Just rec -> ListE.updateIf (\item -> item.uuid == iUuid) (\item -> {item | comment = Just val}) rec.ingredients
               Nothing -> []
-            ingreForEdit = RecipeObj.setIngreComment (getIngreForEdit ingreList idx) val
-            newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
           in
             ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
-        SetIngreQuant idx val ->
+        SetIngreQuant iUuid val ->
           let
             newQuant = Maybe.withDefault 0 <| String.toFloat val
-            ingreList = case model.selectedRecipe of
-              Just rec -> rec.ingredients
+            newIngreList = case model.selectedRecipe of
+              Just rec -> ListE.updateIf (\item -> item.uuid == iUuid) (\item -> {item | quantity = Just newQuant}) rec.ingredients
               Nothing -> []
-            ingreForEdit = RecipeObj.setIngreQuant (getIngreForEdit ingreList idx) newQuant
-            newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
           in
             ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
-        SetIngrePart idx partId ->
+        SetIngrePart iUuid pUuid ->
           let
---            _ = Debug.log "idx: " idx
             partKeyList = case model.kl.partList of
               Just list -> list
               Nothing -> []
-            selectedPart = case ( ListE.find ( \part -> part.id == partId ) partKeyList ) of
-              Just part -> part
-              Nothing -> O.getEmptyPart
---            newPart = Maybe.withDefault 0 <| String.toInt val
-            ingreList = case model.selectedRecipe of
-              Just rec -> rec.ingredients
-              Nothing -> []
-            selRec = RecipeObj.setParts model.selectedRecipe selectedPart
-            _ = Debug.log "selRec: " selRec
-            ingreForEdit = RecipeObj.setIngrePart (getIngreForEdit ingreList idx) selectedPart
-            newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
+            newRec = case ( ListE.find ( \part -> part.uuid == pUuid ) partKeyList ) of
+              Just part -> case RecipeObj.setParts model.selectedRecipe part of
+                Just rec -> (RecipeObj.setIngredients (Just rec) (ListE.updateIf (\item -> item.uuid == iUuid) (\item -> {item | part = Just part}) rec.ingredients))
+                Nothing -> Nothing
+              Nothing -> Nothing
           in
-            ( { model | selectedRecipe = (RecipeObj.setIngredients selRec newIngreList) } , Cmd.none)
-        SetIngreUnit idx unitId ->
+            ( { model | selectedRecipe = newRec } , Cmd.none)
+        SetIngreUnit iUuid uUuid ->
           let
---            _ = Debug.log "idx: " idx
             unitList = case model.kl.unitList of
               Just list -> list
               Nothing -> []
-            selectedUnit = case ( ListE.find ( \unit -> unit.id == unitId ) unitList ) of
-              Just tag -> tag
-              Nothing -> O.getEmptyUnit
-            ingreList = case model.selectedRecipe of
-              Just rec -> rec.ingredients
+            newIngreList = case ( ListE.find ( \unit -> unit.uuid == uUuid ) unitList ) of
+              Just unit -> case model.selectedRecipe of
+                Just rec -> ListE.updateIf (\item -> item.uuid == iUuid) (\item -> {item | unit = Just unit}) rec.ingredients
+                Nothing -> []
               Nothing -> []
-            ingreForEdit = RecipeObj.setIngreUnit (getIngreForEdit ingreList idx) selectedUnit
-            newIngreList = ListE.updateAt idx (\ingre -> ingreForEdit) ingreList
           in
             ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
-        RemoveIngreFromRecipe ->
+        RemoveIngreFromRecipe iUuid ->
           let
-            ingreList = case model.selectedRecipe of
-              Just rec -> List.sortBy .sortorder rec.ingredients
-              Nothing -> []
-            lastIdx = (List.length ingreList) - 1
-            newIngreList = if List.length ingreList > 0
-              then ListE.removeAt lastIdx ingreList
-              else []
-            --_ = Debug.log "lastIdx: " lastIdx
+            newRec = case model.selectedRecipe of
+              Just rec -> Just { rec | ingredients = (List.filter (\item -> (item.uuid /= iUuid)) rec.ingredients) }
+              Nothing -> model.selectedRecipe
           in
-            ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
+            ( { model | selectedRecipe = newRec } , Cmd.none)
         AddTodoToRecipe ->
           let
-            ( newUuid, newSeed ) = Random.step UUID.generator (getSeed model)
-            todoList = case model.selectedRecipe of
-              Just rec -> List.sortBy .number rec.todos
-              Nothing -> []
-            lastIdx = (List.length todoList) - 1
-            newNumber = if lastIdx > -1
-              then case (ListE.getAt lastIdx todoList) of
-                Just todo -> (todo.number + 1)
-                Nothing -> 0
-              else 0
-            newTodo = O.getEmptyTodo newNumber
+            ( newUuid, newSeed ) = Random.step UUID.generator (DU.getSeed model)
           in
-            ( { model | currentSeed = Just newSeed, selectedRecipe = (RecipeObj.addToTodos model.selectedRecipe {newTodo | uuid = UUID.toString newUuid}) } , Cmd.none)
-        SetTodoNr idx val ->
+            ( { model | currentSeed = Just newSeed, selectedRecipe = (RecipeObj.addToTodos model.selectedRecipe (DU.getNewTodo model newUuid)) } , Cmd.none)
+        SetTodoNr tUuid val ->
           let
---            _ = Debug.log "idx: " idx
             newNr = Maybe.withDefault 0 <| String.toInt val
-            todoList = case model.selectedRecipe of
-              Just rec -> rec.todos
+            newTodoList = case model.selectedRecipe of
+              Just rec -> ListE.updateIf (\item -> item.uuid == tUuid) (\item -> {item | number = newNr}) rec.todos
               Nothing -> []
-            todoForEdit = RecipeObj.setTodoNr (getTodoForEdit todoList idx) newNr
-            newTodoList = ListE.updateAt idx (\todo -> todoForEdit) todoList
           in
             ( { model | selectedRecipe = (RecipeObj.setTodos model.selectedRecipe newTodoList) } , Cmd.none)
-        SetTodoText idx val ->
+        SetTodoText tUuid val ->
           let
---            _ = Debug.log "idx: " idx
-            todoList = case model.selectedRecipe of
-              Just rec -> rec.todos
+            newTodoList = case model.selectedRecipe of
+              Just rec -> ListE.updateIf (\item -> item.uuid == tUuid) (\item -> {item | text = val}) rec.todos
               Nothing -> []
-            todoForEdit = RecipeObj.setTodoText (getTodoForEdit todoList idx) val
-            newTodoList = ListE.updateAt idx (\todo -> todoForEdit) todoList
           in
             ( { model | selectedRecipe = (RecipeObj.setTodos model.selectedRecipe newTodoList) } , Cmd.none)
-        SetTodoImg idx val ->
+        SetTodoImg tUuid val ->
           let
---            _ = Debug.log "idx: " idx
-            todoList = case model.selectedRecipe of
-              Just rec -> rec.todos
+            newTodoList = case model.selectedRecipe of
+              Just rec -> ListE.updateIf (\item -> item.uuid == tUuid) (\item -> {item | image = Just val}) rec.todos
               Nothing -> []
-            todoForEdit = RecipeObj.setTodoImg (getTodoForEdit todoList idx) val
-            newTodoList = ListE.updateAt idx (\todo -> todoForEdit) todoList
           in
             ( { model | selectedRecipe = (RecipeObj.setTodos model.selectedRecipe newTodoList) } , Cmd.none)
-        SetTodoImgComment idx val ->
+        SetTodoImgComment tUuid val ->
           let
---            _ = Debug.log "idx: " idx
-            todoList = case model.selectedRecipe of
-              Just rec -> rec.todos
+            newTodoList = case model.selectedRecipe of
+              Just rec -> ListE.updateIf (\item -> item.uuid == tUuid) (\item -> {item | image_comment = Just val}) rec.todos
               Nothing -> []
-            todoForEdit = RecipeObj.setTodoImgComment (getTodoForEdit todoList idx) val
-            newTodoList = ListE.updateAt idx (\todo -> todoForEdit) todoList
           in
             ( { model | selectedRecipe = (RecipeObj.setTodos model.selectedRecipe newTodoList) } , Cmd.none)
-        RemoveTodoFromRecipe ->
+        RemoveTodoFromRecipe tUuid ->
           let
-            todoList = case model.selectedRecipe of
-              Just rec -> List.sortBy .number rec.todos
-              Nothing -> []
-            lastIdx = (List.length todoList) - 1
-            newTodoList = if List.length todoList > 0
-              then ListE.removeAt lastIdx todoList
-              else []
-            --_ = Debug.log "lastIdx: " lastIdx
+            newRec = case model.selectedRecipe of
+              Just rec -> Just { rec | todos = (List.filter (\item -> (item.uuid /= tUuid)) rec.todos) }
+              Nothing -> model.selectedRecipe
           in
-            ( { model | selectedRecipe = (RecipeObj.setTodos model.selectedRecipe newTodoList) } , Cmd.none)
+            ( { model | selectedRecipe = newRec } , Cmd.none)
         CancelRecipeEdit ->
           ( { model | newSource = Nothing, recAlertMessage = Nothing }, Cmd.none )
         ConfirmDelete ->
@@ -360,9 +266,9 @@ update msg model =
         CancelDelete ->
           ( { model | deleteRecipe = False }, Cmd.none )
         CancelLogin ->
-          ( { model | loginToken = Nothing, subAlertMessage = Nothing }, Cmd.none )
+          ( { model | loginToken = Nothing, alertMessage = Nothing }, Cmd.none )
         ShowRecipesOfTag tag ->
-          ( { model | selectedTag = tag }, getRecipeListForTag model tag )
+          ( { model | selectedTag = tag }, DU.getRecipeListForTag model tag )
         RemoveSelectedTag ->
           ( { model | searchValue = "", selectedTag = Nothing, recipesOfSelectedTag = Nothing }, Cmd.none )
         RemoveSelectedRecipe ->
@@ -370,167 +276,43 @@ update msg model =
         CloseAlert ->
           ( { model | alertMessage = Nothing }, Cmd.none )
         CloseLoginAlert ->
-          ( { model | subAlertMessage = Nothing }, Cmd.none )
+          ( { model | alertMessage = Nothing }, Cmd.none )
         ListTagtypes (Ok tagtypeList) ->
           ( { model | tagtypeList = Just tagtypeList } , Cmd.none)
         ListTagtypes (Err error) ->
-          ( { model | alertMessage = Just (httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
         ListRecipesForTag (Ok recipeList) ->
           ( { model | recipesOfSelectedTag = Just recipeList } , Cmd.none)
         ListRecipesForTag (Err error) ->
-          ( { model | alertMessage = Just (httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
         SetSearchInput value ->
           ( { model | searchValue = value }, Cmd.none )
         SearchRecipe ->
             if String.isEmpty model.searchValue then
                 ( { model | alertMessage = Just "Bitte gib einen Suchbegriff ein!" }, Cmd.none )
             else
-                ( { model | selectedTag = Nothing, selectedRecipe = Nothing, recipesOfSelectedTag = Nothing } , searchRecipe model )
+                ( { model | selectedTag = Nothing, selectedRecipe = Nothing, recipesOfSelectedTag = Nothing } , DU.searchRecipe model )
         SetRecipe (Ok recipe) ->
           ( { model | selectedRecipe = Just recipe } , Cmd.none)
         SetRecipe (Err error) ->
-          ( { model | alertMessage = Just (httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
         SetUnitList (Ok list) ->
-          ( { model | kl = (setInitialUnit model.kl list) } , Cmd.none)
+          ( { model | kl = (DU.setInitialUnit model.kl list) } , Cmd.none)
         SetUnitList (Err error) ->
-          ( { model | alertMessage = Just (httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
         SetSourceList (Ok list) ->
-          ( { model | kl = (setInitialSource model.kl list) } , Cmd.none)
+          ( { model | kl = (DU.setInitialSource model.kl list) } , Cmd.none)
         SetSourceList (Err error) ->
-          ( { model | alertMessage = Just (httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
         SetTagList (Ok list) ->
-          ( { model | kl = (setInitialTag model.kl list) } , Cmd.none)
+          ( { model | kl = (DU.setInitialTag model.kl list) } , Cmd.none)
         SetTagList (Err error) ->
-          ( { model | alertMessage = Just (httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
         SetPartList (Ok list) ->
-          ( { model | kl = (setInitialPart model.kl list) } , Cmd.none)
+          ( { model | kl = (DU.setInitialPart model.kl list) } , Cmd.none)
         SetPartList (Err error) ->
-          ( { model | alertMessage = Just (httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
         UploadImage (Ok value) ->
           ( model, Cmd.none)
         UploadImage (Err error) ->
-          ( { model | subAlertMessage = Just (httpErrorToMessage error) }, Cmd.none)
-
--- Functions
-validateRecipe: Recipe -> Maybe String
-validateRecipe rec =
-    if String.isEmpty rec.name
-      then Just "Es muss ein Namen eingegeben werden."
-      else case rec.source of
-        Just src -> if List.isEmpty rec.ingredients
-          then Just "Es muss mindestens eine Zutat eingegeben werden."
-          else if List.isEmpty rec.todos
-            then Just "Es muss mindestens eine Anweisung eingegeben werden."
-            else if List.isEmpty rec.tags
-              then Just "Es muss mindestens ein Tag eingegeben werden."
-              else Nothing
-        Nothing -> Just "Es muss eine Quelle angegeben werden."
-
-getSeed: Model -> Random.Seed
-getSeed model =
-  case model.currentSeed of
-      Just seed ->  seed
-      Nothing -> Random.initialSeed model.random
-
-getIngreForEdit: List Ingredient -> Int -> Ingredient
-getIngreForEdit ingreList idx =
-    case ListE.getAt idx (sortBy .sortorder ingreList) of
-      Just ingre -> ingre
-      Nothing -> O.getEmptyIngre 0 Nothing
-
-getTodoForEdit: List Todo -> Int -> Todo
-getTodoForEdit list idx =
-    case ListE.getAt idx (sortBy .number list) of
-      Just todo -> todo
-      Nothing -> O.getEmptyTodo 0
-
-setInitialUnit: KeyLists -> List Unit -> KeyLists
-setInitialUnit keyList newList = { keyList | unitList = Just newList }
-
-setInitialSource: KeyLists -> List Source -> KeyLists
-setInitialSource keyList newList = { keyList | sourceList = Just newList }
-
-setInitialTag: KeyLists -> List Tag -> KeyLists
-setInitialTag keyList newList = { keyList | tagList = Just newList }
-
-setInitialPart: KeyLists -> List PartLight -> KeyLists
-setInitialPart keyList newList = { keyList | partList = Just newList }
-
-getAllUnits: Model -> Cmd Msg
-getAllUnits model = Api.getAllUnits SetUnitList model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllUnits")
-
-getAllSources: Model -> Cmd Msg
-getAllSources model = Api.getAllSources SetSourceList model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllSources")
-
-getAllTags: Model -> Cmd Msg
-getAllTags model = Api.getAllTags SetTagList model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllTags")
-
-getAllParts: Model -> Cmd Msg
-getAllParts model = Api.getAllParts SetPartList model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllParts")
-
-uploadImage: Model -> ImagePortData -> Cmd Msg
-uploadImage model image = Api.uploadImage UploadImage model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/uploadImage") image
-
-saveSource: Model -> Source -> Cmd Msg
-saveSource model newSource = Api.saveSource SavedSource model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/saveSource") newSource
-
-saveRecipe: Model -> Recipe -> Cmd Msg
-saveRecipe model newRecipe = Api.saveRecipe SavedRecipe model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/saveRecipe") newRecipe
-
-getTagtypeListForOverview : Model -> Cmd Msg
-getTagtypeListForOverview model = Api.getTagtypeListForOverview ListTagtypes model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllTagTypes")
-
-searchRecipe: Model -> Cmd Msg
-searchRecipe model = Api.searchRecipe ListRecipesForTag model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/findRecipeByName/?name=" ++ String.trim model.searchValue)
-
-getRecipe: Model -> RecipeLight -> Cmd Msg
-getRecipe model rec = Api.getRecipe SetRecipe model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getRecipeById/?id=" ++ String.fromInt rec.id)
-
-login: Model -> Cmd Msg
-login model = Api.login HandleLogin (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/login/?username=" ++ model.usernameForCheck ++ "&password=" ++ model.passwordForCheck)
-
-getRecipeListForTag: Model -> Maybe Tag -> Cmd Msg
-getRecipeListForTag model selectedTag =
-  let
-    --_ = Debug.log "Tag: " selectedTag
-    tagId = case model.selectedTag of
-      Just tag ->
-        case tag.id of
-          Just id -> id
-          Nothing -> -2
-      Nothing -> case selectedTag of
-        Just tag ->
-          case tag.id of
-            Just id -> id
-            Nothing -> -3
-        Nothing -> -4
-  in
-    Api.getRecipeListForTag ListRecipesForTag model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllRecipeByTagWithoutMeta/?id=" ++ (String.fromInt tagId))
-
-httpErrorToMessage: Http.Error -> String
-httpErrorToMessage error =
-  case error of
-    Http.NetworkError -> "Is the server running?"
-    Http.BadStatus response -> String.fromInt response
-    Http.BadBody response -> response
---    Http.BadPayload message _ -> "Decoding Failed: " ++ message
-    Http.BadUrl url -> "You defindes a wrong URL! " ++ url
-    Http.Timeout -> "The time for request is out!"
-
-isLoggedIn: Maybe String -> Bool
-isLoggedIn loginToken =
-  case loginToken of
-    Just log -> if String.length log > 0
-      then True
-      else False
-    Nothing -> False
-
-
-isNotMember : ( List a, a ) -> Bool
-isNotMember a =
-  let
-    --_ = Debug.log "isNotMember: " a
-    isNotMemberVal = ListE.notMember (Tuple.second a) (Tuple.first a)
---    _ = Debug.log "isNotMember: " isNotMemberVal
-  in
-    isNotMemberVal
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)

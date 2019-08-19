@@ -23,8 +23,22 @@ type alias Tagtype = {id: Int, name: String, tagList: List Tag, uuid: String}
 type alias UnitCategory = {id: Int, name: String, uuid: String}
 type alias Unit = {id: Int, name: String, unitCategory: UnitCategory, uuid: String}
 type alias Source = {id: Maybe Int, isbn: Maybe String, name: String, year: Maybe String, uuid: String}
-type alias Todo = {id: Int, image: Maybe String, image_comment: Maybe String, number: Int, text: String, uuid: String}
-type alias Ingredient = {id: Maybe Int, name: String, comment: Maybe String , part: Maybe PartLight, quantity: Maybe Float, sortorder: Int, unit: Maybe Unit, uuid: String}
+type alias Todo = {
+  id: Int
+  , image: Maybe String
+  , image_comment: Maybe String
+  , number: Int
+  , text: String
+  , uuid: String}
+type alias Ingredient = {
+  id: Maybe Int
+  , name: String
+  , comment: Maybe String
+  , part: Maybe PartLight
+  , quantity: Maybe Float
+  , sortorder: Int
+  , unit: Maybe Unit
+  , uuid: String}
 type alias Part = {id: Int, name: String, ingredients: List Ingredient, uuid: String}
 type alias PartLight = {id: Int, name: String, uuid: String}
 type alias RecipeLight = {id: Int, name: String, uuid: String}

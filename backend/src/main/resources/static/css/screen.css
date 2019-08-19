@@ -449,6 +449,7 @@ a:ACTIVE {
   height: 18px;
 }
 
+/*
 .ingreRow button {
 	display: none;
 }
@@ -456,6 +457,7 @@ a:ACTIVE {
 .showTabContent div:nth-last-child( 2 ) button {
 	display: inline-block;
 }
+*/
 
 .labelRow label {
 	margin-right: 10px;
@@ -498,9 +500,11 @@ a:ACTIVE {
 	display: flex
 }
 
+/*
 .todoRow button {
 	display: none;
 }
+*/
 
 .numberLabel{ width: 50px !important; }
 .numberInput{ width: 50px; }

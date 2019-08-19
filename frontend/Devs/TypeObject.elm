@@ -37,7 +37,7 @@ type Msg =
   | SetProt String
   | SetSize String
   | SetSourcePage String
-  | SetSource Int
+  | SetSource String
   | AddNewSource
   | SetSrcName String
   | SetSrcIsbn String
@@ -46,24 +46,24 @@ type Msg =
   | SaveNewSource
   | SavedSource (Result Http.Error (Source))
   | ChooseNewTag
-  | SetChoosenTag Int
-  | RemoveTagFromRec Int
+  | SetChoosenTag String
+  | RemoveTagFromRec String
   | CancelAddTag
   | AddTagToRecipe
   | AddIngreToRecipe
-  | SetIngreOrder Int String
-  | SetIngreName Int String
-  | SetIngrePart Int Int
-  | SetIngreUnit Int Int
-  | SetIngreQuant Int String
-  | SetIngreComment Int String
-  | RemoveIngreFromRecipe
+  | SetIngreOrder String String
+  | SetIngreName String String
+  | SetIngrePart String String
+  | SetIngreUnit String String
+  | SetIngreQuant String String
+  | SetIngreComment String String
+  | RemoveIngreFromRecipe String
   | AddTodoToRecipe
-  | SetTodoNr Int String
-  | SetTodoText Int String
-  | SetTodoImg Int String
-  | SetTodoImgComment Int String
-  | RemoveTodoFromRecipe
+  | SetTodoNr String String
+  | SetTodoText String String
+  | SetTodoImg String String
+  | SetTodoImgComment String String
+  | RemoveTodoFromRecipe String
   | CancelRecipeEdit
   | ConfirmDelete
   | CancelDelete

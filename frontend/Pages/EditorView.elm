@@ -2,8 +2,8 @@ module Pages.EditorView exposing(viewEditForm, viewSourceForm, viewAddTagForm)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick, onInput, on)
-import Html.Events.Extra exposing (targetValueIntParse)
+import Html.Events exposing (onClick, onInput)
+import Html.Events.Extra as EvE exposing (onChange)
 import List exposing (..)
 import Json.Decode as Json
 
@@ -30,7 +30,7 @@ viewAddTagForm model =
       Html.div [ class "srcFormDiv" ] [
         Html.div[ class "srcFormDivRow"][
           Html.div[][
-            Html.select [ on "change" (Json.map TO.SetChoosenTag targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (Tab2.showTagOption O.getEmptyTag) (sortBy .name initialTagList)))
+            Html.select [ EvE.onChange TO.SetChoosenTag ] (List.append [PU.getSelectOption](List.map (Tab2.showTagOption O.getEmptyTag) (sortBy .name initialTagList)))
           ]
         ], PU.alert TO.CloseLoginAlert model.subAlertMessage model,
         Html.div [ class "editFormActionDiv" ][

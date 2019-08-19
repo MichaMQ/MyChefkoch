@@ -3,10 +3,9 @@ module Pages.EditorTabs.Tab1 exposing(showTab)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput, on)
+import Html.Events.Extra as EvE exposing (onChange)
 import List exposing (..)
 import Json.Decode as Json
-
-import Html.Events.Extra exposing (targetValueIntParse)
 
 import Devs.Objects as Objects exposing (..)
 import Devs.TypeObject as TO exposing (Msg)
@@ -68,7 +67,7 @@ showTab model =
             ],
             Html.div[][
               Html.label [ for "source" ][ Html.text "Quelle *" ],
-              Html.select [ id "source", on "change" (Json.map TO.SetSource targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (showSourceOption sourceValue) (sortBy .name initialSrcList))),
+              Html.select [ id "source", EvE.onChange TO.SetSource ] (List.append [PU.getSelectOption](List.map (showSourceOption sourceValue) (sortBy .name initialSrcList))),
               Html.button [ onClick TO.AddNewSource ][ Html.text "+" ]
             ],
             Html.div[][
@@ -107,11 +106,8 @@ showSourceOption selectedValue src =
     src_year = case src.year of
       Just year -> " (" ++ year ++ ")"
       Nothing -> ""
-    selectedVal = if src.id == selectedValue.id
+    selectedVal = if src.uuid == selectedValue.uuid
       then True
       else False
-    srcId = case src.id of
-      Just id -> String.fromInt id
-      Nothing -> ""
   in
-    Html.option[ value (srcId), selected selectedVal ][ Html.text (src.name ++ src_year) ]
+    Html.option[ value (src.uuid), selected selectedVal ][ Html.text (src.name ++ src_year) ]

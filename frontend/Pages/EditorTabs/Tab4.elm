@@ -2,13 +2,9 @@ module Pages.EditorTabs.Tab4 exposing(showTab)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick, onInput, on)
+import Html.Events exposing (onClick, onInput)
 import List exposing (..)
 import List.Extra as ListE
-import Json.Decode as Json
-import Tuple exposing (..)
-
---import Html.Events.Extra exposing (targetValueIntParse)
 
 import Devs.Objects as Objects exposing (..)
 import Devs.TypeObject as TO exposing (Msg)
@@ -25,7 +21,7 @@ showTab model =
         Html.div[ class "showTabContent" ](
           List.concat [
             [getLabelRow],
-            ( List.map showTodoList (indexedMap Tuple.pair (sortBy .number recForEdit.todos)) ),
+            ( List.map showTodoList (sortBy .number recForEdit.todos) ),
             [Html.div[][
               Html.button [ onClick TO.AddTodoToRecipe ][ Html.text "Anweisung hinzufügen" ]
             ]]
@@ -41,11 +37,9 @@ getLabelRow =
       Html.label[ for "comment", class "imageLabel" ][ Html.text "Kommentar" ]
   ]
 
-showTodoList: (Int, Todo) -> Html Msg
-showTodoList todoObj =
+showTodoList: Todo -> Html Msg
+showTodoList todo =
   let
-    idx = first todoObj
-    todo = second todoObj
     imgValue = case todo.image of
       Just val -> val
       Nothing -> ""
@@ -54,9 +48,9 @@ showTodoList todoObj =
       Nothing -> ""
   in
     Html.div[ class "todoRow" ][
-      Html.input[ id "number", onInput (TO.SetTodoNr idx), type_ "number", class "numberInput", value (String.fromInt todo.number) ][],
-      Html.textarea[ id "text", onInput (TO.SetTodoText idx), class "textInput", cols 50, rows 4 ][ Html.text todo.text ],
-      Html.input [ id "image", onInput (TO.SetTodoImg idx), type_ "text", class "imageInput", value imgValue ][],
-      Html.input [ id "comment", onInput (TO.SetTodoImgComment idx), type_ "text", class "imageInput", value commentValue ][],
-      Html.button [ onClick TO.RemoveTodoFromRecipe ][ Html.text "-" ]
+      Html.input[ id "number", onInput (TO.SetTodoNr todo.uuid), type_ "number", class "numberInput", value (String.fromInt todo.number) ][],
+      Html.textarea[ id "text", onInput (TO.SetTodoText todo.uuid), class "textInput", cols 50, rows 4 ][ Html.text todo.text ],
+      Html.input [ id "image", onInput (TO.SetTodoImg todo.uuid), type_ "text", class "imageInput", value imgValue ][],
+      Html.input [ id "comment", onInput (TO.SetTodoImgComment todo.uuid), type_ "text", class "imageInput", value commentValue ][],
+      Html.button [ onClick (TO.RemoveTodoFromRecipe todo.uuid) ][ Html.text "-" ]
     ]

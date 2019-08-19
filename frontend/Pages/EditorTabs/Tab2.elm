@@ -3,8 +3,8 @@ module Pages.EditorTabs.Tab2 exposing(showTab, showTagOption)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput, on)
+import Html.Events.Extra as EvE exposing (onChange)
 import List exposing (..)
-import Tuple exposing (..)
 
 import Devs.Objects as Objects exposing (..)
 import Devs.TypeObject as TO exposing (Msg)
@@ -22,7 +22,7 @@ showTab model =
   in
         Html.div[ class "showTabContent" ][
           Html.div[][
-            Html.table [ ]( List.map (showTagDiv initialTagList) (indexedMap Tuple.pair (sortBy .name recForEdit.tags)) )
+            Html.table [ ]( List.map (showTagDiv initialTagList) (sortBy .name recForEdit.tags) )
           ],
           Html.div[][
             Html.button [ onClick TO.ChooseNewTag ][ Html.text "Tag hinzufügen" ]
@@ -30,23 +30,16 @@ showTab model =
           ]
         ]
 
-showTagDiv: List Tag -> (Int, Tag) -> Html Msg
-showTagDiv initialTagList tagObj =
-  let
-    idx = first tagObj
-    tag = second tagObj
-  in
-    Html.tr[][
-      Html.td[][ Html.text (tag.name ++ " (" ++ tag.tagType.name ++ ")") ],
-      Html.td[][ Html.button [ onClick (TO.RemoveTagFromRec idx) ][ Html.text "-" ] ]
-    ]
+showTagDiv: List Tag -> Tag -> Html Msg
+showTagDiv initialTagList tag =
+  Html.tr[][
+    Html.td[][ Html.text (tag.name ++ " (" ++ tag.tagType.name ++ ")") ],
+    Html.td[][ Html.button [ onClick (TO.RemoveTagFromRec tag.uuid) ][ Html.text "-" ] ]
+  ]
 
 showTagOption: Tag -> Tag -> Html Msg
 showTagOption tagListValue tag =
   let
-    selectedVal = if tagListValue.id == tag.id then True else False
-    tagId = case tag.id of
-      Just id -> String.fromInt id
-      Nothing -> ""
+    selectedVal = if tagListValue.uuid == tag.uuid then True else False
   in
-    Html.option[ value tagId, selected selectedVal ][ Html.text (tag.name ++ " (" ++ tag.tagType.name ++ ")") ]
+    Html.option[ value tag.uuid, selected selectedVal ][ Html.text (tag.name ++ " (" ++ tag.tagType.name ++ ")") ]

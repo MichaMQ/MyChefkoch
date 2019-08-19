@@ -6,24 +6,6 @@ import List exposing (..)
 
 import Devs.Objects as Objects exposing (..)
 
-setIngreOrder: Ingredient -> Int -> Ingredient
-setIngreOrder ingre newVal = {ingre | sortorder = newVal}
-
-setIngreComment: Ingredient -> String -> Ingredient
-setIngreComment ingre newVal = {ingre | comment = Just newVal}
-
-setIngreName: Ingredient -> String -> Ingredient
-setIngreName ingre newVal = {ingre | name = newVal}
-
-setIngreQuant: Ingredient -> Float -> Ingredient
-setIngreQuant ingre newVal = {ingre | quantity = Just newVal}
-
-setIngrePart: Ingredient -> PartLight -> Ingredient
-setIngrePart ingre newVal = {ingre | part = Just newVal}
-
-setIngreUnit: Ingredient -> Unit -> Ingredient
-setIngreUnit ingre newVal = {ingre | unit = Just newVal}
-
 setTodoNr: Todo -> Int -> Todo
 setTodoNr todo newVal = {todo | number = newVal}
 

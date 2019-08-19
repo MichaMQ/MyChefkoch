@@ -7,14 +7,14 @@ import List exposing (..)
 
 import Devs.Objects as O exposing (..)
 import Devs.TypeObject as TO exposing (Msg)
-import Devs.Update as U exposing (isLoggedIn)
+import Devs.Utils as DU exposing (isLoggedIn)
 import Pages.Utils as PU exposing (getEditButton, getEditHeader)
 -- View
 
 viewRecipe: Maybe String -> Recipe -> ServerParams -> Html Msg
 viewRecipe loginToken rec sp =
   let
-    actionButton = if (U.isLoggedIn loginToken) == True
+    actionButton = if (DU.isLoggedIn loginToken) == True
       then Html.button [ onClick TO.EditRecipe ][ Html.text "bearbeiten" ]
       else Html.span [][]
     header = case rec.translate of
@@ -59,27 +59,27 @@ viewRecipe loginToken rec sp =
       Html.div [ id "recipeDiv" ][
         Html.div [][
           Html.h2 [ Attr.style "float" "left", Attr.style "margin-right" "5px" ][
-            PU.getEditHeader (U.isLoggedIn loginToken) header (TO.ToggleEditForm O.BasicForm)
+            PU.getEditHeader (DU.isLoggedIn loginToken) header (TO.ToggleEditForm O.BasicForm)
           ]
-          , PU.getEditButton sp (Just (U.isLoggedIn loginToken)) "save.png" Nothing TO.NoOp [Attr.style "margin-top" "10px"]
-          , PU.getEditButton sp (Just (U.isLoggedIn loginToken)) "delete.png" Nothing TO.ConfirmDelete [Attr.style "margin-top" "10px"]
+          , PU.getEditButton sp (Just (DU.isLoggedIn loginToken)) "save.png" Nothing TO.NoOp [Attr.style "margin-top" "10px"]
+          , PU.getEditButton sp (Just (DU.isLoggedIn loginToken)) "delete.png" Nothing TO.ConfirmDelete [Attr.style "margin-top" "10px"]
         ]
         , Html.div [ id "recipeSource", Attr.style "clear" "both" ][ Html.text (rec_source ++ sourcePage ++ sourceYear ++ sourceIsbn), amazonLink ]
         , Html.div [ id "recipeTags" ][
-          PU.getEditHeader (U.isLoggedIn loginToken) "Tags:" (TO.ToggleEditForm O.TagForm)
+          PU.getEditHeader (DU.isLoggedIn loginToken) "Tags:" (TO.ToggleEditForm O.TagForm)
           , Html.text (" " ++ (String.join ", " (List.map getTagName (sortBy .name rec.tags))))
         ]
         , Html.figure [][ recImage, Html.figcaption [][ Html.text rec_number ] ],
         Html.div [ id "recipe" ][
           Html.div [ id "ingredientsDiv" ][
             Html.h4 [][
-              PU.getEditHeader (U.isLoggedIn loginToken) "Zutaten" (TO.ToggleEditForm O.IngredientForm)
+              PU.getEditHeader (DU.isLoggedIn loginToken) "Zutaten" (TO.ToggleEditForm O.IngredientForm)
             ]
             , Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showPartRow (sortBy .name rec.parts) ) ]
           ],
           Html.div [ id "todosDiv" ][
             Html.h4 [][
-              PU.getEditHeader (U.isLoggedIn loginToken) "Zubereitung" (TO.ToggleEditForm O.TodoForm)
+              PU.getEditHeader (DU.isLoggedIn loginToken) "Zubereitung" (TO.ToggleEditForm O.TodoForm)
             ]
             , Html.div [] (List.map (showTodoRow sp) (sortBy .number rec.todos))
           ],

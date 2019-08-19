@@ -1,15 +1,12 @@
 module Pages.EditorTabs.Tab3 exposing(showTab)
 
-import Tuple exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick, onInput, on)
+import Html.Events exposing (onClick, onInput)
+import Html.Events.Extra as EvE exposing (onChange)
 import List exposing (..)
 import List.Extra as ListE
-import Json.Decode as Json
 import Debug exposing (log)
-
-import Html.Events.Extra exposing (targetValueIntParse)
 
 import Devs.Objects as Objects exposing (..)
 import Devs.TypeObject as TO exposing (Msg)
@@ -33,7 +30,7 @@ showTab model =
         Html.div[ class "showTabContent" ](
           List.concat [
             [getLabelRow],
-            ( List.map (showIngreList initialUnitList initialPartList) (indexedMap Tuple.pair (sortBy .sortorder recForEdit.ingredients)) ),
+            ( List.map (showIngreList initialUnitList initialPartList) (sortBy .sortorder recForEdit.ingredients) ),
             [Html.div[][
               Html.button [ onClick TO.AddIngreToRecipe ][ Html.text "Zutat hinzufügen" ]
             ]]
@@ -51,12 +48,9 @@ getLabelRow =
       Html.label[ for "part", class "partLabel" ][ Html.text "Teil" ]
   ]
 
-showIngreList: List Unit -> List PartLight -> (Int, Ingredient) -> Html Msg
-showIngreList unitList partList (idx, ingre) =
+showIngreList: List Unit -> List PartLight -> Ingredient -> Html Msg
+showIngreList unitList partList ingre =
   let
---    idx = first ingreObj
---    ingre = second ingreObj
-    _ = Debug.log "ingre: " ingre
     quant = case ingre.quantity of
       Just quantTmp -> (String.fromFloat quantTmp)
       Nothing -> ""
@@ -71,26 +65,25 @@ showIngreList unitList partList (idx, ingre) =
       Nothing -> ""
   in
     Html.div[ class "ingreRow" ][
-      Html.input[ id "order", onInput (TO.SetIngreOrder idx), type_ "number", class "orderInput", value (String.fromInt ingre.sortorder) ][],
-      Html.input[ id "ingre", onInput (TO.SetIngreName idx), class "ingrInput", value ingre.name ][],
-      Html.input[ id "quant", onInput (TO.SetIngreQuant idx), type_ "number", step "0.1", class "quantInput", value quant ][],
-      Html.select [ id "unit", on "change" (Json.map (TO.SetIngreUnit idx) targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (showUnitOption unit) unitList)),
-      Html.input[ id "comment", onInput (TO.SetIngreComment idx), class "ingrInput", value commentVal ][],
---      Html.input[ id "part", onInput (SetIngrePart idx), type_ "number", class "partInput", value (String.fromInt part.id) ][],
-      Html.select [ id "part", on "change" (Json.map (TO.SetIngrePart idx) targetValueIntParse) ] (List.append [PU.getSelectOption](List.map (showPartOption part) partList)),
-      Html.button [ onClick TO.RemoveIngreFromRecipe ][ Html.text "-" ]
+      Html.input[ id "order", onInput (TO.SetIngreOrder ingre.uuid), type_ "number", class "orderInput", value (String.fromInt ingre.sortorder) ][],
+      Html.input[ id "ingre", onInput (TO.SetIngreName ingre.uuid), class "ingrInput", value ingre.name ][],
+      Html.input[ id "quant", onInput (TO.SetIngreQuant ingre.uuid), type_ "number", step "0.1", class "quantInput", value quant ][],
+      Html.select [ id "unit", EvE.onChange (TO.SetIngreUnit ingre.uuid) ] (List.append [PU.getSelectOption](List.map (showUnitOption unit) unitList)),
+      Html.input[ id "comment", onInput (TO.SetIngreComment ingre.uuid), class "ingrInput", value commentVal ][],
+      Html.select [ id "part", EvE.onChange (TO.SetIngrePart ingre.uuid) ] (List.append [PU.getSelectOption](List.map (showPartOption part) partList)),
+      Html.button [ onClick (TO.RemoveIngreFromRecipe ingre.uuid) ][ Html.text "-" ]
     ]
 
 showUnitOption: Unit -> Unit -> Html Msg
 showUnitOption unitListValue unit =
   let
-    selectedVal = if unitListValue.id == unit.id then True else False
+    selectedVal = if unitListValue.uuid == unit.uuid then True else False
   in
-    Html.option[ value (String.fromInt unit.id), selected selectedVal ][ Html.text (unit.name ++ " (" ++ unit.unitCategory.name ++ ")") ]
+    Html.option[ value unit.uuid, selected selectedVal ][ Html.text (unit.name ++ " (" ++ unit.unitCategory.name ++ ")") ]
 
 showPartOption: PartLight -> PartLight -> Html Msg
 showPartOption partListValue part =
   let
-    selectedVal = if partListValue.id == part.id then True else False
+    selectedVal = if partListValue.uuid == part.uuid then True else False
   in
-    Html.option[ value (String.fromInt part.id), selected selectedVal ][ Html.text (part.name) ]
+    Html.option[ value part.uuid, selected selectedVal ][ Html.text (part.name) ]
