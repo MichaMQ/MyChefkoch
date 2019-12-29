@@ -25,8 +25,9 @@ view model =
               Html.h1 [][ Html.text "RecipeServer" ]
             ]
 
-        alertMsg =
-            PU.alert TO.CloseAlert model.alertMessage model
+        alertMsg = if model.alertMessage /= Nothing then PU.alert TO.CloseAlert model.alertMessage model
+          else if model.recAlertMessage /= Nothing then PU.alert TO.CloseAlert model.recAlertMessage model
+          else Html.div [][]
     in
       OVP.viewOverview model alertMsg
 

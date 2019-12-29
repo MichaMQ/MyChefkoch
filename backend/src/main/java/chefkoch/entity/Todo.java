@@ -1,5 +1,7 @@
 package chefkoch.entity;
 
+import java.util.UUID;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,6 +23,10 @@ public class Todo {
 	public static final String QUERY_GET_BY_RECIPEID = "Todo.GetByRecipeId";
 	public static final String QUERY_DELETE_BY_RECIPEID = "Todo.DeleteByRecipeId";
 
+	public Todo() {
+		this.setUuid(UUID.randomUUID().toString());
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;

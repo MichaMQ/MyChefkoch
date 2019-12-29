@@ -5,7 +5,7 @@ import Devs.Ports as Ports exposing (fileSelected)
 import List.Extra as ListE
 import UUID exposing (UUID)
 import Random
---import Debug exposing (log)
+import Debug exposing (log)
 
 import Devs.Objects as O exposing (..)
 import Devs.TypeObject as TO exposing (..)
@@ -68,6 +68,8 @@ update msg model =
             errorMsg = case model.selectedRecipe of
               Just rec -> DU.validateRecipe rec
               Nothing -> Nothing
+            _ = Debug.log "selectedRecipe: " model.selectedRecipe
+            _ = Debug.log "errorMsg: " errorMsg
           in
             case errorMsg of
               Just msg1 -> ( { model | recAlertMessage = Just msg1 }, Cmd.none )
@@ -75,7 +77,11 @@ update msg model =
                 Just newRecipe -> ( model, DU.saveRecipe model newRecipe )
                 Nothing -> ( model, Cmd.none )
         SavedRecipe (Ok savedRecipe) -> ( { model | selectedRecipe = Just savedRecipe, recAlertMessage = Nothing }, Cmd.none )
-        SavedRecipe (Err error) -> ( { model | recAlertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+        SavedRecipe (Err error) ->
+          let
+            _ = Debug.log "error: " error
+          in
+            ( { model | recAlertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
         DeleteRecipe -> ( { model | deleteRecipe = False, selectedTag = Nothing, recipesOfSelectedTag = Nothing, selectedRecipe = Nothing, newSource = Nothing }, Cmd.none )
         CloseRecipeAlert -> ( { model | recAlertMessage = Nothing }, Cmd.none )
         SetAikz val ->           ( { model | selectedRecipe = (RecipeObj.setAikz model.selectedRecipe val) } , Cmd.none)
@@ -274,7 +280,7 @@ update msg model =
         RemoveSelectedRecipe ->
           ( { model | selectedRecipe = Nothing }, Cmd.none )
         CloseAlert ->
-          ( { model | alertMessage = Nothing }, Cmd.none )
+          ( { model | alertMessage = Nothing, recAlertMessage = Nothing }, Cmd.none )
         CloseLoginAlert ->
           ( { model | alertMessage = Nothing }, Cmd.none )
         ListTagtypes (Ok tagtypeList) ->

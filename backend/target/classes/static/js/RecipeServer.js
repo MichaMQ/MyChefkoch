@@ -8614,14 +8614,16 @@ var author$project$Devs$Update$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'SaveRecipe':
 				var errorMsg = function () {
-					var _n5 = model.selectedRecipe;
-					if (_n5.$ === 'Just') {
-						var rec = _n5.a;
+					var _n7 = model.selectedRecipe;
+					if (_n7.$ === 'Just') {
+						var rec = _n7.a;
 						return author$project$Devs$Utils$validateRecipe(rec);
 					} else {
 						return elm$core$Maybe$Nothing;
 					}
 				}();
+				var _n3 = A2(elm$core$Debug$log, 'selectedRecipe: ', model.selectedRecipe);
+				var _n4 = A2(elm$core$Debug$log, 'errorMsg: ', errorMsg);
 				if (errorMsg.$ === 'Just') {
 					var msg1 = errorMsg.a;
 					return _Utils_Tuple2(
@@ -8632,9 +8634,9 @@ var author$project$Devs$Update$update = F2(
 							}),
 						elm$core$Platform$Cmd$none);
 				} else {
-					var _n4 = model.selectedRecipe;
-					if (_n4.$ === 'Just') {
-						var newRecipe = _n4.a;
+					var _n6 = model.selectedRecipe;
+					if (_n6.$ === 'Just') {
+						var newRecipe = _n6.a;
 						return _Utils_Tuple2(
 							model,
 							A2(author$project$Devs$Utils$saveRecipe, model, newRecipe));
@@ -8655,6 +8657,7 @@ var author$project$Devs$Update$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var error = msg.a.a;
+					var _n8 = A2(elm$core$Debug$log, 'error: ', error);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8799,23 +8802,23 @@ var author$project$Devs$Update$update = F2(
 			case 'SetSource':
 				var sUuid = msg.a;
 				var sourceList = function () {
-					var _n7 = model.kl.sourceList;
-					if (_n7.$ === 'Just') {
-						var srcList = _n7.a;
+					var _n10 = model.kl.sourceList;
+					if (_n10.$ === 'Just') {
+						var srcList = _n10.a;
 						return srcList;
 					} else {
 						return _List_Nil;
 					}
 				}();
 				var newRec = function () {
-					var _n6 = A2(
+					var _n9 = A2(
 						elm_community$list_extra$List$Extra$find,
 						function (item) {
 							return _Utils_eq(item.uuid, sUuid);
 						},
 						sourceList);
-					if (_n6.$ === 'Just') {
-						var src = _n6.a;
+					if (_n9.$ === 'Just') {
+						var src = _n9.a;
 						return A2(author$project$Devs$Recipe$setSource, model.selectedRecipe, src);
 					} else {
 						return model.selectedRecipe;
@@ -8827,12 +8830,12 @@ var author$project$Devs$Update$update = F2(
 						{selectedRecipe: newRec}),
 					elm$core$Platform$Cmd$none);
 			case 'AddNewSource':
-				var _n8 = A2(
+				var _n11 = A2(
 					elm$random$Random$step,
 					TSFoster$elm_uuid$UUID$generator,
 					author$project$Devs$Utils$getSeed(model));
-				var newUuid = _n8.a;
-				var newSeed = _n8.b;
+				var newUuid = _n11.a;
+				var newSeed = _n11.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -8881,9 +8884,9 @@ var author$project$Devs$Update$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'SaveNewSource':
 				var newSource = function () {
-					var _n9 = model.newSource;
-					if (_n9.$ === 'Just') {
-						var src = _n9.a;
+					var _n12 = model.newSource;
+					if (_n12.$ === 'Just') {
+						var src = _n12.a;
 						return src;
 					} else {
 						return author$project$Devs$Objects$getEmptySource;
@@ -8902,9 +8905,9 @@ var author$project$Devs$Update$update = F2(
 				if (msg.a.$ === 'Ok') {
 					var savedSource = msg.a.a;
 					var newSourceList = function () {
-						var _n10 = model.kl.sourceList;
-						if (_n10.$ === 'Just') {
-							var srcList = _n10.a;
+						var _n13 = model.kl.sourceList;
+						if (_n13.$ === 'Just') {
+							var srcList = _n13.a;
 							return A2(
 								elm$core$List$append,
 								srcList,
@@ -8945,23 +8948,23 @@ var author$project$Devs$Update$update = F2(
 			case 'SetChoosenTag':
 				var tUuid = msg.a;
 				var tagList = function () {
-					var _n12 = model.kl.tagList;
-					if (_n12.$ === 'Just') {
-						var tagListTmp = _n12.a;
+					var _n15 = model.kl.tagList;
+					if (_n15.$ === 'Just') {
+						var tagListTmp = _n15.a;
 						return tagListTmp;
 					} else {
 						return _List_Nil;
 					}
 				}();
 				var newModel = function () {
-					var _n11 = A2(
+					var _n14 = A2(
 						elm_community$list_extra$List$Extra$find,
 						function (item) {
 							return _Utils_eq(item.uuid, tUuid);
 						},
 						tagList);
-					if (_n11.$ === 'Just') {
-						var item = _n11.a;
+					if (_n14.$ === 'Just') {
+						var item = _n14.a;
 						return _Utils_update(
 							model,
 							{
@@ -8975,9 +8978,9 @@ var author$project$Devs$Update$update = F2(
 			case 'RemoveTagFromRec':
 				var tUuid = msg.a;
 				var newTagList = function () {
-					var _n13 = model.selectedRecipe;
-					if (_n13.$ === 'Just') {
-						var rec = _n13.a;
+					var _n16 = model.selectedRecipe;
+					if (_n16.$ === 'Just') {
+						var rec = _n16.a;
 						return A2(
 							elm$core$List$filter,
 							function (item) {
@@ -8996,9 +8999,9 @@ var author$project$Devs$Update$update = F2(
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'AddTagToRecipe':
-				var _n14 = model.addTag;
-				if (_n14.$ === 'Just') {
-					var newTag = _n14.a;
+				var _n17 = model.addTag;
+				if (_n17.$ === 'Just') {
+					var newTag = _n17.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -9024,12 +9027,12 @@ var author$project$Devs$Update$update = F2(
 						{addTag: elm$core$Maybe$Nothing, alertMessage: elm$core$Maybe$Nothing}),
 					elm$core$Platform$Cmd$none);
 			case 'AddIngreToRecipe':
-				var _n15 = A2(
+				var _n18 = A2(
 					elm$random$Random$step,
 					TSFoster$elm_uuid$UUID$generator,
 					author$project$Devs$Utils$getSeed(model));
-				var newUuid = _n15.a;
-				var newSeed = _n15.b;
+				var newUuid = _n18.a;
+				var newSeed = _n18.b;
 				var newIngre = A2(author$project$Devs$Utils$getNewIngre, model, newUuid);
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -9047,9 +9050,9 @@ var author$project$Devs$Update$update = F2(
 					0,
 					elm$core$String$toInt(val));
 				var newIngreList = function () {
-					var _n16 = model.selectedRecipe;
-					if (_n16.$ === 'Just') {
-						var rec = _n16.a;
+					var _n19 = model.selectedRecipe;
+					if (_n19.$ === 'Just') {
+						var rec = _n19.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9076,9 +9079,9 @@ var author$project$Devs$Update$update = F2(
 				var iUuid = msg.a;
 				var val = msg.b;
 				var newIngreList = function () {
-					var _n17 = model.selectedRecipe;
-					if (_n17.$ === 'Just') {
-						var rec = _n17.a;
+					var _n20 = model.selectedRecipe;
+					if (_n20.$ === 'Just') {
+						var rec = _n20.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9105,9 +9108,9 @@ var author$project$Devs$Update$update = F2(
 				var iUuid = msg.a;
 				var val = msg.b;
 				var newIngreList = function () {
-					var _n18 = model.selectedRecipe;
-					if (_n18.$ === 'Just') {
-						var rec = _n18.a;
+					var _n21 = model.selectedRecipe;
+					if (_n21.$ === 'Just') {
+						var rec = _n21.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9140,9 +9143,9 @@ var author$project$Devs$Update$update = F2(
 					0,
 					elm$core$String$toFloat(val));
 				var newIngreList = function () {
-					var _n19 = model.selectedRecipe;
-					if (_n19.$ === 'Just') {
-						var rec = _n19.a;
+					var _n22 = model.selectedRecipe;
+					if (_n22.$ === 'Just') {
+						var rec = _n22.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9171,26 +9174,26 @@ var author$project$Devs$Update$update = F2(
 				var iUuid = msg.a;
 				var pUuid = msg.b;
 				var partKeyList = function () {
-					var _n22 = model.kl.partList;
-					if (_n22.$ === 'Just') {
-						var list = _n22.a;
+					var _n25 = model.kl.partList;
+					if (_n25.$ === 'Just') {
+						var list = _n25.a;
 						return list;
 					} else {
 						return _List_Nil;
 					}
 				}();
 				var newRec = function () {
-					var _n20 = A2(
+					var _n23 = A2(
 						elm_community$list_extra$List$Extra$find,
 						function (part) {
 							return _Utils_eq(part.uuid, pUuid);
 						},
 						partKeyList);
-					if (_n20.$ === 'Just') {
-						var part = _n20.a;
-						var _n21 = A2(author$project$Devs$Recipe$setParts, model.selectedRecipe, part);
-						if (_n21.$ === 'Just') {
-							var rec = _n21.a;
+					if (_n23.$ === 'Just') {
+						var part = _n23.a;
+						var _n24 = A2(author$project$Devs$Recipe$setParts, model.selectedRecipe, part);
+						if (_n24.$ === 'Just') {
+							var rec = _n24.a;
 							return A2(
 								author$project$Devs$Recipe$setIngredients,
 								elm$core$Maybe$Just(rec),
@@ -9223,26 +9226,26 @@ var author$project$Devs$Update$update = F2(
 				var iUuid = msg.a;
 				var uUuid = msg.b;
 				var unitList = function () {
-					var _n25 = model.kl.unitList;
-					if (_n25.$ === 'Just') {
-						var list = _n25.a;
+					var _n28 = model.kl.unitList;
+					if (_n28.$ === 'Just') {
+						var list = _n28.a;
 						return list;
 					} else {
 						return _List_Nil;
 					}
 				}();
 				var newIngreList = function () {
-					var _n23 = A2(
+					var _n26 = A2(
 						elm_community$list_extra$List$Extra$find,
 						function (unit) {
 							return _Utils_eq(unit.uuid, uUuid);
 						},
 						unitList);
-					if (_n23.$ === 'Just') {
-						var unit = _n23.a;
-						var _n24 = model.selectedRecipe;
-						if (_n24.$ === 'Just') {
-							var rec = _n24.a;
+					if (_n26.$ === 'Just') {
+						var unit = _n26.a;
+						var _n27 = model.selectedRecipe;
+						if (_n27.$ === 'Just') {
+							var rec = _n27.a;
 							return A3(
 								elm_community$list_extra$List$Extra$updateIf,
 								function (item) {
@@ -9273,9 +9276,9 @@ var author$project$Devs$Update$update = F2(
 			case 'RemoveIngreFromRecipe':
 				var iUuid = msg.a;
 				var newRec = function () {
-					var _n26 = model.selectedRecipe;
-					if (_n26.$ === 'Just') {
-						var rec = _n26.a;
+					var _n29 = model.selectedRecipe;
+					if (_n29.$ === 'Just') {
+						var rec = _n29.a;
 						return elm$core$Maybe$Just(
 							_Utils_update(
 								rec,
@@ -9297,12 +9300,12 @@ var author$project$Devs$Update$update = F2(
 						{selectedRecipe: newRec}),
 					elm$core$Platform$Cmd$none);
 			case 'AddTodoToRecipe':
-				var _n27 = A2(
+				var _n30 = A2(
 					elm$random$Random$step,
 					TSFoster$elm_uuid$UUID$generator,
 					author$project$Devs$Utils$getSeed(model));
-				var newUuid = _n27.a;
-				var newSeed = _n27.b;
+				var newUuid = _n30.a;
+				var newSeed = _n30.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -9322,9 +9325,9 @@ var author$project$Devs$Update$update = F2(
 					0,
 					elm$core$String$toInt(val));
 				var newTodoList = function () {
-					var _n28 = model.selectedRecipe;
-					if (_n28.$ === 'Just') {
-						var rec = _n28.a;
+					var _n31 = model.selectedRecipe;
+					if (_n31.$ === 'Just') {
+						var rec = _n31.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9351,9 +9354,9 @@ var author$project$Devs$Update$update = F2(
 				var tUuid = msg.a;
 				var val = msg.b;
 				var newTodoList = function () {
-					var _n29 = model.selectedRecipe;
-					if (_n29.$ === 'Just') {
-						var rec = _n29.a;
+					var _n32 = model.selectedRecipe;
+					if (_n32.$ === 'Just') {
+						var rec = _n32.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9380,9 +9383,9 @@ var author$project$Devs$Update$update = F2(
 				var tUuid = msg.a;
 				var val = msg.b;
 				var newTodoList = function () {
-					var _n30 = model.selectedRecipe;
-					if (_n30.$ === 'Just') {
-						var rec = _n30.a;
+					var _n33 = model.selectedRecipe;
+					if (_n33.$ === 'Just') {
+						var rec = _n33.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9411,9 +9414,9 @@ var author$project$Devs$Update$update = F2(
 				var tUuid = msg.a;
 				var val = msg.b;
 				var newTodoList = function () {
-					var _n31 = model.selectedRecipe;
-					if (_n31.$ === 'Just') {
-						var rec = _n31.a;
+					var _n34 = model.selectedRecipe;
+					if (_n34.$ === 'Just') {
+						var rec = _n34.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9441,9 +9444,9 @@ var author$project$Devs$Update$update = F2(
 			case 'RemoveTodoFromRecipe':
 				var tUuid = msg.a;
 				var newRec = function () {
-					var _n32 = model.selectedRecipe;
-					if (_n32.$ === 'Just') {
-						var rec = _n32.a;
+					var _n35 = model.selectedRecipe;
+					if (_n35.$ === 'Just') {
+						var rec = _n35.a;
 						return elm$core$Maybe$Just(
 							_Utils_update(
 								rec,
@@ -9511,7 +9514,7 @@ var author$project$Devs$Update$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{alertMessage: elm$core$Maybe$Nothing}),
+						{alertMessage: elm$core$Maybe$Nothing, recAlertMessage: elm$core$Maybe$Nothing}),
 					elm$core$Platform$Cmd$none);
 			case 'CloseLoginAlert':
 				return _Utils_Tuple2(
@@ -11960,6 +11963,7 @@ var author$project$Devs$TypeObject$ConfirmDelete = {$: 'ConfirmDelete'};
 var author$project$Devs$TypeObject$EditRecipe = {$: 'EditRecipe'};
 var author$project$Devs$TypeObject$NoOp = {$: 'NoOp'};
 var author$project$Devs$TypeObject$RemoveSelectedRecipe = {$: 'RemoveSelectedRecipe'};
+var author$project$Devs$TypeObject$SaveRecipe = {$: 'SaveRecipe'};
 var author$project$Devs$Utils$isLoggedIn = function (loginToken) {
 	if (loginToken.$ === 'Just') {
 		var log = loginToken.a;
@@ -12442,7 +12446,7 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 										author$project$Devs$Utils$isLoggedIn(loginToken)),
 									'save.png',
 									elm$core$Maybe$Nothing,
-									author$project$Devs$TypeObject$NoOp,
+									author$project$Devs$TypeObject$SaveRecipe,
 									_List_fromArray(
 										[
 											A2(elm$html$Html$Attributes$style, 'margin-top', '10px')
@@ -12931,7 +12935,7 @@ var author$project$RecipeServer$view = function (model) {
 					elm$html$Html$text('RecipeServer')
 				]))
 		]);
-	var alertMsg = A3(author$project$Pages$Utils$alert, author$project$Devs$TypeObject$CloseAlert, model.alertMessage, model);
+	var alertMsg = (!_Utils_eq(model.alertMessage, elm$core$Maybe$Nothing)) ? A3(author$project$Pages$Utils$alert, author$project$Devs$TypeObject$CloseAlert, model.alertMessage, model) : ((!_Utils_eq(model.recAlertMessage, elm$core$Maybe$Nothing)) ? A3(author$project$Pages$Utils$alert, author$project$Devs$TypeObject$CloseAlert, model.recAlertMessage, model) : A2(elm$html$Html$div, _List_Nil, _List_Nil));
 	return A2(author$project$Pages$OverViewPage$viewOverview, model, alertMsg);
 };
 var elm$browser$Browser$External = function (a) {

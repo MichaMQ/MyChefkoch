@@ -1,5 +1,7 @@
 package chefkoch.entity;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,6 +29,10 @@ import javax.validation.constraints.NotNull;
 public class Recipe_Tag {
 	public static final String QUERY_GETALL = "Recipe_Tag.GetAll";
 	public static final String QUERY_DELETE_BY_RECIPEID = "Recipe_Tag.DeleteByRecipeId";
+	
+	public Recipe_Tag() {
+		this.setUuid(UUID.randomUUID().toString());
+	}
 	
 	@Id
 	//@GeneratedValue(strategy = GenerationType.IDENTITY)

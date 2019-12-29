@@ -225,29 +225,11 @@
 									<xsl:text>Pro Portion: </xsl:text><xsl:value-of select="nv_calories" /><xsl:text> kcal</xsl:text>
 								</fo:block>
 							</xsl:if>
-							<xsl:for-each select="ingredients/part">
+							<xsl:for-each select="parts/part">
 								<xsl:choose>
 									<xsl:when test="normalize-space(@name)!=''">
 										<fo:block line-height="12.0pt" padding-top="0.3cm" white-space-collapse="false" linefeed-treatment="preserve" 
 											text-align="start" color="#a6b3b3" font-family="{$fontFamily}" font-size="10.0pt" font-weight="bold">
-											<!--xsl:variable name="partTxt">
-												<xsl:choose>
-													<xsl:when test="@id=0">Für den Teig</xsl:when>
-													<xsl:when test="@id=1">Für die Creme</xsl:when>
-													<xsl:when test="@id=2">Für die Sauce</xsl:when>
-													<xsl:when test="@id=3">Für das Ragout</xsl:when>
-													<xsl:when test="@id=4">Für das Parfait</xsl:when>
-													<xsl:when test="@id=5">Für die Mayonnaise</xsl:when>
-													<xsl:when test="@id=6">Außerdem</xsl:when>
-													<xsl:when test="@id=7">Für den Belag</xsl:when>
-													<xsl:when test="@id=8">Für die Suppe</xsl:when>
-													<xsl:when test="@id=9">Für die Croutons</xsl:when>
-													<xsl:when test="@id=10">Für das Fleisch</xsl:when>
-													<xsl:when test="@id='null'">Sonstige Zutaten</xsl:when>
-													<xsl:otherwise><xsl:value-of select="@id" /></xsl:otherwise>
-												</xsl:choose>
-											</xsl:variable>
-											<xsl:value-of select="$partTxt" /-->
 											<xsl:value-of select="@name" />
 										</fo:block>
 									</xsl:when>

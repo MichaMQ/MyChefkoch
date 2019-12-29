@@ -441,9 +441,11 @@ public class RecipeServiceImpl implements RecipeService {
 			throw new IllegalArgumentException("error.recipe");
 		} else {
 			Recipe recipe = new Recipe();
-			Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeDto.getId());
-			if (recipeOptional.isPresent()) {
-				recipe = recipeOptional.get();
+			if(recipeDto.getId() != null) {
+				Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeDto.getId());
+				if (recipeOptional.isPresent()) {
+					recipe = recipeOptional.get();
+				}
 			}
 			recipe.setName(recipeDto.getName());
 			recipe.setAikz(recipeDto.getAikz());
@@ -460,9 +462,11 @@ public class RecipeServiceImpl implements RecipeService {
 			
 			SourceDto srcDto = recipeDto.getSource();
 			Source src = new Source();
-			Optional<Source> srcOpt = sourceRepository.findById(srcDto.getId());
-			if (srcOpt.isPresent()) {
-				src = srcOpt.get();
+			if(srcDto.getId() != null) {
+				Optional<Source> srcOpt = sourceRepository.findById(srcDto.getId());
+				if (srcOpt.isPresent()) {
+					src = srcOpt.get();
+				}
 			}
 			src.setName(srcDto.getName());
 			src.setIsbn(srcDto.getIsbn());
@@ -472,22 +476,26 @@ public class RecipeServiceImpl implements RecipeService {
 			recipe.setTags(new HashSet<>());
 			for(TagDto tagDto : recipeDto.getTags()) {
 				Tag tag = new Tag();
-				Optional<Tag> tagOpt = tagRepository.findById(tagDto.getId());
-				Optional<Tag_Type> tagtypeOpt = tagtypeRepository.findById(tagDto.getTagtype().getId());
-				if (tagOpt.isPresent()) {
-					tag = tagOpt.get();
+				if(tagDto.getId() != null) {
+					Optional<Tag> tagOpt = tagRepository.findById(tagDto.getId());
+					Optional<Tag_Type> tagtypeOpt = tagtypeRepository.findById(tagDto.getTagtype().getId());
+					if (tagOpt.isPresent()) {
+						tag = tagOpt.get();
+					}
+					tag.setTagType(tagtypeOpt.get());
 				}
 				tag.setName(tagDto.getName());
-				tag.setTagType(tagtypeOpt.get());
 				recipe.getTags().add(tag);
 			}
 			
 			recipe.setTodos(new HashSet<>());
 			for(TodoDto todoDto : recipeDto.getTodos()) {
 				Todo todo = new Todo();
-				Optional<Todo> todoOpt = todoRepository.findById(todoDto.getId());
-				if (todoOpt.isPresent()) {
-					todo = todoOpt.get();
+				if(todoDto.getId() != null) {
+					Optional<Todo> todoOpt = todoRepository.findById(todoDto.getId());
+					if (todoOpt.isPresent()) {
+						todo = todoOpt.get();
+					}
 				}
 				todo.setImage(todoDto.getImage());
 				todo.setImage_comment(todoDto.getImage_comment());
@@ -500,20 +508,22 @@ public class RecipeServiceImpl implements RecipeService {
 			recipe.setIngredients(new HashSet<>());
 			for(IngredientDto ingreDto : recipeDto.getIngredients()) {
 				Ingredient ingre = new Ingredient();
-				Optional<Ingredient> ingreOpt = ingredientRepository.findById(ingreDto.getId());
-				if (ingreOpt.isPresent()) {
-					ingre = ingreOpt.get();
+				if(ingreDto.getId() != null) {
+					Optional<Ingredient> ingreOpt = ingredientRepository.findById(ingreDto.getId());
+					if (ingreOpt.isPresent()) {
+						ingre = ingreOpt.get();
+					}
 				}
 				ingre.setComment(ingreDto.getComment());
 				ingre.setName(ingreDto.getName());
 				ingre.setQuantity(ingreDto.getQuantity());
 				ingre.setSortorder(ingreDto.getSortorder());
 				ingre.setRecipe(recipe);
-				if(ingreDto.getPart() != null) {
+				if(ingreDto.getPart() != null && ingreDto.getPart().getId() != null) {
 					Optional<Part> partOpt = partRepository.findById(ingreDto.getPart().getId());
 					ingre.setPart(partOpt.get());
 				}
-				if(ingreDto.getUnit() != null) {
+				if(ingreDto.getUnit() != null && ingreDto.getUnit().getId() != null) {
 					Optional<Unit> unitOpt = unitRepository.findById(ingreDto.getUnit().getId());
 					ingre.setUnit(unitOpt.get());
 				}

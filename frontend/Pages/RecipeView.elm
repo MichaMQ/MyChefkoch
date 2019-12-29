@@ -61,7 +61,7 @@ viewRecipe loginToken rec sp =
           Html.h2 [ Attr.style "float" "left", Attr.style "margin-right" "5px" ][
             PU.getEditHeader (DU.isLoggedIn loginToken) header (TO.ToggleEditForm O.BasicForm)
           ]
-          , PU.getEditButton sp (Just (DU.isLoggedIn loginToken)) "save.png" Nothing TO.NoOp [Attr.style "margin-top" "10px"]
+          , PU.getEditButton sp (Just (DU.isLoggedIn loginToken)) "save.png" Nothing TO.SaveRecipe [Attr.style "margin-top" "10px"]
           , PU.getEditButton sp (Just (DU.isLoggedIn loginToken)) "delete.png" Nothing TO.ConfirmDelete [Attr.style "margin-top" "10px"]
         ]
         , Html.div [ id "recipeSource", Attr.style "clear" "both" ][ Html.text (rec_source ++ sourcePage ++ sourceYear ++ sourceIsbn), amazonLink ]

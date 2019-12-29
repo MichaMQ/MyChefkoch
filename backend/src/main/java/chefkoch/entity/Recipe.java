@@ -2,6 +2,7 @@ package chefkoch.entity;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,6 +32,10 @@ public class Recipe {
 	public static final String QUERY_DELETE_BY_ID = "Recipe.DeleteById";
 	public static final String QUERY_FIND_BY_NAME = "Recipe.FindByName";
 
+	public Recipe() {
+		this.setUuid(UUID.randomUUID().toString());
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
