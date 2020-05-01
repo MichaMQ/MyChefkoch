@@ -92,6 +92,9 @@ type alias Model = {
 
 type alias InitData = {
   random: Int
+  , protocol: String
+  , serverName: String
+  , serverPort: Int
   }
 
 -- Model
@@ -101,7 +104,7 @@ keyLists = {sourceList = Nothing, tagList = Nothing, unitList = Nothing, partLis
 
 serverParams: ServerParams
 serverParams = {serverProtokoll = "http://",
-    serverHost = "horst:8085",
+    serverHost = "localhost:8085",
     serverUrlPrefix = "/RecipeServer",
     apiUrlPrefix = "/api/v1",
     iconPath = "icons/",

@@ -1,5 +1,11 @@
 /*  I M P O R T   S T Y L E S
 --------------------------------------------------------------------------------------------------- */
+@import "screen.css";
+
+body {
+	background-color: white;
+}
+
 .noprint {
 	display: none;
 }

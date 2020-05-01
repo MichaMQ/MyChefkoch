@@ -3,16 +3,34 @@
   <head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-		<link href="pub/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
-		<link href="pub/css/print.css" type="text/css" rel="stylesheet" media="print" />
+		<link rel="shortcut icon" type="image/x-icon" href="icons/favicon.ico">
+		<link href="css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+		<link href="css/print.css" type="text/css" rel="stylesheet" media="print" />
   </head>
   <body>
     <div id="content"></div>
-    <!--script src="pub/js/RecipeServer.min.js"></script-->
-    <script src="pub/js/RecipeServer.js"></script>
+    <!--script src="js/RecipeServer.min.js"></script-->
+    <script src="js/RecipeServer.js"></script>
     <script>
       var mainNode = document.getElementById("content");
-      var app = Elm.RecipeServer.embed(mainNode);
+      //var app = Elm.RecipeServer.embed(mainNode);
+      var app = Elm.RecipeServer.init({ node: mainNode });
+
+      var min=10000;
+      var max=2147483647;
+      var random = Math.floor(Math.random() * (+max - +min)) + +min;
+      var port = parseInt(document.location.port);
+      if (isNaN(port)) {
+        port = 0;
+      }
+      var ServerObj = {
+        "random": random
+        , "protocol": document.location.protocol.substring(0,4)
+        , "serverName": document.location.hostname
+        , "serverPort": port
+      };
+
+      app.ports.initialize.send(ServerObj);
 
       app.ports.fileSelected.subscribe(function (id) {
         var node = document.getElementById(id);

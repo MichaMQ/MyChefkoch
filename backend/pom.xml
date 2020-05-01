@@ -8,7 +8,7 @@
 
 	<name>Spring Boot Blank Project (from https://github.com/making/spring-boot-blank)</name>
 
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -62,6 +62,12 @@
 		    <groupId>org.glassfish.jersey.core</groupId>
 		    <artifactId>jersey-common</artifactId>
 	    </dependency>
+<!-- https://mvnrepository.com/artifact/org.javassist/javassist -->
+<dependency>
+    <groupId>org.javassist</groupId>
+    <artifactId>javassist</artifactId>
+    <version>3.26.0-GA</version>
+</dependency>
 	</dependencies>
 
 	<properties>
@@ -74,6 +80,13 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+	        <executable>true</executable>
+					<jvmArguments>
+          	-Xms384m
+          	-Xmx512m
+        	</jvmArguments>
+        </configuration>
 			</plugin>
 		</plugins>
 	</build>

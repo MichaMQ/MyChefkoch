@@ -16,13 +16,22 @@
       //var app = Elm.RecipeServer.embed(mainNode);
       var app = Elm.RecipeServer.init({ node: mainNode });
 
-    var min=10000;
-    var max=2147483647;
-    var random = Math.floor(Math.random() * (+max - +min)) + +min
+      var min=10000;
+      var max=2147483647;
+      var random = Math.floor(Math.random() * (+max - +min)) + +min;
+      var port = parseInt(document.location.port);
+      if (isNaN(port)) {
+        port = 0;
+      }
+      var ServerObj = {
+        "random": random
+        , "protocol": document.location.protocol.substring(0,4)
+        , "serverName": document.location.hostname
+        , "serverPort": port
+      };
+      //console.log(ServerObj);
 
-      var initData = {random: random}
-
-      app.ports.initialize.send(initData);
+      app.ports.initialize.send(ServerObj);
 
       app.ports.fileSelected.subscribe(function (id) {
         var node = document.getElementById(id);

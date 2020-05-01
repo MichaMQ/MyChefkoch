@@ -6593,126 +6593,6 @@ var author$project$Devs$Recipe$setTranslate = F2(
 			return elm$core$Maybe$Nothing;
 		}
 	});
-var author$project$Devs$Objects$getEmptyIngre = F2(
-	function (newOrder, newPart) {
-		return {
-			comment: elm$core$Maybe$Nothing,
-			id: elm$core$Maybe$Nothing,
-			name: '',
-			part: newPart,
-			quantity: elm$core$Maybe$Nothing,
-			sortorder: newOrder,
-			unit: elm$core$Maybe$Nothing,
-			uuid: TSFoster$elm_uuid$UUID$toString(TSFoster$elm_uuid$UUID$nil)
-		};
-	});
-var author$project$Devs$Objects$getEmptyPart = {
-	id: -2,
-	name: 'Sonstige Zutaten',
-	uuid: TSFoster$elm_uuid$UUID$toString(TSFoster$elm_uuid$UUID$nil)
-};
-var elm$core$List$sortBy = _List_sortBy;
-var elm_community$list_extra$List$Extra$last = function (items) {
-	last:
-	while (true) {
-		if (!items.b) {
-			return elm$core$Maybe$Nothing;
-		} else {
-			if (!items.b.b) {
-				var x = items.a;
-				return elm$core$Maybe$Just(x);
-			} else {
-				var rest = items.b;
-				var $temp$items = rest;
-				items = $temp$items;
-				continue last;
-			}
-		}
-	}
-};
-var author$project$Devs$Utils$getNewIngre = F2(
-	function (model, newUuid) {
-		var ingreList = function () {
-			var _n2 = model.selectedRecipe;
-			if (_n2.$ === 'Just') {
-				var rec = _n2.a;
-				return A2(
-					elm$core$List$sortBy,
-					function ($) {
-						return $.sortorder;
-					},
-					rec.ingredients);
-			} else {
-				return _List_Nil;
-			}
-		}();
-		var newOrder = function () {
-			var _n1 = elm_community$list_extra$List$Extra$last(ingreList);
-			if (_n1.$ === 'Just') {
-				var lastItem = _n1.a;
-				return lastItem.sortorder + 1;
-			} else {
-				return 0;
-			}
-		}();
-		var newPart = function () {
-			var _n0 = elm_community$list_extra$List$Extra$last(ingreList);
-			if (_n0.$ === 'Just') {
-				var lastItem = _n0.a;
-				return lastItem.part;
-			} else {
-				return elm$core$Maybe$Just(author$project$Devs$Objects$getEmptyPart);
-			}
-		}();
-		var newIngre = A2(author$project$Devs$Objects$getEmptyIngre, newOrder, newPart);
-		return _Utils_update(
-			newIngre,
-			{
-				uuid: TSFoster$elm_uuid$UUID$toString(newUuid)
-			});
-	});
-var author$project$Devs$Objects$getEmptyTodo = function (newNumber) {
-	return {
-		id: 0,
-		image: elm$core$Maybe$Nothing,
-		image_comment: elm$core$Maybe$Nothing,
-		number: newNumber,
-		text: '',
-		uuid: TSFoster$elm_uuid$UUID$toString(TSFoster$elm_uuid$UUID$nil)
-	};
-};
-var author$project$Devs$Utils$getNewTodo = F2(
-	function (model, newUuid) {
-		var todoList = function () {
-			var _n1 = model.selectedRecipe;
-			if (_n1.$ === 'Just') {
-				var rec = _n1.a;
-				return A2(
-					elm$core$List$sortBy,
-					function ($) {
-						return $.number;
-					},
-					rec.todos);
-			} else {
-				return _List_Nil;
-			}
-		}();
-		var newNumber = function () {
-			var _n0 = elm_community$list_extra$List$Extra$last(todoList);
-			if (_n0.$ === 'Just') {
-				var lastItem = _n0.a;
-				return lastItem.number + 1;
-			} else {
-				return 0;
-			}
-		}();
-		var newTodo = author$project$Devs$Objects$getEmptyTodo(newNumber);
-		return _Utils_update(
-			newTodo,
-			{
-				uuid: TSFoster$elm_uuid$UUID$toString(newUuid)
-			});
-	});
 var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
 var elm$core$Basics$compare = _Utils_compare;
@@ -7495,6 +7375,356 @@ var author$project$Devs$BackendApi$myRequest = F5(
 		return elm$http$Http$request(
 			{body: body, expect: expect, headers: header, method: method, timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: url});
 	});
+var author$project$Devs$Objects$PartLight = F3(
+	function (id, name, uuid) {
+		return {id: id, name: name, uuid: uuid};
+	});
+var elm$json$Json$Decode$field = _Json_decodeField;
+var elm$json$Json$Decode$int = _Json_decodeInt;
+var elm$json$Json$Decode$map3 = _Json_map3;
+var elm$json$Json$Decode$string = _Json_decodeString;
+var author$project$Devs$RecipeDecode$partLightDecoder = A4(
+	elm$json$Json$Decode$map3,
+	author$project$Devs$Objects$PartLight,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
+var elm$core$Result$mapError = F2(
+	function (f, result) {
+		if (result.$ === 'Ok') {
+			var v = result.a;
+			return elm$core$Result$Ok(v);
+		} else {
+			var e = result.a;
+			return elm$core$Result$Err(
+				f(e));
+		}
+	});
+var elm$http$Http$expectStringResponse = F2(
+	function (toMsg, toResult) {
+		return A3(
+			_Http_expect,
+			'',
+			elm$core$Basics$identity,
+			A2(elm$core$Basics$composeR, toResult, toMsg));
+	});
+var elm$http$Http$BadBody = function (a) {
+	return {$: 'BadBody', a: a};
+};
+var elm$http$Http$BadStatus = function (a) {
+	return {$: 'BadStatus', a: a};
+};
+var elm$http$Http$BadUrl = function (a) {
+	return {$: 'BadUrl', a: a};
+};
+var elm$http$Http$NetworkError = {$: 'NetworkError'};
+var elm$http$Http$Timeout = {$: 'Timeout'};
+var elm$http$Http$resolve = F2(
+	function (toResult, response) {
+		switch (response.$) {
+			case 'BadUrl_':
+				var url = response.a;
+				return elm$core$Result$Err(
+					elm$http$Http$BadUrl(url));
+			case 'Timeout_':
+				return elm$core$Result$Err(elm$http$Http$Timeout);
+			case 'NetworkError_':
+				return elm$core$Result$Err(elm$http$Http$NetworkError);
+			case 'BadStatus_':
+				var metadata = response.a;
+				return elm$core$Result$Err(
+					elm$http$Http$BadStatus(metadata.statusCode));
+			default:
+				var body = response.b;
+				return A2(
+					elm$core$Result$mapError,
+					elm$http$Http$BadBody,
+					toResult(body));
+		}
+	});
+var elm$json$Json$Decode$decodeString = _Json_runOnString;
+var elm$http$Http$expectJson = F2(
+	function (toMsg, decoder) {
+		return A2(
+			elm$http$Http$expectStringResponse,
+			toMsg,
+			elm$http$Http$resolve(
+				function (string) {
+					return A2(
+						elm$core$Result$mapError,
+						elm$json$Json$Decode$errorToString,
+						A2(elm$json$Json$Decode$decodeString, decoder, string));
+				}));
+	});
+var elm$json$Json$Decode$list = _Json_decodeList;
+var author$project$Devs$BackendApi$getAllParts = F3(
+	function (event, token, url) {
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'GET',
+			url,
+			A2(
+				elm$http$Http$expectJson,
+				event,
+				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$partLightDecoder)),
+			token,
+			elm$core$Maybe$Nothing);
+	});
+var author$project$Devs$TypeObject$SetPartList = function (a) {
+	return {$: 'SetPartList', a: a};
+};
+var author$project$Devs$Utils$getAllParts = function (model) {
+	return A3(author$project$Devs$BackendApi$getAllParts, author$project$Devs$TypeObject$SetPartList, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllParts'))));
+};
+var author$project$Devs$Objects$Source = F5(
+	function (id, isbn, name, year, uuid) {
+		return {id: id, isbn: isbn, name: name, uuid: uuid, year: year};
+	});
+var elm$json$Json$Decode$map5 = _Json_map5;
+var elm$json$Json$Decode$map = _Json_map1;
+var elm$json$Json$Decode$oneOf = _Json_oneOf;
+var elm$json$Json$Decode$succeed = _Json_succeed;
+var elm$json$Json$Decode$maybe = function (decoder) {
+	return elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				A2(elm$json$Json$Decode$map, elm$core$Maybe$Just, decoder),
+				elm$json$Json$Decode$succeed(elm$core$Maybe$Nothing)
+			]));
+};
+var author$project$Devs$RecipeDecode$sourceDecoder = A6(
+	elm$json$Json$Decode$map5,
+	author$project$Devs$Objects$Source,
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'isbn', elm$json$Json$Decode$string)),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'year', elm$json$Json$Decode$string)),
+	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
+var author$project$Devs$BackendApi$getAllSources = F3(
+	function (event, token, url) {
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'GET',
+			url,
+			A2(
+				elm$http$Http$expectJson,
+				event,
+				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$sourceDecoder)),
+			token,
+			elm$core$Maybe$Nothing);
+	});
+var author$project$Devs$TypeObject$SetSourceList = function (a) {
+	return {$: 'SetSourceList', a: a};
+};
+var author$project$Devs$Utils$getAllSources = function (model) {
+	return A3(author$project$Devs$BackendApi$getAllSources, author$project$Devs$TypeObject$SetSourceList, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllSources'))));
+};
+var author$project$Devs$Objects$Tag = F4(
+	function (id, name, tagType, uuid) {
+		return {id: id, name: name, tagType: tagType, uuid: uuid};
+	});
+var author$project$Devs$Objects$TagtypeShort = F3(
+	function (id, name, uuid) {
+		return {id: id, name: name, uuid: uuid};
+	});
+var author$project$Devs$RecipeDecode$tagtypeShortDecoder = A4(
+	elm$json$Json$Decode$map3,
+	author$project$Devs$Objects$TagtypeShort,
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
+var elm$json$Json$Decode$map4 = _Json_map4;
+var author$project$Devs$RecipeDecode$tagDecoder = A5(
+	elm$json$Json$Decode$map4,
+	author$project$Devs$Objects$Tag,
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'tagtype', author$project$Devs$RecipeDecode$tagtypeShortDecoder),
+	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
+var author$project$Devs$BackendApi$getAllTags = F3(
+	function (event, token, url) {
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'GET',
+			url,
+			A2(
+				elm$http$Http$expectJson,
+				event,
+				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$tagDecoder)),
+			token,
+			elm$core$Maybe$Nothing);
+	});
+var author$project$Devs$TypeObject$SetTagList = function (a) {
+	return {$: 'SetTagList', a: a};
+};
+var author$project$Devs$Utils$getAllTags = function (model) {
+	return A3(author$project$Devs$BackendApi$getAllTags, author$project$Devs$TypeObject$SetTagList, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllTags'))));
+};
+var author$project$Devs$Objects$Unit = F4(
+	function (id, name, unitCategory, uuid) {
+		return {id: id, name: name, unitCategory: unitCategory, uuid: uuid};
+	});
+var author$project$Devs$Objects$UnitCategory = F3(
+	function (id, name, uuid) {
+		return {id: id, name: name, uuid: uuid};
+	});
+var author$project$Devs$RecipeDecode$unitCategoryDecoder = A4(
+	elm$json$Json$Decode$map3,
+	author$project$Devs$Objects$UnitCategory,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
+var author$project$Devs$RecipeDecode$unitDecoder = A5(
+	elm$json$Json$Decode$map4,
+	author$project$Devs$Objects$Unit,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'unitCategory', author$project$Devs$RecipeDecode$unitCategoryDecoder),
+	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
+var author$project$Devs$BackendApi$getAllUnits = F3(
+	function (event, token, url) {
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'GET',
+			url,
+			A2(
+				elm$http$Http$expectJson,
+				event,
+				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$unitDecoder)),
+			token,
+			elm$core$Maybe$Nothing);
+	});
+var author$project$Devs$TypeObject$SetUnitList = function (a) {
+	return {$: 'SetUnitList', a: a};
+};
+var author$project$Devs$Utils$getAllUnits = function (model) {
+	return A3(author$project$Devs$BackendApi$getAllUnits, author$project$Devs$TypeObject$SetUnitList, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllUnits'))));
+};
+var author$project$Devs$Objects$getEmptyIngre = F2(
+	function (newOrder, newPart) {
+		return {
+			comment: elm$core$Maybe$Nothing,
+			id: elm$core$Maybe$Nothing,
+			name: '',
+			part: newPart,
+			quantity: elm$core$Maybe$Nothing,
+			sortorder: newOrder,
+			unit: elm$core$Maybe$Nothing,
+			uuid: TSFoster$elm_uuid$UUID$toString(TSFoster$elm_uuid$UUID$nil)
+		};
+	});
+var author$project$Devs$Objects$getEmptyPart = {
+	id: -2,
+	name: 'Sonstige Zutaten',
+	uuid: TSFoster$elm_uuid$UUID$toString(TSFoster$elm_uuid$UUID$nil)
+};
+var elm$core$List$sortBy = _List_sortBy;
+var elm_community$list_extra$List$Extra$last = function (items) {
+	last:
+	while (true) {
+		if (!items.b) {
+			return elm$core$Maybe$Nothing;
+		} else {
+			if (!items.b.b) {
+				var x = items.a;
+				return elm$core$Maybe$Just(x);
+			} else {
+				var rest = items.b;
+				var $temp$items = rest;
+				items = $temp$items;
+				continue last;
+			}
+		}
+	}
+};
+var author$project$Devs$Utils$getNewIngre = F2(
+	function (model, newUuid) {
+		var ingreList = function () {
+			var _n2 = model.selectedRecipe;
+			if (_n2.$ === 'Just') {
+				var rec = _n2.a;
+				return A2(
+					elm$core$List$sortBy,
+					function ($) {
+						return $.sortorder;
+					},
+					rec.ingredients);
+			} else {
+				return _List_Nil;
+			}
+		}();
+		var newOrder = function () {
+			var _n1 = elm_community$list_extra$List$Extra$last(ingreList);
+			if (_n1.$ === 'Just') {
+				var lastItem = _n1.a;
+				return lastItem.sortorder + 1;
+			} else {
+				return 0;
+			}
+		}();
+		var newPart = function () {
+			var _n0 = elm_community$list_extra$List$Extra$last(ingreList);
+			if (_n0.$ === 'Just') {
+				var lastItem = _n0.a;
+				return lastItem.part;
+			} else {
+				return elm$core$Maybe$Just(author$project$Devs$Objects$getEmptyPart);
+			}
+		}();
+		var newIngre = A2(author$project$Devs$Objects$getEmptyIngre, newOrder, newPart);
+		return _Utils_update(
+			newIngre,
+			{
+				uuid: TSFoster$elm_uuid$UUID$toString(newUuid)
+			});
+	});
+var author$project$Devs$Objects$getEmptyTodo = function (newNumber) {
+	return {
+		id: 0,
+		image: elm$core$Maybe$Nothing,
+		image_comment: elm$core$Maybe$Nothing,
+		number: newNumber,
+		text: '',
+		uuid: TSFoster$elm_uuid$UUID$toString(TSFoster$elm_uuid$UUID$nil)
+	};
+};
+var author$project$Devs$Utils$getNewTodo = F2(
+	function (model, newUuid) {
+		var todoList = function () {
+			var _n1 = model.selectedRecipe;
+			if (_n1.$ === 'Just') {
+				var rec = _n1.a;
+				return A2(
+					elm$core$List$sortBy,
+					function ($) {
+						return $.number;
+					},
+					rec.todos);
+			} else {
+				return _List_Nil;
+			}
+		}();
+		var newNumber = function () {
+			var _n0 = elm_community$list_extra$List$Extra$last(todoList);
+			if (_n0.$ === 'Just') {
+				var lastItem = _n0.a;
+				return lastItem.number + 1;
+			} else {
+				return 0;
+			}
+		}();
+		var newTodo = author$project$Devs$Objects$getEmptyTodo(newNumber);
+		return _Utils_update(
+			newTodo,
+			{
+				uuid: TSFoster$elm_uuid$UUID$toString(newUuid)
+			});
+	});
 var author$project$Devs$Objects$Recipe = function (aikz) {
 	return function (id) {
 		return function (image) {
@@ -7538,55 +7768,8 @@ var author$project$Devs$Objects$Ingredient = F8(
 	function (id, name, comment, part, quantity, sortorder, unit, uuid) {
 		return {comment: comment, id: id, name: name, part: part, quantity: quantity, sortorder: sortorder, unit: unit, uuid: uuid};
 	});
-var author$project$Devs$Objects$PartLight = F3(
-	function (id, name, uuid) {
-		return {id: id, name: name, uuid: uuid};
-	});
-var elm$json$Json$Decode$field = _Json_decodeField;
-var elm$json$Json$Decode$int = _Json_decodeInt;
-var elm$json$Json$Decode$map3 = _Json_map3;
-var elm$json$Json$Decode$string = _Json_decodeString;
-var author$project$Devs$RecipeDecode$partLightDecoder = A4(
-	elm$json$Json$Decode$map3,
-	author$project$Devs$Objects$PartLight,
-	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
-var author$project$Devs$Objects$Unit = F4(
-	function (id, name, unitCategory, uuid) {
-		return {id: id, name: name, unitCategory: unitCategory, uuid: uuid};
-	});
-var author$project$Devs$Objects$UnitCategory = F3(
-	function (id, name, uuid) {
-		return {id: id, name: name, uuid: uuid};
-	});
-var author$project$Devs$RecipeDecode$unitCategoryDecoder = A4(
-	elm$json$Json$Decode$map3,
-	author$project$Devs$Objects$UnitCategory,
-	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
-var elm$json$Json$Decode$map4 = _Json_map4;
-var author$project$Devs$RecipeDecode$unitDecoder = A5(
-	elm$json$Json$Decode$map4,
-	author$project$Devs$Objects$Unit,
-	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'unitCategory', author$project$Devs$RecipeDecode$unitCategoryDecoder),
-	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
 var elm$json$Json$Decode$float = _Json_decodeFloat;
 var elm$json$Json$Decode$map8 = _Json_map8;
-var elm$json$Json$Decode$map = _Json_map1;
-var elm$json$Json$Decode$oneOf = _Json_oneOf;
-var elm$json$Json$Decode$succeed = _Json_succeed;
-var elm$json$Json$Decode$maybe = function (decoder) {
-	return elm$json$Json$Decode$oneOf(
-		_List_fromArray(
-			[
-				A2(elm$json$Json$Decode$map, elm$core$Maybe$Just, decoder),
-				elm$json$Json$Decode$succeed(elm$core$Maybe$Nothing)
-			]));
-};
 var author$project$Devs$RecipeDecode$ingrDecoder = A9(
 	elm$json$Json$Decode$map8,
 	author$project$Devs$Objects$Ingredient,
@@ -7603,7 +7786,6 @@ var author$project$Devs$RecipeDecode$ingrDecoder = A9(
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'unit', author$project$Devs$RecipeDecode$unitDecoder)),
 	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
-var elm$json$Json$Decode$list = _Json_decodeList;
 var author$project$Devs$RecipeDecode$ingrListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$ingrDecoder);
 var author$project$Devs$Objects$Part = F4(
 	function (id, name, ingredients, uuid) {
@@ -7617,45 +7799,6 @@ var author$project$Devs$RecipeDecode$partDecoder = A5(
 	A2(elm$json$Json$Decode$field, 'ingredients', author$project$Devs$RecipeDecode$ingrListDecoder),
 	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
 var author$project$Devs$RecipeDecode$partListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$partDecoder);
-var author$project$Devs$Objects$Source = F5(
-	function (id, isbn, name, year, uuid) {
-		return {id: id, isbn: isbn, name: name, uuid: uuid, year: year};
-	});
-var elm$json$Json$Decode$map5 = _Json_map5;
-var author$project$Devs$RecipeDecode$sourceDecoder = A6(
-	elm$json$Json$Decode$map5,
-	author$project$Devs$Objects$Source,
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'isbn', elm$json$Json$Decode$string)),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'year', elm$json$Json$Decode$string)),
-	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
-var author$project$Devs$Objects$Tag = F4(
-	function (id, name, tagType, uuid) {
-		return {id: id, name: name, tagType: tagType, uuid: uuid};
-	});
-var author$project$Devs$Objects$TagtypeShort = F3(
-	function (id, name, uuid) {
-		return {id: id, name: name, uuid: uuid};
-	});
-var author$project$Devs$RecipeDecode$tagtypeShortDecoder = A4(
-	elm$json$Json$Decode$map3,
-	author$project$Devs$Objects$TagtypeShort,
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
-var author$project$Devs$RecipeDecode$tagDecoder = A5(
-	elm$json$Json$Decode$map4,
-	author$project$Devs$Objects$Tag,
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'tagtype', author$project$Devs$RecipeDecode$tagtypeShortDecoder),
-	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
 var author$project$Devs$RecipeDecode$tagListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$tagDecoder);
 var author$project$Devs$Objects$Todo = F6(
 	function (id, image, image_comment, number, text, uuid) {
@@ -7770,73 +7913,6 @@ var author$project$Devs$RecipeDecode$recipeDecoder = A2(
 																			elm_community$json_extra$Json$Decode$Extra$andMap,
 																			A2(elm$json$Json$Decode$field, 'aikz', elm$json$Json$Decode$int),
 																			elm$json$Json$Decode$succeed(author$project$Devs$Objects$Recipe))))))))))))))))))));
-var elm$core$Result$mapError = F2(
-	function (f, result) {
-		if (result.$ === 'Ok') {
-			var v = result.a;
-			return elm$core$Result$Ok(v);
-		} else {
-			var e = result.a;
-			return elm$core$Result$Err(
-				f(e));
-		}
-	});
-var elm$http$Http$expectStringResponse = F2(
-	function (toMsg, toResult) {
-		return A3(
-			_Http_expect,
-			'',
-			elm$core$Basics$identity,
-			A2(elm$core$Basics$composeR, toResult, toMsg));
-	});
-var elm$http$Http$BadBody = function (a) {
-	return {$: 'BadBody', a: a};
-};
-var elm$http$Http$BadStatus = function (a) {
-	return {$: 'BadStatus', a: a};
-};
-var elm$http$Http$BadUrl = function (a) {
-	return {$: 'BadUrl', a: a};
-};
-var elm$http$Http$NetworkError = {$: 'NetworkError'};
-var elm$http$Http$Timeout = {$: 'Timeout'};
-var elm$http$Http$resolve = F2(
-	function (toResult, response) {
-		switch (response.$) {
-			case 'BadUrl_':
-				var url = response.a;
-				return elm$core$Result$Err(
-					elm$http$Http$BadUrl(url));
-			case 'Timeout_':
-				return elm$core$Result$Err(elm$http$Http$Timeout);
-			case 'NetworkError_':
-				return elm$core$Result$Err(elm$http$Http$NetworkError);
-			case 'BadStatus_':
-				var metadata = response.a;
-				return elm$core$Result$Err(
-					elm$http$Http$BadStatus(metadata.statusCode));
-			default:
-				var body = response.b;
-				return A2(
-					elm$core$Result$mapError,
-					elm$http$Http$BadBody,
-					toResult(body));
-		}
-	});
-var elm$json$Json$Decode$decodeString = _Json_runOnString;
-var elm$http$Http$expectJson = F2(
-	function (toMsg, decoder) {
-		return A2(
-			elm$http$Http$expectStringResponse,
-			toMsg,
-			elm$http$Http$resolve(
-				function (string) {
-					return A2(
-						elm$core$Result$mapError,
-						elm$json$Json$Decode$errorToString,
-						A2(elm$json$Json$Decode$decodeString, decoder, string));
-				}));
-	});
 var author$project$Devs$BackendApi$getRecipe = F3(
 	function (event, token, url) {
 		return A5(
@@ -7935,6 +8011,36 @@ var author$project$Devs$Utils$getSeed = function (model) {
 	} else {
 		return elm$random$Random$initialSeed(model.random);
 	}
+};
+var author$project$Devs$Objects$Tagtype = F4(
+	function (id, name, tagList, uuid) {
+		return {id: id, name: name, tagList: tagList, uuid: uuid};
+	});
+var author$project$Devs$RecipeDecode$tagtypeDecoder = A5(
+	elm$json$Json$Decode$map4,
+	author$project$Devs$Objects$Tagtype,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'tagList', author$project$Devs$RecipeDecode$tagListDecoder),
+	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
+var author$project$Devs$BackendApi$getTagtypeListForOverview = F3(
+	function (event, token, url) {
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'GET',
+			url,
+			A2(
+				elm$http$Http$expectJson,
+				event,
+				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$tagtypeDecoder)),
+			token,
+			elm$core$Maybe$Nothing);
+	});
+var author$project$Devs$TypeObject$ListTagtypes = function (a) {
+	return {$: 'ListTagtypes', a: a};
+};
+var author$project$Devs$Utils$getTagtypeListForOverview = function (model) {
+	return A3(author$project$Devs$BackendApi$getTagtypeListForOverview, author$project$Devs$TypeObject$ListTagtypes, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllTagTypes'))));
 };
 var author$project$Devs$Utils$httpErrorToMessage = function (error) {
 	switch (error.$) {
@@ -8465,11 +8571,27 @@ var author$project$Devs$Update$update = F2(
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 			case 'Initialize':
 				var initData = msg.a;
+				var sp = model.sp;
+				var newSp = _Utils_update(
+					sp,
+					{
+						serverHost: initData.serverName + (':' + elm$core$String$fromInt(initData.serverPort)),
+						serverProtokoll: initData.protocol + '://'
+					});
+				var newModel = _Utils_update(
+					model,
+					{random: initData.random, sp: newSp});
 				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{random: initData.random}),
-					elm$core$Platform$Cmd$none);
+					newModel,
+					elm$core$Platform$Cmd$batch(
+						_List_fromArray(
+							[
+								author$project$Devs$Utils$getTagtypeListForOverview(newModel),
+								author$project$Devs$Utils$getAllUnits(newModel),
+								author$project$Devs$Utils$getAllSources(newModel),
+								author$project$Devs$Utils$getAllTags(newModel),
+								author$project$Devs$Utils$getAllParts(newModel)
+							])));
 			case 'ImageSelected':
 				return _Utils_Tuple2(
 					model,
@@ -9706,125 +9828,9 @@ var author$project$Devs$Update$update = F2(
 		}
 	});
 var author$project$Devs$Objects$keyLists = {partList: elm$core$Maybe$Nothing, sourceList: elm$core$Maybe$Nothing, tagList: elm$core$Maybe$Nothing, unitList: elm$core$Maybe$Nothing};
-var author$project$Devs$Objects$serverParams = {apiUrlPrefix: '/api/v1', iconPath: 'icons/', imagePath: 'images/', serverHost: 'horst:8085', serverProtokoll: 'http://', serverUrlPrefix: '/RecipeServer'};
+var author$project$Devs$Objects$serverParams = {apiUrlPrefix: '/api/v1', iconPath: 'icons/', imagePath: 'images/', serverHost: 'localhost:8085', serverProtokoll: 'http://', serverUrlPrefix: '/RecipeServer'};
 var author$project$Devs$Objects$initialModel = {addTag: elm$core$Maybe$Nothing, alertMessage: elm$core$Maybe$Nothing, currentSeed: elm$core$Maybe$Nothing, deleteRecipe: false, kl: author$project$Devs$Objects$keyLists, loginToken: elm$core$Maybe$Nothing, newSource: elm$core$Maybe$Nothing, passwordForCheck: '', random: 123456789, recAlertMessage: elm$core$Maybe$Nothing, recImage: elm$core$Maybe$Nothing, recipesOfSelectedTag: elm$core$Maybe$Nothing, searchValue: '', selectedRecipe: elm$core$Maybe$Nothing, selectedTag: elm$core$Maybe$Nothing, showEditForm: elm$core$Maybe$Nothing, sp: author$project$Devs$Objects$serverParams, subAlertMessage: elm$core$Maybe$Nothing, tagtypeList: elm$core$Maybe$Nothing, usernameForCheck: ''};
-var author$project$Devs$BackendApi$getAllParts = F3(
-	function (event, token, url) {
-		return A5(
-			author$project$Devs$BackendApi$myRequest,
-			'GET',
-			url,
-			A2(
-				elm$http$Http$expectJson,
-				event,
-				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$partLightDecoder)),
-			token,
-			elm$core$Maybe$Nothing);
-	});
-var author$project$Devs$TypeObject$SetPartList = function (a) {
-	return {$: 'SetPartList', a: a};
-};
-var author$project$Devs$Utils$getAllParts = function (model) {
-	return A3(author$project$Devs$BackendApi$getAllParts, author$project$Devs$TypeObject$SetPartList, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllParts'))));
-};
-var author$project$Devs$BackendApi$getAllSources = F3(
-	function (event, token, url) {
-		return A5(
-			author$project$Devs$BackendApi$myRequest,
-			'GET',
-			url,
-			A2(
-				elm$http$Http$expectJson,
-				event,
-				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$sourceDecoder)),
-			token,
-			elm$core$Maybe$Nothing);
-	});
-var author$project$Devs$TypeObject$SetSourceList = function (a) {
-	return {$: 'SetSourceList', a: a};
-};
-var author$project$Devs$Utils$getAllSources = function (model) {
-	return A3(author$project$Devs$BackendApi$getAllSources, author$project$Devs$TypeObject$SetSourceList, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllSources'))));
-};
-var author$project$Devs$BackendApi$getAllTags = F3(
-	function (event, token, url) {
-		return A5(
-			author$project$Devs$BackendApi$myRequest,
-			'GET',
-			url,
-			A2(
-				elm$http$Http$expectJson,
-				event,
-				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$tagDecoder)),
-			token,
-			elm$core$Maybe$Nothing);
-	});
-var author$project$Devs$TypeObject$SetTagList = function (a) {
-	return {$: 'SetTagList', a: a};
-};
-var author$project$Devs$Utils$getAllTags = function (model) {
-	return A3(author$project$Devs$BackendApi$getAllTags, author$project$Devs$TypeObject$SetTagList, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllTags'))));
-};
-var author$project$Devs$BackendApi$getAllUnits = F3(
-	function (event, token, url) {
-		return A5(
-			author$project$Devs$BackendApi$myRequest,
-			'GET',
-			url,
-			A2(
-				elm$http$Http$expectJson,
-				event,
-				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$unitDecoder)),
-			token,
-			elm$core$Maybe$Nothing);
-	});
-var author$project$Devs$TypeObject$SetUnitList = function (a) {
-	return {$: 'SetUnitList', a: a};
-};
-var author$project$Devs$Utils$getAllUnits = function (model) {
-	return A3(author$project$Devs$BackendApi$getAllUnits, author$project$Devs$TypeObject$SetUnitList, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllUnits'))));
-};
-var author$project$Devs$Objects$Tagtype = F4(
-	function (id, name, tagList, uuid) {
-		return {id: id, name: name, tagList: tagList, uuid: uuid};
-	});
-var author$project$Devs$RecipeDecode$tagtypeDecoder = A5(
-	elm$json$Json$Decode$map4,
-	author$project$Devs$Objects$Tagtype,
-	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
-	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'tagList', author$project$Devs$RecipeDecode$tagListDecoder),
-	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
-var author$project$Devs$BackendApi$getTagtypeListForOverview = F3(
-	function (event, token, url) {
-		return A5(
-			author$project$Devs$BackendApi$myRequest,
-			'GET',
-			url,
-			A2(
-				elm$http$Http$expectJson,
-				event,
-				elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$tagtypeDecoder)),
-			token,
-			elm$core$Maybe$Nothing);
-	});
-var author$project$Devs$TypeObject$ListTagtypes = function (a) {
-	return {$: 'ListTagtypes', a: a};
-};
-var author$project$Devs$Utils$getTagtypeListForOverview = function (model) {
-	return A3(author$project$Devs$BackendApi$getTagtypeListForOverview, author$project$Devs$TypeObject$ListTagtypes, model.loginToken, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllTagTypes'))));
-};
-var author$project$RecipeServer$init = _Utils_Tuple2(
-	author$project$Devs$Objects$initialModel,
-	elm$core$Platform$Cmd$batch(
-		_List_fromArray(
-			[
-				author$project$Devs$Utils$getTagtypeListForOverview(author$project$Devs$Objects$initialModel),
-				author$project$Devs$Utils$getAllUnits(author$project$Devs$Objects$initialModel),
-				author$project$Devs$Utils$getAllSources(author$project$Devs$Objects$initialModel),
-				author$project$Devs$Utils$getAllTags(author$project$Devs$Objects$initialModel),
-				author$project$Devs$Utils$getAllParts(author$project$Devs$Objects$initialModel)
-			])));
+var author$project$RecipeServer$init = _Utils_Tuple2(author$project$Devs$Objects$initialModel, elm$core$Platform$Cmd$none);
 var elm$json$Json$Decode$andThen = _Json_andThen;
 var author$project$Devs$Ports$fileContentRead = _Platform_incomingPort(
 	'fileContentRead',
@@ -9844,11 +9850,26 @@ var author$project$Devs$Ports$initialize = _Platform_incomingPort(
 	'initialize',
 	A2(
 		elm$json$Json$Decode$andThen,
-		function (random) {
-			return elm$json$Json$Decode$succeed(
-				{random: random});
+		function (serverPort) {
+			return A2(
+				elm$json$Json$Decode$andThen,
+				function (serverName) {
+					return A2(
+						elm$json$Json$Decode$andThen,
+						function (random) {
+							return A2(
+								elm$json$Json$Decode$andThen,
+								function (protocol) {
+									return elm$json$Json$Decode$succeed(
+										{protocol: protocol, random: random, serverName: serverName, serverPort: serverPort});
+								},
+								A2(elm$json$Json$Decode$field, 'protocol', elm$json$Json$Decode$string));
+						},
+						A2(elm$json$Json$Decode$field, 'random', elm$json$Json$Decode$int));
+				},
+				A2(elm$json$Json$Decode$field, 'serverName', elm$json$Json$Decode$string));
 		},
-		A2(elm$json$Json$Decode$field, 'random', elm$json$Json$Decode$int)));
+		A2(elm$json$Json$Decode$field, 'serverPort', elm$json$Json$Decode$int)));
 var author$project$Devs$TypeObject$ImageRead = function (a) {
 	return {$: 'ImageRead', a: a};
 };
@@ -16466,4 +16487,4 @@ var author$project$RecipeServer$main = elm$browser$Browser$element(
 		view: author$project$RecipeServer$view
 	});
 _Platform_export({'RecipeServer':{'init':author$project$RecipeServer$main(
-	elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.0"},"types":{"message":"Devs.TypeObject.Msg","aliases":{"Devs.Objects.ImagePortData":{"args":[],"type":"{ contents : String.String, filename : String.String }"},"Devs.Objects.Ingredient":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, comment : Maybe.Maybe String.String, part : Maybe.Maybe Devs.Objects.PartLight, quantity : Maybe.Maybe Basics.Float, sortorder : Basics.Int, unit : Maybe.Maybe Devs.Objects.Unit, uuid : String.String }"},"Devs.Objects.InitData":{"args":[],"type":"{ random : Basics.Int }"},"Devs.Objects.Part":{"args":[],"type":"{ id : Basics.Int, name : String.String, ingredients : List.List Devs.Objects.Ingredient, uuid : String.String }"},"Devs.Objects.PartLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Recipe":{"args":[],"type":"{ aikz : Basics.Int, id : Maybe.Maybe Basics.Int, image : Maybe.Maybe String.String, ingredients : List.List Devs.Objects.Ingredient, parts : List.List Devs.Objects.Part, name : String.String, translate : Maybe.Maybe String.String, number : Maybe.Maybe Basics.Int, number_comment : Maybe.Maybe String.String, nv_carbohydrates : Maybe.Maybe Basics.Float, nv_energy : Maybe.Maybe Basics.Float, nv_fat : Maybe.Maybe Basics.Float, nv_protein : Maybe.Maybe Basics.Float, nv_size : Maybe.Maybe Basics.Int, source : Maybe.Maybe Devs.Objects.Source, source_page : Maybe.Maybe Basics.Int, tags : List.List Devs.Objects.Tag, todos : List.List Devs.Objects.Todo, uuid : String.String }"},"Devs.Objects.RecipeLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Source":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, isbn : Maybe.Maybe String.String, name : String.String, year : Maybe.Maybe String.String, uuid : String.String }"},"Devs.Objects.Tag":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, tagType : Devs.Objects.TagtypeShort, uuid : String.String }"},"Devs.Objects.Tagtype":{"args":[],"type":"{ id : Basics.Int, name : String.String, tagList : List.List Devs.Objects.Tag, uuid : String.String }"},"Devs.Objects.TagtypeShort":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Todo":{"args":[],"type":"{ id : Basics.Int, image : Maybe.Maybe String.String, image_comment : Maybe.Maybe String.String, number : Basics.Int, text : String.String, uuid : String.String }"},"Devs.Objects.Unit":{"args":[],"type":"{ id : Basics.Int, name : String.String, unitCategory : Devs.Objects.UnitCategory, uuid : String.String }"},"Devs.Objects.UnitCategory":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"}},"unions":{"Devs.TypeObject.Msg":{"args":[],"tags":{"NoOp":[],"Initialize":["Devs.Objects.InitData"],"ImageSelected":[],"ImageRead":["Devs.Objects.ImagePortData"],"ShowOverView":[],"ToggleEditForm":["Devs.Objects.EditForm"],"GetLoginForm":[],"SetUsernameForCheck":["String.String"],"SetPasswortForCheck":["String.String"],"Login":[],"HandleLogin":["Result.Result Http.Error String.String"],"ShowRecipesOfTag":["Maybe.Maybe Devs.Objects.Tag"],"ShowRecipe":["Maybe.Maybe Devs.Objects.RecipeLight"],"EditRecipe":[],"InsertRecipe":[],"SaveRecipe":[],"SavedRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"DeleteRecipe":[],"SetAikz":["Basics.Int"],"SetName":["String.String"],"SetTranslate":["String.String"],"SetNumber":["String.String"],"SetNumberComment":["String.String"],"SetRecImage":["String.String"],"RemoveImageFromRecipe":[],"SetCarbo":["String.String"],"SetEnergy":["String.String"],"SetFat":["String.String"],"SetProt":["String.String"],"SetSize":["String.String"],"SetSourcePage":["String.String"],"SetSource":["String.String"],"AddNewSource":[],"SetSrcName":["String.String"],"SetSrcIsbn":["String.String"],"SetSrcYear":["String.String"],"CancelSourceEdit":[],"SaveNewSource":[],"SavedSource":["Result.Result Http.Error Devs.Objects.Source"],"ChooseNewTag":[],"SetChoosenTag":["String.String"],"RemoveTagFromRec":["String.String"],"CancelAddTag":[],"AddTagToRecipe":[],"AddIngreToRecipe":[],"SetIngreOrder":["String.String","String.String"],"SetIngreName":["String.String","String.String"],"SetIngrePart":["String.String","String.String"],"SetIngreUnit":["String.String","String.String"],"SetIngreQuant":["String.String","String.String"],"SetIngreComment":["String.String","String.String"],"RemoveIngreFromRecipe":["String.String"],"AddTodoToRecipe":[],"SetTodoNr":["String.String","String.String"],"SetTodoText":["String.String","String.String"],"SetTodoImg":["String.String","String.String"],"SetTodoImgComment":["String.String","String.String"],"RemoveTodoFromRecipe":["String.String"],"CancelRecipeEdit":[],"ConfirmDelete":[],"CancelDelete":[],"CancelLogin":[],"CloseAlert":[],"CloseLoginAlert":[],"CloseRecipeAlert":[],"RemoveSelectedTag":[],"RemoveSelectedRecipe":[],"ListTagtypes":["Result.Result Http.Error (List.List Devs.Objects.Tagtype)"],"ListRecipesForTag":["Result.Result Http.Error (List.List Devs.Objects.RecipeLight)"],"SetRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"SetUnitList":["Result.Result Http.Error (List.List Devs.Objects.Unit)"],"SetSourceList":["Result.Result Http.Error (List.List Devs.Objects.Source)"],"SetTagList":["Result.Result Http.Error (List.List Devs.Objects.Tag)"],"SetPartList":["Result.Result Http.Error (List.List Devs.Objects.PartLight)"],"SetSearchInput":["String.String"],"SearchRecipe":[],"UploadImage":["Result.Result Http.Error Basics.Bool"]}},"Devs.Objects.EditForm":{"args":[],"tags":{"BasicForm":[],"TagForm":[],"IngredientForm":[],"TodoForm":[],"FootValueForm":[],"None":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}}}}})}});}(this));
+	elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.0"},"types":{"message":"Devs.TypeObject.Msg","aliases":{"Devs.Objects.ImagePortData":{"args":[],"type":"{ contents : String.String, filename : String.String }"},"Devs.Objects.Ingredient":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, comment : Maybe.Maybe String.String, part : Maybe.Maybe Devs.Objects.PartLight, quantity : Maybe.Maybe Basics.Float, sortorder : Basics.Int, unit : Maybe.Maybe Devs.Objects.Unit, uuid : String.String }"},"Devs.Objects.InitData":{"args":[],"type":"{ random : Basics.Int, protocol : String.String, serverName : String.String, serverPort : Basics.Int }"},"Devs.Objects.Part":{"args":[],"type":"{ id : Basics.Int, name : String.String, ingredients : List.List Devs.Objects.Ingredient, uuid : String.String }"},"Devs.Objects.PartLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Recipe":{"args":[],"type":"{ aikz : Basics.Int, id : Maybe.Maybe Basics.Int, image : Maybe.Maybe String.String, ingredients : List.List Devs.Objects.Ingredient, parts : List.List Devs.Objects.Part, name : String.String, translate : Maybe.Maybe String.String, number : Maybe.Maybe Basics.Int, number_comment : Maybe.Maybe String.String, nv_carbohydrates : Maybe.Maybe Basics.Float, nv_energy : Maybe.Maybe Basics.Float, nv_fat : Maybe.Maybe Basics.Float, nv_protein : Maybe.Maybe Basics.Float, nv_size : Maybe.Maybe Basics.Int, source : Maybe.Maybe Devs.Objects.Source, source_page : Maybe.Maybe Basics.Int, tags : List.List Devs.Objects.Tag, todos : List.List Devs.Objects.Todo, uuid : String.String }"},"Devs.Objects.RecipeLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Source":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, isbn : Maybe.Maybe String.String, name : String.String, year : Maybe.Maybe String.String, uuid : String.String }"},"Devs.Objects.Tag":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, tagType : Devs.Objects.TagtypeShort, uuid : String.String }"},"Devs.Objects.Tagtype":{"args":[],"type":"{ id : Basics.Int, name : String.String, tagList : List.List Devs.Objects.Tag, uuid : String.String }"},"Devs.Objects.TagtypeShort":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Todo":{"args":[],"type":"{ id : Basics.Int, image : Maybe.Maybe String.String, image_comment : Maybe.Maybe String.String, number : Basics.Int, text : String.String, uuid : String.String }"},"Devs.Objects.Unit":{"args":[],"type":"{ id : Basics.Int, name : String.String, unitCategory : Devs.Objects.UnitCategory, uuid : String.String }"},"Devs.Objects.UnitCategory":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"}},"unions":{"Devs.TypeObject.Msg":{"args":[],"tags":{"NoOp":[],"Initialize":["Devs.Objects.InitData"],"ImageSelected":[],"ImageRead":["Devs.Objects.ImagePortData"],"ShowOverView":[],"ToggleEditForm":["Devs.Objects.EditForm"],"GetLoginForm":[],"SetUsernameForCheck":["String.String"],"SetPasswortForCheck":["String.String"],"Login":[],"HandleLogin":["Result.Result Http.Error String.String"],"ShowRecipesOfTag":["Maybe.Maybe Devs.Objects.Tag"],"ShowRecipe":["Maybe.Maybe Devs.Objects.RecipeLight"],"EditRecipe":[],"InsertRecipe":[],"SaveRecipe":[],"SavedRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"DeleteRecipe":[],"SetAikz":["Basics.Int"],"SetName":["String.String"],"SetTranslate":["String.String"],"SetNumber":["String.String"],"SetNumberComment":["String.String"],"SetRecImage":["String.String"],"RemoveImageFromRecipe":[],"SetCarbo":["String.String"],"SetEnergy":["String.String"],"SetFat":["String.String"],"SetProt":["String.String"],"SetSize":["String.String"],"SetSourcePage":["String.String"],"SetSource":["String.String"],"AddNewSource":[],"SetSrcName":["String.String"],"SetSrcIsbn":["String.String"],"SetSrcYear":["String.String"],"CancelSourceEdit":[],"SaveNewSource":[],"SavedSource":["Result.Result Http.Error Devs.Objects.Source"],"ChooseNewTag":[],"SetChoosenTag":["String.String"],"RemoveTagFromRec":["String.String"],"CancelAddTag":[],"AddTagToRecipe":[],"AddIngreToRecipe":[],"SetIngreOrder":["String.String","String.String"],"SetIngreName":["String.String","String.String"],"SetIngrePart":["String.String","String.String"],"SetIngreUnit":["String.String","String.String"],"SetIngreQuant":["String.String","String.String"],"SetIngreComment":["String.String","String.String"],"RemoveIngreFromRecipe":["String.String"],"AddTodoToRecipe":[],"SetTodoNr":["String.String","String.String"],"SetTodoText":["String.String","String.String"],"SetTodoImg":["String.String","String.String"],"SetTodoImgComment":["String.String","String.String"],"RemoveTodoFromRecipe":["String.String"],"CancelRecipeEdit":[],"ConfirmDelete":[],"CancelDelete":[],"CancelLogin":[],"CloseAlert":[],"CloseLoginAlert":[],"CloseRecipeAlert":[],"RemoveSelectedTag":[],"RemoveSelectedRecipe":[],"ListTagtypes":["Result.Result Http.Error (List.List Devs.Objects.Tagtype)"],"ListRecipesForTag":["Result.Result Http.Error (List.List Devs.Objects.RecipeLight)"],"SetRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"SetUnitList":["Result.Result Http.Error (List.List Devs.Objects.Unit)"],"SetSourceList":["Result.Result Http.Error (List.List Devs.Objects.Source)"],"SetTagList":["Result.Result Http.Error (List.List Devs.Objects.Tag)"],"SetPartList":["Result.Result Http.Error (List.List Devs.Objects.PartLight)"],"SetSearchInput":["String.String"],"SearchRecipe":[],"UploadImage":["Result.Result Http.Error Basics.Bool"]}},"Devs.Objects.EditForm":{"args":[],"tags":{"BasicForm":[],"TagForm":[],"IngredientForm":[],"TodoForm":[],"FootValueForm":[],"None":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}}}}})}});}(this));

@@ -17,7 +17,19 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         NoOp -> ( model , Cmd.none )
-        Initialize initData -> ( { model | random = initData.random } , Cmd.none )
+        Initialize initData ->
+          let
+            sp = model.sp
+            newSp = {sp | serverHost = initData.serverName ++ ":" ++ (String.fromInt initData.serverPort), serverProtokoll = initData.protocol ++ "://"}
+            newModel = { model | random = initData.random, sp = newSp }
+          in
+            ( newModel , Cmd.batch [
+              DU.getTagtypeListForOverview newModel
+              , DU.getAllUnits newModel
+              , DU.getAllSources newModel
+              , DU.getAllTags newModel
+              , DU.getAllParts newModel
+            ] )
         ImageSelected -> ( model , Ports.fileSelected "recImage")
         ImageRead imagePortData ->
           let

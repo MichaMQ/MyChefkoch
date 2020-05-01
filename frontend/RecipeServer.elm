@@ -44,11 +44,4 @@ subscriptions : Model -> Sub Msg
 subscriptions model = Sub.batch [ Ports.fileContentRead TO.ImageRead, Ports.initialize TO.Initialize ]
 
 init : ( Model, Cmd Msg )
-init =  ( O.initialModel
-  , Cmd.batch [
-    DU.getTagtypeListForOverview O.initialModel
-    , DU.getAllUnits O.initialModel
-    , DU.getAllSources O.initialModel
-    , DU.getAllTags O.initialModel
-    , DU.getAllParts O.initialModel
-  ] )
+init =  ( O.initialModel, Cmd.none )

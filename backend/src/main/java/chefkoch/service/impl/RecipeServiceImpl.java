@@ -79,6 +79,8 @@ public class RecipeServiceImpl implements RecipeService {
 
 	@Value("${my.dumpXMLToLog}")
 	private String dumpXMLToLog;
+	@Value("${my.xslPath}")
+	private String xslPath;
 	@Value("${logging.path}")
 	private String loggingPath;
 	
@@ -307,6 +309,9 @@ public class RecipeServiceImpl implements RecipeService {
 	public ResponseEntity<byte[]> printBook(BookPrintType bookPrintType) {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource("book.xsl").getFile());
+		if(!file.exists()) {
+			file = new File(this.xslPath + "/book.xsl");
+		}
 		
 		ResponseEntity<byte[]> res = ResponseEntity.status(401).build();
 		List<Recipe> recipes = (List<Recipe>) recipeRepository.findAll();
@@ -319,6 +324,8 @@ public class RecipeServiceImpl implements RecipeService {
 
 		Element bookEle = XMLUtil.getRecipeBookXML(recipes, tagtypes, classLoader, this.recipeRepository, this.tagRepository);
 		logger.debug(XMLUtil.dumpElement(bookEle));
+		System.out.println(XMLUtil.dumpElement(bookEle));
+		System.out.println("xsl-File: " + file.getAbsolutePath());
 		
 		try {
 			byte[] data = FopInterface.transform(bookEle, file);

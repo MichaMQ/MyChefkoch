@@ -1,1 +1,1 @@
-elm make --debug RecipeServer.elm --output=pub/js/RecipeServer.js
+elm make RecipeServer.elm --output=pub/js/RecipeServer.js
