@@ -68,6 +68,13 @@ update msg model =
               Nothing -> {id = -1, name = "", uuid=UUID.toString UUID.nil}
           in
             ( model, DU.getRecipe model selectedRecipe )
+        SetNumberForDisplay nfd ->
+          let
+            selectedRecipe = case model.selectedRecipe of
+              Just recipe ->  Just {recipe|number_for_display=String.toFloat nfd}
+              Nothing -> Nothing
+          in
+            ( { model | selectedRecipe = selectedRecipe}, Cmd.none )
         EditRecipe -> ( { model | selectedRecipe = model.selectedRecipe }, Cmd.none )
         InsertRecipe ->
           let
@@ -311,7 +318,12 @@ update msg model =
             else
                 ( { model | selectedTag = Nothing, selectedRecipe = Nothing, recipesOfSelectedTag = Nothing } , DU.searchRecipe model )
         SetRecipe (Ok recipe) ->
-          ( { model | selectedRecipe = Just recipe } , Cmd.none)
+          let
+              number_for_display = case recipe.number of
+                Just n -> toFloat n
+                Nothing -> 1
+          in
+            ( { model | selectedRecipe = Just {recipe|number_for_display=Just number_for_display} } , Cmd.none)
         SetRecipe (Err error) ->
           ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
         SetUnitList (Ok list) ->

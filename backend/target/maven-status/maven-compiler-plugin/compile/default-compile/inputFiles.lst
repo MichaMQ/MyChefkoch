@@ -27,6 +27,7 @@
 /home/michael/Git/elm/MyChefkoch/backend/src/main/java/chefkoch/dto/TodoDto.java
 /home/michael/Git/elm/MyChefkoch/backend/src/main/java/chefkoch/controller/MainController.java
 /home/michael/Git/elm/MyChefkoch/backend/src/main/java/chefkoch/repo/iface/TagtypeRepository.java
+/home/michael/Git/elm/MyChefkoch/backend/src/main/java/chefkoch/util/Base64Util.java
 /home/michael/Git/elm/MyChefkoch/backend/src/main/java/chefkoch/util/ExceptionUtil.java
 /home/michael/Git/elm/MyChefkoch/backend/src/main/java/chefkoch/dto/TagDto.java
 /home/michael/Git/elm/MyChefkoch/backend/src/main/java/chefkoch/service/enums/AccountType.java

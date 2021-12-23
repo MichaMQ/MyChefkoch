@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Implementation-Title: Spring Boot Blank Project (from https://github.c
  om/making/spring-boot-blank)
-Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Version: 1.2
 Built-By: michael
 Implementation-Vendor-Id: de.schaefer
-Build-Jdk: 1.8.0_252
+Build-Jdk: 1.8.0_292
 Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
  ot-starter-parent/chefkoch
 Created-By: Maven Integration for Eclipse

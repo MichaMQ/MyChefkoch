@@ -204,7 +204,8 @@
 				<!--xsl:variable name="imageUrl" select="concat('http://michahannover.dyndns-ip.com:8080/rezepte/getImage.php?id=',@id)" /-->
 				<xsl:variable name="imageUrl" select="image" />
 				<fo:block text-align="left">
-					<fo:external-graphic src="{$imageUrl}" content-height="5cm" border-style="solid" border-width="1.0pt" border-color="#a6b3b3" background-color="#eeeeee" padding="3pt" />
+					<!-- <img src="data:image/png;base64,{.}"/> -->
+					<fo:external-graphic src="data:image/png;base64,{image}" content-height="5cm" border-style="solid" border-width="1.0pt" border-color="#a6b3b3" background-color="#eeeeee" padding="3pt" />
 				</fo:block>
 			</xsl:if>
 			<fo:table table-layout="fixed" >

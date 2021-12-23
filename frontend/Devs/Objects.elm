@@ -51,6 +51,7 @@ type alias Recipe = {
   name: String,
   translate: Maybe String,
   number: Maybe Int,
+  number_for_display: Maybe Float,
   number_comment: Maybe String,
   nv_carbohydrates: Maybe Float,
   nv_energy: Maybe Float,
@@ -199,6 +200,7 @@ getEmptyRecipe = {
     , name=""
     , translate = Nothing
     , number=Nothing
+    , number_for_display=Nothing
     , number_comment=Nothing
     , nv_carbohydrates=Nothing
     , nv_energy=Nothing

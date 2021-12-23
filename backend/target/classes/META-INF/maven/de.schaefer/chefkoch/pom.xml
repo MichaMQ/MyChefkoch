@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.schaefer</groupId>
 	<artifactId>chefkoch</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.2</version>
 
 	<name>Spring Boot Blank Project (from https://github.com/making/spring-boot-blank)</name>
 
@@ -68,6 +68,12 @@
     <artifactId>javassist</artifactId>
     <version>3.26.0-GA</version>
 </dependency>
+<!-- https://mvnrepository.com/artifact/org.apache.ws.commons.util/ws-commons-util -->
+<dependency>
+    <groupId>org.apache.ws.commons.util</groupId>
+    <artifactId>ws-commons-util</artifactId>
+    <version>1.0.2</version>
+</dependency>
 	</dependencies>
 
 	<properties>
@@ -81,12 +87,15 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-	        <executable>true</executable>
+					<executable>true</executable>
 					<jvmArguments>
-          	-Xms384m
-          	-Xmx512m
-        	</jvmArguments>
-        </configuration>
+						-Xms384m
+						-Xmx512m
+					</jvmArguments>
+					<!--excludes>
+						<exclude>**/pub/images/*.jpg</exclude>
+					</excludes-->
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

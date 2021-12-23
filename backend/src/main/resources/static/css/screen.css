@@ -4,7 +4,20 @@
 	14px; -> 1.5
 	16px; -> 1.7
 	18px; -> 1.9
+
+<= 690px
+#categoryTypeDiv{
+* width: 100%;
+}
+
+
 */
+
+@media only screen and (min-width: 690px) {
+	#categoryTypeDiv{
+		width: 100%;
+	}
+}
 
 /*  I M P O R T   S T Y L E S
 --------------------------------------------------------------------------------------------------- */

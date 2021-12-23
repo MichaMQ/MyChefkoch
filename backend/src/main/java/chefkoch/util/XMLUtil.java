@@ -32,7 +32,7 @@ public class XMLUtil {
 	private static String confroot = null;
 	private static Logger logger = LoggerFactory.getLogger(XMLUtil.class);
 
-	public static Element getRecipeBookXML(List<Recipe> recipes, List<TagtypeDto> tagtypes, ClassLoader classLoader, RecipeRepository recipeRepo, TagRepository tagRepo) {
+	public static Element getRecipeBookXML(List<Recipe> recipes, List<TagtypeDto> tagtypes, ClassLoader classLoader, RecipeRepository recipeRepo, TagRepository tagRepo, String imgPath) {
 		Element bookEle = new Element("export");
 		
 		Element locEle = new Element("loc");
@@ -63,7 +63,7 @@ public class XMLUtil {
 		
 		Element recEle = new Element("rec");
 		for(Recipe recipe : recipes) {
-			RecipeDto r = new RecipeDto(recipe);
+			RecipeDto r = new RecipeDto(recipe, imgPath);
 			recEle.addContent(r.toXml(classLoader));
 		}
 		bookEle.addContent(recEle);

@@ -81,6 +81,8 @@ public class RecipeServiceImpl implements RecipeService {
 	private String dumpXMLToLog;
 	@Value("${my.xslPath}")
 	private String xslPath;
+	@Value("${my.imgPath}")
+	private String imgPath;
 	@Value("${logging.path}")
 	private String loggingPath;
 	
@@ -322,7 +324,7 @@ public class RecipeServiceImpl implements RecipeService {
 		System.out.println("loggingPath: " + loggingPath);
 		System.out.println("dumpXMLToLog: " + dumpXMLToLog);
 
-		Element bookEle = XMLUtil.getRecipeBookXML(recipes, tagtypes, classLoader, this.recipeRepository, this.tagRepository);
+		Element bookEle = XMLUtil.getRecipeBookXML(recipes, tagtypes, classLoader, this.recipeRepository, this.tagRepository, this.imgPath);
 		logger.debug(XMLUtil.dumpElement(bookEle));
 		System.out.println(XMLUtil.dumpElement(bookEle));
 		System.out.println("xsl-File: " + file.getAbsolutePath());
@@ -373,9 +375,9 @@ public class RecipeServiceImpl implements RecipeService {
 	    criteria.where(builder.and(builder.like(lower, "%"+name.toLowerCase()+"%")));
 	    List<Recipe> recipeList = em.createQuery(criteria).getResultList();
 		for(Recipe r : recipeList) {
-			RecipeDto rDto = new RecipeDto(r);
+			RecipeDto rDto = new RecipeDto(r, this.imgPath);
 			if(withMeta == false) {
-				rDto.setImage(null);
+				rDto.setImage(null, this.imgPath);
 				rDto.setParts(null);
 				rDto.setTodos(null);
 				rDto.setTags(null);
@@ -390,9 +392,9 @@ public class RecipeServiceImpl implements RecipeService {
 		List<RecipeDto> list = new LinkedList<RecipeDto>();
 		List<Recipe> recipeList = recipeRepository.findRecipeByTagId(tagId);
 		for(Recipe r : recipeList) {
-			RecipeDto rDto = new RecipeDto(r);
+			RecipeDto rDto = new RecipeDto(r, this.imgPath);
 			if(withMeta == false) {
-				rDto.setImage(null);
+				rDto.setImage(null, this.imgPath);
 				rDto.setParts(null);
 				rDto.setTodos(null);
 				rDto.setTags(null);
@@ -406,7 +408,7 @@ public class RecipeServiceImpl implements RecipeService {
 	public RecipeDto getRecipeById(Integer id) throws IllegalArgumentException {
 		Optional<Recipe> recipe = this.recipeRepository.findById(id);
 		if (recipe.isPresent()) {
-			return new RecipeDto(recipe.get());
+			return new RecipeDto(recipe.get(), this.imgPath);
 		} else {
 			throw new IllegalArgumentException("kein Rezeot mit der ID " + id.toString() + " gefunden!");
 		}
@@ -537,7 +539,7 @@ public class RecipeServiceImpl implements RecipeService {
 				recipe.getIngredients().add(ingre);
 			}
 			
-			return new RecipeDto(recipeRepository.save(recipe));
+			return new RecipeDto(recipeRepository.save(recipe), this.imgPath);
 		}
 	}
 

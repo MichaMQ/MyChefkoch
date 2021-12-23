@@ -4,6 +4,8 @@ import Html exposing (..)
 import Html.Attributes as Attr exposing (..)
 import Html.Events exposing (onClick, onInput)
 import List exposing (..)
+import FormatNumber exposing (format)
+import FormatNumber.Locales as Loc exposing (spanishLocale,Decimals)
 
 import Devs.Objects as O exposing (..)
 import Devs.TypeObject as TO exposing (Msg)
@@ -46,11 +48,21 @@ viewRecipe loginToken rec sp =
     number_comment = case rec.number_comment of
       Just comment -> comment
       Nothing -> "Portionen"
-    rec_number = case rec.number of
-      Just number -> (String.fromInt number) ++ " " ++ number_comment
-      Nothing -> ""
-    recImage = case rec.image of
-      Just img -> Html.img [ class "recipeImg", src (sp.imagePath ++ img) ][]
+    number = case rec.number of
+      Just n -> n
+      Nothing -> 1
+    number_for_display = case rec.number_for_display of
+      Just n -> n
+      Nothing -> 1
+
+    --rec_number = Html.text ((String.fromInt number_for_display) ++ " " ++ number_comment)
+    rec_number = Html.span [][
+        Html.input[Attr.id "number_for_display", type_ "number", class "numberInput", onInput TO.SetNumberForDisplay, value (String.fromFloat number_for_display)][]
+        , Html.label[ for "number_for_display" ][ Html.text number_comment ]
+      ]
+    recImage = case rec.image of--data:image/png;base64,
+      Just img -> Html.img [ class "recipeImg", src ("data:image/jpeg;base64," ++ img) ][]
+      --Just img -> Html.img [ class "recipeImg", src (sp.imagePath ++ img) ][]
       Nothing -> Html.text ""
   in
     Html.div [ id "contentDiv", class "cf" ] [
@@ -69,13 +81,13 @@ viewRecipe loginToken rec sp =
           PU.getEditHeader (DU.isLoggedIn loginToken) "Tags:" (TO.ToggleEditForm O.TagForm)
           , Html.text (" " ++ (String.join ", " (List.map getTagName (sortBy .name rec.tags))))
         ]
-        , Html.figure [][ recImage, Html.figcaption [][ Html.text rec_number ] ],
+        , Html.figure [][ recImage, Html.figcaption [][ rec_number ] ],
         Html.div [ id "recipe" ][
           Html.div [ id "ingredientsDiv" ][
             Html.h4 [][
               PU.getEditHeader (DU.isLoggedIn loginToken) "Zutaten" (TO.ToggleEditForm O.IngredientForm)
             ]
-            , Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map showPartRow (sortBy .name rec.parts) ) ]
+            , Html.table [ class "incredientsTable" ][ Html.tbody [] ( List.map (showPartRow number number_for_display) (sortBy .name rec.parts) ) ]
           ],
           Html.div [ id "todosDiv" ][
             Html.h4 [][
@@ -103,10 +115,10 @@ showTodoRow sp todo =
       Html.figure [][ image ]
     ]
 
-showPartRow: Part -> Html Msg
-showPartRow part =
+showPartRow: Int -> Float -> Part -> Html Msg
+showPartRow number nfd part =
   let
-    ingreRows = (List.map showIngrRow (sortBy .sortorder part.ingredients))
+    ingreRows = (List.map (showIngrRow number nfd) (sortBy .sortorder part.ingredients))
     partRow = Html.tr[ class "partsRow" ][
       Html.td [ colspan 2 ][ Html.text part.name ]
       ]
@@ -115,9 +127,10 @@ showPartRow part =
       Html.table [ ][ Html.tbody [] ([partRow] ++ ingreRows) ]
     ]]
 
-showIngrRow: Ingredient -> Html Msg
-showIngrRow ingr =
+showIngrRow: Int -> Float -> Ingredient -> Html Msg
+showIngrRow number nfd ingr =
   let
+    loc = { spanishLocale | decimals = Loc.Max 2 }
     ingr_comment = case ingr.comment of
       Just comment -> ", " ++ comment
       Nothing -> ""
@@ -125,7 +138,7 @@ showIngrRow ingr =
       Just unit -> " " ++ unit.name
       Nothing -> ""
     ingr_quantity = case ingr.quantity of
-      Just quantity -> (String.fromFloat quantity) ++ ingr_unit
+      Just quantity -> (quantity * nfd / (toFloat number) |> format loc) ++ ingr_unit
       Nothing -> ""
   in
     Html.tr[ class "incredientsRow" ][

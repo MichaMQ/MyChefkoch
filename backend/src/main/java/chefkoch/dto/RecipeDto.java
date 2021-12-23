@@ -16,6 +16,7 @@ import chefkoch.entity.Part;
 import chefkoch.entity.Recipe;
 import chefkoch.entity.Tag;
 import chefkoch.entity.Todo;
+import chefkoch.util.Base64Util;
 import chefkoch.util.StringUtil;
 
 public class RecipeDto extends GenericDto {
@@ -41,7 +42,7 @@ public class RecipeDto extends GenericDto {
 	@JsonCreator
 	public RecipeDto() {}
 	
-	public RecipeDto(Recipe recipe) {
+	public RecipeDto(Recipe recipe, String imgPath) {
 		this.setId(recipe.getId());
 		this.setUuid(recipe.getUuid());
 		this.setName(recipe.getName());
@@ -53,7 +54,7 @@ public class RecipeDto extends GenericDto {
 		this.setNv_carbohydrates(recipe.getNv_carbohydrates());
 		this.setNv_protein(recipe.getNv_protein());
 		this.setNv_fat(recipe.getNv_fat());
-		this.setImage(recipe.getImage());
+		this.setImage(recipe.getImage(), imgPath);
 		this.setSource(new SourceDto(recipe.getSource()));
 		this.setSource_page(recipe.getSource_page());
 		this.setAikz(recipe.getAikz());
@@ -104,6 +105,7 @@ public class RecipeDto extends GenericDto {
 		recEle.addContent((new Element("nv_protein")).addContent(StringUtil.toString(this.getNv_protein())));
 		recEle.addContent((new Element("nv_fat")).addContent(StringUtil.toString(this.getNv_fat())));
 		if(this.getImage() != null) {
+			/*
 			URL imageFileUrl = classLoader.getResource("static/images/" + this.getImage());
 			logger.debug("imagePath 0 :" + this.getImage());
 			String imageFileName = imageFileUrl.getFile();
@@ -111,6 +113,8 @@ public class RecipeDto extends GenericDto {
 			String imagePath = imageFile.getAbsolutePath();
 			logger.debug("imagePath 1 :" + imagePath);
 			recEle.addContent((new Element("image")).addContent(StringUtil.toString(imagePath)));
+			*/
+			recEle.addContent((new Element("image")).addContent(this.getImage()));
 		}
 		
 		Element srcEle = this.getSource().toXml();
@@ -216,8 +220,13 @@ public class RecipeDto extends GenericDto {
 	public String getImage() {
 		return image;
 	}
-	public void setImage(String image) {
-		this.image = image;
+	public void setImage(String image, String imgPath) {
+		if(image != null) {
+			String imgCode = Base64Util.encodeToBase64(imgPath + "/" + image);
+			this.image = imgCode;
+		} else {
+			this.image = image;
+		}
 	}
 	public SourceDto getSource() {
 		return source;

@@ -116,6 +116,7 @@ recipeDecoder =
     |> andMap (Decode.field "name" Decode.string)
     |> andMap (Decode.field "translate" (Decode.maybe Decode.string))
     |> andMap (Decode.field "number" (Decode.maybe Decode.int))
+    |> andMap (Decode.succeed Nothing)
     |> andMap (Decode.field "number_comment" (Decode.maybe Decode.string))
     |> andMap (Decode.field "nv_carbohydrates" (Decode.maybe Decode.float))
     |> andMap (Decode.field "nv_energy" (Decode.maybe Decode.float))

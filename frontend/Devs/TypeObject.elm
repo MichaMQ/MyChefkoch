@@ -19,6 +19,7 @@ type Msg =
   | HandleLogin (Result Http.Error String)
   | ShowRecipesOfTag (Maybe Tag)
   | ShowRecipe (Maybe RecipeLight)
+  | SetNumberForDisplay String
   | EditRecipe
   | InsertRecipe
   | SaveRecipe
