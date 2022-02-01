@@ -4,7 +4,7 @@ Implementation-Title: Spring Boot Blank Project (from https://github.c
 Implementation-Version: 1.2
 Built-By: michael
 Implementation-Vendor-Id: de.schaefer
-Build-Jdk: 1.8.0_292
+Build-Jdk: 1.8.0_312
 Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
  ot-starter-parent/chefkoch
 Created-By: Maven Integration for Eclipse
