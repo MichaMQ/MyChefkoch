@@ -1,11 +1,11 @@
-module Devs.RecipeEncode exposing ( sourceEncoder,recipeEncoder,imageEncoder )
+module Devs.RecipeEncode exposing ( sourceEncoder,recipeEncoder,imageEncoder,partEncoder )
 
 --import Json.Decode as Decode exposing (Decoder, field, succeed)
 --import Json.Decode.Extra exposing (andMap)
 import Json.Encode as Encode exposing (..)
 --import Json.Encode.Extra as JsonE exposing (..)
 
-import Devs.Objects as Objects exposing (..)
+import Devs.Objects as O
 
 encodeString: Maybe String -> Encode.Value
 encodeString str = case str of
@@ -24,12 +24,12 @@ encodeFloat str = case str of
   Just val -> Encode.float val
   Nothing -> Encode.null
 
-imageEncoder: ImagePortData -> Encode.Value
+imageEncoder: O.ImagePortData -> Encode.Value
 imageEncoder img = Encode.object [ ( "contents", Encode.string img.contents )
   , ( "filename", Encode.string img.filename )
   ]
 
-recipeEncoder: Recipe -> Encode.Value
+recipeEncoder: O.Recipe -> Encode.Value
 recipeEncoder rec =
     let
       list =
@@ -59,7 +59,7 @@ recipeEncoder rec =
     in
       Encode.object list
 
-todoEncoder: Todo -> Encode.Value
+todoEncoder: O.Todo -> Encode.Value
 todoEncoder td =
     Encode.object [ ( "id", Encode.int td.id )
     , ( "number", Encode.int td.number )
@@ -69,7 +69,7 @@ todoEncoder td =
     , ( "uuid", Encode.string td.uuid )
     ]
 
-tagEncoder: Tag -> Encode.Value
+tagEncoder: O.Tag -> Encode.Value
 tagEncoder tag =
     let
       list =
@@ -81,14 +81,14 @@ tagEncoder tag =
     in
       Encode.object list
 
-tagtypeEncoder: TagtypeShort -> Encode.Value
+tagtypeEncoder: O.TagtypeShort -> Encode.Value
 tagtypeEncoder tt =
     Encode.object [ ( "id", encodeInt tt.id )
     , ( "name", Encode.string tt.name )
     , ( "uuid", Encode.string tt.uuid )
     ]
 
-ingreEncoder: Ingredient -> Encode.Value
+ingreEncoder: O.Ingredient -> Encode.Value
 ingreEncoder ingre =
     let
       list =
@@ -108,7 +108,7 @@ ingreEncoder ingre =
     in
       Encode.object list
 
-partEncoder: Part -> Encode.Value
+partEncoder: O.Part -> Encode.Value
 partEncoder p =
     Encode.object [ ( "id", Encode.int p.id )
     , ( "name", Encode.string p.name )
@@ -116,14 +116,14 @@ partEncoder p =
     , ( "uuid", Encode.string p.uuid )
     ]
 
-partLightEncoder: PartLight -> Encode.Value
+partLightEncoder: O.PartLight -> Encode.Value
 partLightEncoder p =
     Encode.object [ ( "id", Encode.int p.id )
     , ( "name", Encode.string p.name )
     , ( "uuid", Encode.string p.uuid )
     ]
 
-unitEncoder: Unit -> Encode.Value
+unitEncoder: O.Unit -> Encode.Value
 unitEncoder unit =
     Encode.object [ ( "id", Encode.int unit.id )
     , ( "name", Encode.string unit.name )
@@ -131,7 +131,7 @@ unitEncoder unit =
     , ( "uuid", Encode.string unit.uuid )
     ]
 
-unitCatEncoder: UnitCategory -> Encode.Value
+unitCatEncoder: O.UnitCategory -> Encode.Value
 unitCatEncoder uc =
     let
       list =
@@ -142,7 +142,7 @@ unitCatEncoder uc =
     in
       Encode.object list
 
-sourceEncoder : Source -> Encode.Value
+sourceEncoder : O.Source -> Encode.Value
 sourceEncoder src =
     let
       list =

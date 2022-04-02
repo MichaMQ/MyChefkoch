@@ -1,26 +1,25 @@
-port module RecipeServer exposing (..)
+module RecipeServer exposing (..)
 
 --elm make --debug RecipeServer.elm --output=pub/js/RecipeServer.js
 
-import Devs.Ports as Ports exposing (fileContentRead)
+import Devs.Ports as Ports
 
-import Browser exposing (element)
-import Html exposing (Html,h1,text)
-import Devs.Objects as O exposing (Model, initialModel)
-import Devs.Update as U exposing (update)
-import Devs.Utils as DU exposing (getTagtypeListForOverview,getAllUnits,getAllSources,getAllTags,getAllParts)
-import Devs.TypeObject as TO exposing (Msg)
+import Browser
+import Html
+import Devs.Objects as O
+import Devs.Update as U
+import Devs.TypeObject as TO
 
-import Pages.OverViewPage as OVP exposing (viewOverview)
-import Pages.Utils as PU exposing (alert)
+import Pages.OverViewPage as OVP
+import Pages.Utils as PU
 
-import Debug exposing (log)
+--import Debug exposing (log)
 
 -- View
-view : Model -> Html Msg
+view : O.Model -> Html.Html TO.Msg
 view model =
     let
-        appHeader =
+        _ =
             [
               Html.h1 [][ Html.text "RecipeServer" ]
             ]
@@ -31,7 +30,7 @@ view model =
     in
       OVP.viewOverview model alertMsg
 
-main : Program () Model Msg
+main : Program () O.Model TO.Msg
 main =
     Browser.element
         { init = \() -> init
@@ -40,8 +39,8 @@ main =
         , subscriptions = subscriptions
         }
 
-subscriptions : Model -> Sub Msg
-subscriptions model = Sub.batch [ Ports.fileContentRead TO.ImageRead, Ports.initialize TO.Initialize ]
+subscriptions : O.Model -> Sub TO.Msg
+subscriptions _ = Sub.batch [ Ports.fileContentRead TO.ImageRead, Ports.initialize TO.Initialize ]
 
-init : ( Model, Cmd Msg )
+init : ( O.Model, Cmd TO.Msg )
 init =  ( O.initialModel, Cmd.none )

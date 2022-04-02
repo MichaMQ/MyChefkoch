@@ -1,10 +1,10 @@
 port module Devs.Ports exposing (..)
 
-import Devs.Objects as Objects exposing (..)
+import Devs.Objects as O
 
 -- Outgoing
 port fileSelected : String -> Cmd msg
 
 -- Incoming
-port fileContentRead : (ImagePortData -> msg) -> Sub msg
-port initialize : (InitData -> msg) -> Sub msg
+port fileContentRead : (O.ImagePortData -> msg) -> Sub msg
+port initialize : (O.InitData -> msg) -> Sub msg

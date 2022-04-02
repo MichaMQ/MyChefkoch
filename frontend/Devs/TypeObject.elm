@@ -2,28 +2,28 @@ module Devs.TypeObject exposing (..)
 
 import Http
 
-import Devs.Objects as O exposing (..)
+import Devs.Objects as O
 
 -- Types
 type Msg =
   NoOp
-  | Initialize InitData
+  | Initialize O.InitData
   | ImageSelected
-  | ImageRead ImagePortData
+  | ImageRead O.ImagePortData
   | ShowOverView
-  | ToggleEditForm EditForm
+  | ToggleEditForm O.EditForm
   | GetLoginForm
   | SetUsernameForCheck String
   | SetPasswortForCheck String
   | Login
   | HandleLogin (Result Http.Error String)
-  | ShowRecipesOfTag (Maybe Tag)
-  | ShowRecipe (Maybe RecipeLight)
+  | ShowRecipesOfTag (Maybe O.Tag)
+  | ShowRecipe (Maybe O.RecipeLight)
   | SetNumberForDisplay String
   | EditRecipe
   | InsertRecipe
   | SaveRecipe
-  | SavedRecipe (Result Http.Error (Recipe))
+  | SavedRecipe (Result Http.Error (O.Recipe))
   | DeleteRecipe
   | SetAikz Int
   | SetName String
@@ -45,7 +45,7 @@ type Msg =
   | SetSrcYear String
   | CancelSourceEdit
   | SaveNewSource
-  | SavedSource (Result Http.Error (Source))
+  | SavedSource (Result Http.Error (O.Source))
   | ChooseNewTag
   | SetChoosenTag String
   | RemoveTagFromRec String
@@ -74,13 +74,13 @@ type Msg =
   | CloseRecipeAlert
   | RemoveSelectedTag
   | RemoveSelectedRecipe
-  | ListTagtypes (Result Http.Error (List Tagtype))
-  | ListRecipesForTag (Result Http.Error (List RecipeLight))
-  | SetRecipe (Result Http.Error Recipe)
-  | SetUnitList (Result Http.Error (List Unit))
-  | SetSourceList (Result Http.Error (List Source))
-  | SetTagList (Result Http.Error (List Tag))
-  | SetPartList (Result Http.Error (List PartLight))
+  | ListTagtypes (Result Http.Error (List O.Tagtype))
+  | ListRecipesForTag (Result Http.Error (List O.RecipeLight))
+  | SetRecipe (Result Http.Error O.Recipe)
+  | SetUnitList (Result Http.Error (List O.Unit))
+  | SetSourceList (Result Http.Error (List O.Source))
+  | SetTagList (Result Http.Error (List O.Tag))
+  | SetPartList (Result Http.Error (List O.PartLight))
   | SetSearchInput String
   | SearchRecipe
   | UploadImage (Result Http.Error Bool)

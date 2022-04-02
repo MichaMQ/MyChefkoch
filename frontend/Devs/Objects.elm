@@ -1,6 +1,6 @@
 module Devs.Objects exposing (..)
 
-import UUID exposing (UUID)
+import UUID
 import Random
 
 --import Video as VideoObj
