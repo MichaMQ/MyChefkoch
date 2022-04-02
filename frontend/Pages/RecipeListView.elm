@@ -1,15 +1,15 @@
 module Pages.RecipeListView exposing(viewRecipesOfTag)
 
 import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onClick, onInput)
-import List exposing (..)
+import Html.Attributes as Attr
+import Html.Events as Ev
+import List
 
-import Devs.Objects as Objects exposing (..)
-import Devs.TypeObject as TO exposing (Msg)
+import Devs.Objects as O
+import Devs.TypeObject as TO
 -- View
 
-viewRecipesOfTag: Model -> Html Msg
+viewRecipesOfTag: O.Model -> Html TO.Msg
 viewRecipesOfTag model =
   let
     selectedTagName = case model.selectedTag of
@@ -20,20 +20,20 @@ viewRecipesOfTag model =
       Nothing -> []
   in showRecipeList recipeList selectedTagName
 
-showRecipeList: List RecipeLight -> String -> Html Msg
+showRecipeList: List O.RecipeLight -> String -> Html TO.Msg
 showRecipeList recipeList divHeader =
-    Html.div [ id "contentDiv", class "cf" ] [
-      Html.div[][ Html.button [ onClick TO.RemoveSelectedTag ][ Html.text "zur Startseite" ] ],
-      Html.div [ id "categoryTypeDiv", style "width" "99%" ][
+    Html.div [ Attr.id "contentDiv", Attr.class "cf" ] [
+      Html.div[][ Html.button [ Ev.onClick TO.RemoveSelectedTag ][ Html.text "zur Startseite" ] ],
+      Html.div [ Attr.id "categoryTypeDiv", Attr.style "width" "99%" ][
         Html.h3 [][ Html.text divHeader ],
-        Html.div [ id "categoryDiv" ] (List.map showRecipeView recipeList)
+        Html.div [ Attr.id "categoryDiv" ] (List.map showRecipeView recipeList)
       ]
     ]
 
-showRecipeView: RecipeLight -> Html Msg
+showRecipeView: O.RecipeLight -> Html TO.Msg
 showRecipeView rec =
   Html.button [
-    id (String.fromInt rec.id),
-    class "tagLink",
-    onClick (TO.ShowRecipe (Just rec))
+    Attr.id (String.fromInt rec.id),
+    Attr.class "tagLink",
+    Ev.onClick (TO.ShowRecipe (Just rec))
   ][ Html.text rec.name ]

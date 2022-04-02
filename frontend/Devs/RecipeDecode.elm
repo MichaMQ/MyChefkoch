@@ -1,4 +1,4 @@
-module Devs.RecipeDecode exposing ( tagtypeDecoder,recipeLightDecoder,recipeDecoder,unitDecoder,sourceDecoder,tagDecoder,partLightDecoder )
+module Devs.RecipeDecode exposing ( tagtypeDecoder,recipeLightDecoder,recipeDecoder,unitDecoder,sourceDecoder,tagDecoder,partLightDecoder,sessionDecoder )
 
 import Json.Decode as Decode exposing (Decoder, field)
 import Json.Decode.Extra exposing (andMap)
@@ -21,8 +21,7 @@ tagDecoder = Decode.map4 O.Tag
   (field "uuid" Decode.string)
 
 tagListDecoder : Decoder (List O.Tag)
-tagListDecoder =
-  Decode.list tagDecoder
+tagListDecoder = Decode.list tagDecoder
 
 tagtypeDecoder : Decoder O.Tagtype
 tagtypeDecoder =
@@ -44,12 +43,10 @@ ingrDecoder = Decode.map8 O.Ingredient
   (field "uuid" Decode.string)
 
 ingrListDecoder : Decoder (List O.Ingredient)
-ingrListDecoder =
-  Decode.list ingrDecoder
+ingrListDecoder = Decode.list ingrDecoder
 
 partListDecoder : Decoder (List O.Part)
-partListDecoder =
-  Decode.list partDecoder
+partListDecoder = Decode.list partDecoder
 
 partDecoder : Decoder O.Part
 partDecoder =
@@ -87,6 +84,42 @@ sourceDecoder = Decode.map5 O.Source
   (Decode.maybe <| field "year" Decode.string)
   (field "uuid" Decode.string)
 
+roleDecoder: Decoder O.Role
+roleDecoder = Decode.string |> 
+  Decode.andThen (\str ->
+    case str of
+      "ADMIN" -> Decode.succeed O.ADMIN
+      "USER" -> Decode.succeed O.USER
+      somethingElse -> Decode.fail <| "Unknown role: " ++ somethingElse
+  )
+
+accountTypeDecoder: Decoder O.AccountType
+accountTypeDecoder = Decode.string |> 
+  Decode.andThen (\str ->
+    case str of
+      "HASH" -> Decode.succeed O.HASH
+      "INIT" -> Decode.succeed O.INIT
+      somethingElse -> Decode.fail <| "Unknown accountType: " ++ somethingElse
+  )
+
+accountDecoder: Decoder O.Account
+accountDecoder = Decode.map7 O.Account
+  (field "id" Decode.int)
+  (field "username" Decode.string)
+  (field "passwordhash" Decode.string)
+  (field "token" Decode.string)
+  (field "accountType" accountTypeDecoder)
+  (field "expirationdate" Decode.string)
+  (field "uuid" Decode.string)
+
+personDecoder : Decoder O.Person
+personDecoder = Decode.map5 O.Person
+  (Decode.maybe <| field "id" Decode.int)
+  (field "firstname" Decode.string)
+  (field "surname" Decode.string)
+  (field "role" roleDecoder)
+  (field "uuid" Decode.string)
+
 todoDecoder : Decoder O.Todo
 todoDecoder = Decode.map6 O.Todo
   (field "id" Decode.int)
@@ -104,6 +137,11 @@ recipeLightDecoder = Decode.map3 O.RecipeLight
   (field "id" Decode.int)
   (field "name" Decode.string)
   (field "uuid" Decode.string)
+
+sessionDecoder: Decoder O.Session
+sessionDecoder = Decode.map2 O.Session
+  (field "person" personDecoder)
+  (field "account" accountDecoder)
 
 recipeDecoder : Decode.Decoder O.Recipe
 recipeDecoder =
@@ -125,6 +163,7 @@ recipeDecoder =
     |> andMap (Decode.field "nv_size" (Decode.maybe Decode.int))
     |> andMap (Decode.field "source" (Decode.maybe sourceDecoder))
     |> andMap (Decode.field "source_page" (Decode.maybe Decode.int))
+    |> andMap (Decode.field "person" personDecoder)
     |> andMap (Decode.field "tags" tagListDecoder)
     |> andMap (Decode.field "todos" todoListDecoder)
     |> andMap (Decode.field "uuid" Decode.string)

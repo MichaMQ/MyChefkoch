@@ -1,19 +1,19 @@
 module Devs.Update exposing (..)
 
-import Devs.Ports as Ports exposing (fileSelected)
+import Devs.Ports as Ports
 
 import List.Extra as ListE
-import UUID exposing (UUID)
+import UUID
 import Random
-import Debug exposing (log)
+import Debug
 
-import Devs.Objects as O exposing (..)
-import Devs.TypeObject as TO exposing (..)
+import Devs.Objects as O
+import Devs.TypeObject exposing (..)
 import Devs.Recipe as RecipeObj
-import Devs.Utils as DU exposing (..)
+import Devs.Utils as DU
 
 -- Update
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> O.Model -> ( O.Model, Cmd Msg )
 update msg model =
     case msg of
         NoOp -> ( model , Cmd.none )
@@ -39,7 +39,7 @@ update msg model =
               }
           in
             ( { model | recImage = Just newImage, selectedRecipe = (RecipeObj.setImage model.selectedRecipe (Just imagePortData.filename)) }, DU.uploadImage model newImage )
-        GetLoginForm -> ( { model | loginToken = Just "" } , Cmd.none)
+        GetLoginForm -> ( { model | session = Just O.getEmptySession } , Cmd.none)
         SetUsernameForCheck val -> ( { model | usernameForCheck = val } , Cmd.none)
         SetPasswortForCheck val -> ( { model | passwordForCheck = val } , Cmd.none)
         Login ->
@@ -50,9 +50,9 @@ update msg model =
                 ( { model | alertMessage = Just "Bitte gib einen Benutzername ein!" }, Cmd.none )
               else
                 ( model, DU.login model )
-        HandleLogin (Ok loginToken) ->
-            if String.length loginToken > 0 then
-              ( { model | alertMessage = Nothing, loginToken = Just loginToken } , Cmd.none )
+        HandleLogin (Ok session) ->
+            if String.length session.account.token > 0 then
+              ( { model | alertMessage = Nothing, session = Just session } , Cmd.none )
             else ( { model | alertMessage = Just "Mindestens eine der eingegeben Daten ist falsch!" }, Cmd.none )
         HandleLogin (Err error) -> ( { model | recAlertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
         ShowOverView -> ( { model | selectedRecipe = Nothing, selectedTag = Nothing }, Cmd.none )
@@ -68,13 +68,7 @@ update msg model =
               Nothing -> {id = -1, name = "", uuid=UUID.toString UUID.nil}
           in
             ( model, DU.getRecipe model selectedRecipe )
-        SetNumberForDisplay nfd ->
-          let
-            selectedRecipe = case model.selectedRecipe of
-              Just recipe ->  Just {recipe|number_for_display=String.toFloat nfd}
-              Nothing -> Nothing
-          in
-            ( { model | selectedRecipe = selectedRecipe}, Cmd.none )
+        SetNumberForDisplay nfd -> ( { model | selectedRecipe = Maybe.andThen (\recipe -> Just {recipe|number_for_display=String.toFloat nfd}) model.selectedRecipe}, Cmd.none )
         EditRecipe -> ( { model | selectedRecipe = model.selectedRecipe }, Cmd.none )
         InsertRecipe ->
           let
@@ -84,9 +78,7 @@ update msg model =
             ( { model | currentSeed = Just newSeed, selectedRecipe = Just {newRec | uuid = UUID.toString newUuid} }, Cmd.none )
         SaveRecipe ->
           let
-            errorMsg = case model.selectedRecipe of
-              Just rec -> DU.validateRecipe rec
-              Nothing -> Nothing
+            errorMsg = Maybe.andThen (\rec -> DU.validateRecipe rec) model.selectedRecipe
             _ = Debug.log "selectedRecipe: " model.selectedRecipe
             _ = Debug.log "errorMsg: " errorMsg
           in
@@ -129,8 +121,9 @@ update msg model =
         AddNewSource ->
           let
             ( newUuid, newSeed ) = Random.step UUID.generator (DU.getSeed model)
+            emptySource = O.getEmptySource
           in
-            ( { model | currentSeed = Just newSeed, newSource = Just { getEmptySource | uuid = UUID.toString newUuid } }, Cmd.none)
+            ( { model | currentSeed = Just newSeed, newSource = Just { emptySource | uuid = UUID.toString newUuid } }, Cmd.none)
         SetSrcName val -> ( { model | newSource = (RecipeObj.setSourceName model.newSource val) }, Cmd.none)
         SetSrcIsbn val -> ( { model | newSource = (RecipeObj.setSourceIsbn model.newSource val) }, Cmd.none)
         SetSrcYear val -> ( { model | newSource = (RecipeObj.setSourceYear model.newSource val) }, Cmd.none)
@@ -217,11 +210,7 @@ update msg model =
             partKeyList = case model.kl.partList of
               Just list -> list
               Nothing -> []
-            newRec = case ( ListE.find ( \part -> part.uuid == pUuid ) partKeyList ) of
-              Just part -> case RecipeObj.setParts model.selectedRecipe part of
-                Just rec -> (RecipeObj.setIngredients (Just rec) (ListE.updateIf (\item -> item.uuid == iUuid) (\item -> {item | part = Just part}) rec.ingredients))
-                Nothing -> Nothing
-              Nothing -> Nothing
+            newRec = Maybe.andThen (\part -> Maybe.andThen (\rec-> RecipeObj.setIngredients (Just rec) (ListE.updateIf (\item -> item.uuid == iUuid) (\item -> {item | part = Just part}) rec.ingredients)) (RecipeObj.setParts model.selectedRecipe part)) ( ListE.find ( \part -> part.uuid == pUuid ) partKeyList )
           in
             ( { model | selectedRecipe = newRec } , Cmd.none)
         SetIngreUnit iUuid uUuid ->
@@ -291,7 +280,7 @@ update msg model =
         CancelDelete ->
           ( { model | deleteRecipe = False }, Cmd.none )
         CancelLogin ->
-          ( { model | loginToken = Nothing, alertMessage = Nothing }, Cmd.none )
+          ( { model | session = Nothing, alertMessage = Nothing }, Cmd.none )
         ShowRecipesOfTag tag ->
           ( { model | selectedTag = tag }, DU.getRecipeListForTag model tag )
         RemoveSelectedTag ->
@@ -342,7 +331,7 @@ update msg model =
           ( { model | kl = (DU.setInitialPart model.kl list) } , Cmd.none)
         SetPartList (Err error) ->
           ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
-        UploadImage (Ok value) ->
+        UploadImage (Ok _) ->
           ( model, Cmd.none)
         UploadImage (Err error) ->
           ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)

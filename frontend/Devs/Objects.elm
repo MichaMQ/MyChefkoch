@@ -14,6 +14,9 @@ type EditForm =
   | FootValueForm
   | None
 
+type Role = ADMIN | USER
+type AccountType = HASH | INIT
+
 -- Model
 type alias ServerParams = {serverProtokoll: String, serverHost: String, serverUrlPrefix: String, apiUrlPrefix: String, iconPath: String, imagePath: String}
 type alias KeyLists = {sourceList: Maybe (List Source), tagList: Maybe (List Tag), unitList: Maybe (List Unit), partList: Maybe (List PartLight)}
@@ -23,6 +26,10 @@ type alias Tagtype = {id: Int, name: String, tagList: List Tag, uuid: String}
 type alias UnitCategory = {id: Int, name: String, uuid: String}
 type alias Unit = {id: Int, name: String, unitCategory: UnitCategory, uuid: String}
 type alias Source = {id: Maybe Int, isbn: Maybe String, name: String, year: Maybe String, uuid: String}
+type alias Person = {id: Maybe Int, firstname: String, surname: String, role: Role, uuid: String}
+type alias Account = {id: Int, username: String, passwordhash: String, token: String, accountType: AccountType, expirationdate: String, uuid: String}
+type alias Session = { person: Person, account: Account }
+
 type alias Todo = {
   id: Int
   , image: Maybe String
@@ -60,6 +67,7 @@ type alias Recipe = {
   nv_size: Maybe Int,
   source: Maybe Source,
   source_page: Maybe Int,
+  person: Person,
   tags: List Tag,
   todos: List Todo,
   uuid: String}
@@ -83,7 +91,7 @@ type alias Model = {
   , newSource: Maybe Source
   , addTag: Maybe Tag
   , kl: KeyLists
-  , loginToken: Maybe String
+  , session: Maybe Session
 --    loggedIn: Maybe Bool
   , deleteRecipe: Bool
   , usernameForCheck: String
@@ -131,7 +139,7 @@ initialModel = {
   , newSource = Nothing
   , addTag = Nothing
   , kl = keyLists
-  , loginToken = Nothing
+  , session = Nothing
 --    loggedIn = Nothing
   , deleteRecipe = False
   , usernameForCheck = ""
@@ -190,6 +198,15 @@ getPartOfPartLight pl = {id=pl.id, name=pl.name, ingredients=[], uuid=pl.uuid}
 getEmptyTag: Tag
 getEmptyTag = {id=Nothing, name="", tagType={id=Nothing, name="", uuid=UUID.toString UUID.nil}, uuid=UUID.toString UUID.nil}
 
+getEmptyAccount: Account
+getEmptyAccount = Account -1 "" "" "" INIT "" (UUID.toString UUID.nil)
+
+getEmptyPerson: Person
+getEmptyPerson = Person Nothing "" "" USER (UUID.toString UUID.nil)
+
+getEmptySession: Session
+getEmptySession = Session getEmptyPerson getEmptyAccount
+
 getEmptyRecipe: Recipe
 getEmptyRecipe = {
     aikz=1
@@ -209,6 +226,7 @@ getEmptyRecipe = {
     , nv_size=Nothing
     , source=Nothing
     , source_page=Nothing
+    , person = getEmptyPerson
     , tags=[]
     , todos=[]
     , uuid=UUID.toString UUID.nil

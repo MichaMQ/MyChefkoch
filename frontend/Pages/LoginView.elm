@@ -4,12 +4,12 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
 
-import Devs.Objects as Objects exposing (..)
-import Devs.TypeObject as TO exposing (Msg)
-import Pages.Utils as PU exposing (alert, onEnter)
+import Devs.Objects as O
+import Devs.TypeObject as TO
+import Pages.Utils as PU
 -- View
 
-getLoginForm: Model -> Html Msg
+getLoginForm: O.Model -> Html TO.Msg
 getLoginForm model =
   Html.div [ class "editFormBG" ][
     Html.div [ class "editFormDiv" ] [
@@ -28,7 +28,7 @@ getLoginForm model =
     ]
   ]
 
-showSourceOption: Source -> Html Msg
+showSourceOption: O.Source -> Html TO.Msg
 showSourceOption src =
   let
     src_year = case src.year of
@@ -40,5 +40,5 @@ showSourceOption src =
   in
     Html.option[ value (String.fromInt src_id) ][ Html.text (src.name ++ src_year) ]
 
-getSelectOption: Html Msg
+getSelectOption: Html TO.Msg
 getSelectOption = Html.option[ ][ Html.text "Bitte wählen" ]

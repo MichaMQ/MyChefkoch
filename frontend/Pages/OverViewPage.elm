@@ -3,49 +3,47 @@ module Pages.OverViewPage exposing(viewOverview)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
-import Devs.Objects as Objects exposing (..)
-import Devs.TypeObject as TO exposing (Msg)
+import Devs.Objects as O
+import Devs.TypeObject as TO
 --import Debug exposing (log)
 
 --import Recipe as RecipeObj
 
-import Pages.LoginView as LW exposing (getLoginForm)
-import Pages.EditorView as EW exposing (viewEditForm, viewSourceForm, viewAddTagForm)
-import Pages.RecipeView as RW exposing (viewRecipe)
-import Pages.RecipeListView as RLW exposing (viewRecipesOfTag)
-import Pages.TagtypeView as TtW exposing (viewInitialTagtypeList)
-import Pages.Utils as Utils exposing (getConfirmForm, onEnter)
+import Pages.LoginView as LW
+import Pages.EditorView as EW
+import Pages.RecipeView as RW
+import Pages.RecipeListView as RLW
+import Pages.TagtypeView as TtW
+import Pages.Utils as Utils
 
 -- View
-viewOverview: Model -> Html Msg -> Html Msg
+viewOverview: O.Model -> Html TO.Msg -> Html TO.Msg
 viewOverview model alertMsg =
   let
     content = case model.selectedRecipe of
-      Just rec -> RW.viewRecipe model.loginToken rec model.sp
+      Just rec -> RW.viewRecipe model.session rec model.sp
       Nothing -> case model.recipesOfSelectedTag of
-        Just recipeList -> RLW.viewRecipesOfTag model
+        Just _ -> RLW.viewRecipesOfTag model
         Nothing -> TtW.viewInitialTagtypeList model
     editForm = case model.showEditForm of
-      Just rec -> EW.viewEditForm model
+      Just _ -> EW.viewEditForm model
       Nothing -> Html.text ""
     sourceForm = case model.newSource of
-      Just src -> EW.viewSourceForm model
+      Just _ -> EW.viewSourceForm model
       Nothing -> Html.text ""
     tagForm = case model.addTag of
-      Just tag -> EW.viewAddTagForm model
+      Just _ -> EW.viewAddTagForm model
       Nothing -> Html.text ""
-    loginForm = case model.loginToken of
-      Just isLoggedInTmp -> if String.length isLoggedInTmp == 0
+    loginForm = case model.session of
+      Just session -> if String.length session.account.token == 0
         then LW.getLoginForm model
         else Html.text ""
       Nothing -> Html.text ""
     confirmDeleteForm = if model.deleteRecipe
-      then Utils.getConfirmForm TO.DeleteRecipe TO.CancelDelete "Soll das Rezept wirklich gelöscht werden?" model
+      then Utils.getConfirmForm TO.DeleteRecipe TO.CancelDelete "Soll das Rezept wirklich gelöscht werden?"
       else Html.text ""
-    isLoggedIn = case model.loginToken of
-      Just log -> if String.length log > 0
-        then True
-        else False
+    isLoggedIn = case model.session of
+      Just session -> String.length session.account.token > 0
       Nothing -> False
     actionButton = if isLoggedIn == True
       then Html.button [ onClick TO.InsertRecipe ][ Html.text "hinzufügen" ]

@@ -1,32 +1,32 @@
 module Pages.TagtypeView exposing(viewInitialTagtypeList)
 
 import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onClick, onInput)
-import List exposing (..)
+import Html.Attributes as Attr
+import Html.Events as Ev
+import List
 
-import Devs.Objects as Objects exposing (..)
+import Devs.Objects as O
 import Devs.TypeObject as TO exposing (Msg)
 -- View
 
 
-viewInitialTagtypeList: Model -> Html Msg
-viewInitialTagtypeList model = Html.div [ id "contentDiv", class "cf" ] (listInitialTagtypeList model)
+viewInitialTagtypeList: O.Model -> Html Msg
+viewInitialTagtypeList model = Html.div [ Attr.id "contentDiv", Attr.class "cf" ] (listInitialTagtypeList model)
 
-listInitialTagtypeList : Model -> List (Html Msg)
+listInitialTagtypeList : O.Model -> List (Html Msg)
 listInitialTagtypeList model =
     case model.tagtypeList of
         Just tagtypeList -> List.map viewInitialTagtype (List.sortBy .name tagtypeList)
         Nothing -> [Html.text ""]
 
-viewInitialTagtype: Tagtype -> Html Msg
+viewInitialTagtype: O.Tagtype -> Html Msg
 viewInitialTagtype tagtype =
-  Html.div [ id "categoryTypeDiv" ][
+  Html.div [ Attr.id "categoryTypeDiv" ][
     Html.h3 [][ Html.text tagtype.name ],
-    Html.div [ id "categoryDiv" ] (List.map viewInitialTag tagtype.tagList)
+    Html.div [ Attr.id "categoryDiv" ] (List.map viewInitialTag tagtype.tagList)
   ]
 
-viewInitialTag: Tag -> Html Msg
+viewInitialTag: O.Tag -> Html Msg
 viewInitialTag tag =
   let
     tag_id = case tag.id of
@@ -34,7 +34,7 @@ viewInitialTag tag =
         Nothing -> -1
   in
     Html.button [
-      id (String.fromInt tag_id),
-      class "tagLink",
-      onClick (TO.ShowRecipesOfTag (Just tag))
+      Attr.id (String.fromInt tag_id),
+      Attr.class "tagLink",
+      Ev.onClick (TO.ShowRecipesOfTag (Just tag))
     ][ Html.text tag.name ]

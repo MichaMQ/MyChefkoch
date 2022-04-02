@@ -14,66 +14,67 @@ import Debug
 import Devs.RecipeDecode as RD
 import Devs.RecipeEncode as RE
 
-uploadImage: (Result Http.Error (Bool) -> TO.Msg) -> Maybe String -> String -> O.ImagePortData -> Cmd TO.Msg
-uploadImage event token url image =
+uploadImage: (Result Http.Error (Bool) -> TO.Msg) -> Maybe O.Session -> String -> O.ImagePortData -> Cmd TO.Msg
+uploadImage event session url image =
   let
     jsonValue = RE.imageEncoder image
   in
     --Http.post {url=url, body=(Http.jsonBody jsonValue), expect=Http.expectJson event Decode.bool}
-    myRequest "POST" url (Http.expectJson event Decode.bool) token (Just jsonValue)
+    myRequest "POST" url (Http.expectJson event Decode.bool) session (Just jsonValue)
 
-saveRecipe: (Result Http.Error (O.Recipe) -> TO.Msg) -> Maybe String -> String -> O.Recipe -> Cmd TO.Msg
-saveRecipe event token url newRecipe =
+saveRecipe: (Result Http.Error (O.Recipe) -> TO.Msg) -> Maybe O.Session -> String -> O.Recipe -> Cmd TO.Msg
+saveRecipe event session url newRecipe =
   let
     jsonValue = RE.recipeEncoder newRecipe
     logString = Encode.encode 0 jsonValue
     _ = Debug.log "newRecipe: " logString
   in
     --Http.post {url=url, body=(Http.jsonBody jsonValue), expect=Http.expectJson event recipeDecoder}
-    myRequest "POST" url (Http.expectJson event RD.recipeDecoder) token (Just jsonValue)
+    myRequest "POST" url (Http.expectJson event RD.recipeDecoder) session (Just jsonValue)
 
-saveSource: (Result Http.Error (O.Source) -> TO.Msg) -> Maybe String -> String -> O.Source -> Cmd TO.Msg
-saveSource event token url newSource =
+saveSource: (Result Http.Error (O.Source) -> TO.Msg) -> Maybe O.Session -> String -> O.Source -> Cmd TO.Msg
+saveSource event session url newSource =
   let
     jsonValue = RE.sourceEncoder newSource
 
   in
     --Http.post {url=url, body=(Http.jsonBody jsonValue), expect=Http.expectJson event sourceDecoder}
-    myRequest "POST" url (Http.expectJson event RD.sourceDecoder) token (Just jsonValue)
+    myRequest "POST" url (Http.expectJson event RD.sourceDecoder) session (Just jsonValue)
 
-getAllUnits: (Result Http.Error (List O.Unit) -> TO.Msg) -> Maybe String -> String -> Cmd TO.Msg
-getAllUnits event token url = myRequest "GET" url (Http.expectJson event (Decode.list RD.unitDecoder)) token Nothing
+getAllUnits: (Result Http.Error (List O.Unit) -> TO.Msg) -> Maybe O.Session -> String -> Cmd TO.Msg
+getAllUnits event session url = myRequest "GET" url (Http.expectJson event (Decode.list RD.unitDecoder)) session Nothing
 
-getAllSources: (Result Http.Error (List O.Source) -> TO.Msg) -> Maybe String -> String -> Cmd TO.Msg
-getAllSources event token url = myRequest "GET" url (Http.expectJson event (Decode.list RD.sourceDecoder)) token Nothing
+getAllSources: (Result Http.Error (List O.Source) -> TO.Msg) -> Maybe O.Session -> String -> Cmd TO.Msg
+getAllSources event session url = myRequest "GET" url (Http.expectJson event (Decode.list RD.sourceDecoder)) session Nothing
 
-getAllTags: (Result Http.Error (List O.Tag) -> TO.Msg) -> Maybe String -> String -> Cmd TO.Msg
-getAllTags event token url = myRequest "GET" url (Http.expectJson event (Decode.list RD.tagDecoder)) token Nothing
+getAllTags: (Result Http.Error (List O.Tag) -> TO.Msg) -> Maybe O.Session -> String -> Cmd TO.Msg
+getAllTags event session url = myRequest "GET" url (Http.expectJson event (Decode.list RD.tagDecoder)) session Nothing
 
-getAllParts: (Result Http.Error (List O.PartLight) -> TO.Msg) -> Maybe String -> String -> Cmd TO.Msg
-getAllParts event token url = myRequest "GET" url (Http.expectJson event (Decode.list RD.partLightDecoder)) token Nothing
+getAllParts: (Result Http.Error (List O.PartLight) -> TO.Msg) -> Maybe O.Session -> String -> Cmd TO.Msg
+getAllParts event session url = myRequest "GET" url (Http.expectJson event (Decode.list RD.partLightDecoder)) session Nothing
 
-getTagtypeListForOverview: (Result Http.Error (List O.Tagtype) -> TO.Msg) -> Maybe String -> String -> Cmd TO.Msg
-getTagtypeListForOverview event token url = myRequest "GET" url (Http.expectJson event (Decode.list RD.tagtypeDecoder)) token Nothing
+getTagtypeListForOverview: (Result Http.Error (List O.Tagtype) -> TO.Msg) -> Maybe O.Session -> String -> Cmd TO.Msg
+getTagtypeListForOverview event session url = myRequest "GET" url (Http.expectJson event (Decode.list RD.tagtypeDecoder)) session Nothing
 
-getRecipeListForTag : (Result Http.Error (List O.RecipeLight) -> TO.Msg) -> Maybe String -> String -> Cmd TO.Msg
-getRecipeListForTag event token url = myRequest "GET" url (Http.expectJson event (Decode.list RD.recipeLightDecoder)) token Nothing
+getRecipeListForTag : (Result Http.Error (List O.RecipeLight) -> TO.Msg) -> Maybe O.Session -> String -> Cmd TO.Msg
+getRecipeListForTag event session url = myRequest "GET" url (Http.expectJson event (Decode.list RD.recipeLightDecoder)) session Nothing
 
-searchRecipe: (Result Http.Error (List O.RecipeLight) -> TO.Msg) -> Maybe String -> String -> Cmd TO.Msg
-searchRecipe event token url = myRequest "GET" url (Http.expectJson event (Decode.list RD.recipeLightDecoder)) token Nothing
+searchRecipe: (Result Http.Error (List O.RecipeLight) -> TO.Msg) -> Maybe O.Session -> String -> Cmd TO.Msg
+searchRecipe event session url = myRequest "GET" url (Http.expectJson event (Decode.list RD.recipeLightDecoder)) session Nothing
 
-getRecipe: (Result Http.Error (O.Recipe) -> TO.Msg) -> Maybe String -> String -> Cmd TO.Msg
-getRecipe event token url = myRequest "GET" url (Http.expectJson event RD.recipeDecoder) token Nothing
+getRecipe: (Result Http.Error (O.Recipe) -> TO.Msg) -> Maybe O.Session -> String -> Cmd TO.Msg
+getRecipe event session url = myRequest "GET" url (Http.expectJson event RD.recipeDecoder) session Nothing
 
-login: (Result Http.Error (String) -> TO.Msg) -> String -> Cmd TO.Msg
-login event url = Http.get {url=url, expect=Http.expectString event}
+login: (Result Http.Error (O.Session) -> TO.Msg) -> String -> Cmd TO.Msg
+login event url = myRequest "GET" url (Http.expectJson event RD.sessionDecoder) Nothing Nothing
+--login event url = Http.get {url=url, expect=Http.expectString event}
 
-myRequest: String -> String -> (Http.Expect TO.Msg) -> Maybe String -> Maybe Encode.Value -> Cmd TO.Msg
-myRequest method url expect token content =
+myRequest: String -> String -> (Http.Expect TO.Msg) -> Maybe O.Session -> Maybe Encode.Value -> Cmd TO.Msg
+myRequest method url expect session content =
   let
-      header = case token of
-        Just reqToken -> if String.length reqToken > 0
-          then [(Http.header "token" reqToken)]
+      header = case session of
+        Just reqSession -> if String.length reqSession.account.token > 0
+          then [(Http.header "session" reqSession.account.token)]
           else []
         Nothing -> []
       body = case content of

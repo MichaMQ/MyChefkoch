@@ -3,18 +3,18 @@ module Pages.EditorView exposing(viewEditForm, viewSourceForm, viewAddTagForm)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
-import Html.Events.Extra as EvE exposing (onChange)
+import Html.Events.Extra as EvE
 import List exposing (..)
-import Json.Decode as Json
+--import Json.Decode as Json
 
 import Devs.Objects as O exposing (..)
 import Devs.TypeObject as TO exposing (Msg)
-import Pages.Utils as PU exposing (alert, onEnter)
-import Pages.EditorTabs.Tab1 as Tab1 exposing (showTab)
-import Pages.EditorTabs.Tab2 as Tab2 exposing (showTab,showTagOption)
-import Pages.EditorTabs.Tab3 as Tab3 exposing (showTab)
-import Pages.EditorTabs.Tab4 as Tab4 exposing (showTab)
-import Pages.EditorTabs.Tab5 as Tab5 exposing (showTab)
+import Pages.Utils as PU
+import Pages.EditorTabs.Tab1 as Tab1
+import Pages.EditorTabs.Tab2 as Tab2
+import Pages.EditorTabs.Tab3 as Tab3
+import Pages.EditorTabs.Tab4 as Tab4
+import Pages.EditorTabs.Tab5 as Tab5
 -- View
 
 --type alias Source = {id: Maybe Int, isbn: Maybe String, name: String, year: Maybe String}

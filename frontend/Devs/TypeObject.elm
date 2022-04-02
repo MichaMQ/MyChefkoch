@@ -16,7 +16,7 @@ type Msg =
   | SetUsernameForCheck String
   | SetPasswortForCheck String
   | Login
-  | HandleLogin (Result Http.Error String)
+  | HandleLogin (Result Http.Error O.Session)
   | ShowRecipesOfTag (Maybe O.Tag)
   | ShowRecipe (Maybe O.RecipeLight)
   | SetNumberForDisplay String

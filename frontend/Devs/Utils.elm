@@ -6,12 +6,12 @@ import Http
 import Random
 import UUID exposing (UUID)
 
-import Devs.Objects as O exposing (..)
-import Devs.TypeObject as TO exposing (..)
+import Devs.Objects as O
+import Devs.TypeObject as TO
 import Devs.BackendApi as Api
 
 -- Functions
-getNewIngre: Model -> UUID -> Ingredient
+getNewIngre: O.Model -> UUID -> O.Ingredient
 getNewIngre model newUuid =
   let
     ingreList = case model.selectedRecipe of
@@ -27,7 +27,7 @@ getNewIngre model newUuid =
   in
     { newIngre | uuid = UUID.toString newUuid }
 
-getNewTodo: Model -> UUID -> Todo
+getNewTodo: O.Model -> UUID -> O.Todo
 getNewTodo model newUuid =
   let
     todoList = case model.selectedRecipe of
@@ -40,12 +40,12 @@ getNewTodo model newUuid =
   in
     { newTodo | uuid = UUID.toString newUuid }
 
-validateRecipe: Recipe -> Maybe String
+validateRecipe: O.Recipe -> Maybe String
 validateRecipe rec =
     if String.isEmpty rec.name
       then Just "Es muss ein Namen eingegeben werden."
       else case rec.source of
-        Just src -> if List.isEmpty rec.ingredients
+        Just _ -> if List.isEmpty rec.ingredients
           then Just "Es muss mindestens eine Zutat eingegeben werden."
           else if List.isEmpty rec.todos
             then Just "Es muss mindestens eine Anweisung eingegeben werden."
@@ -54,70 +54,70 @@ validateRecipe rec =
               else Nothing
         Nothing -> Just "Es muss eine Quelle angegeben werden."
 
-getSeed: Model -> Random.Seed
+getSeed: O.Model -> Random.Seed
 getSeed model =
   case model.currentSeed of
       Just seed ->  seed
       Nothing -> Random.initialSeed model.random
 
-getIngreForEdit: List Ingredient -> Int -> Ingredient
+getIngreForEdit: List O.Ingredient -> Int -> O.Ingredient
 getIngreForEdit ingreList idx =
     case ListE.getAt idx (sortBy .sortorder ingreList) of
       Just ingre -> ingre
       Nothing -> O.getEmptyIngre 0 Nothing
 
-getTodoForEdit: List Todo -> Int -> Todo
+getTodoForEdit: List O.Todo -> Int -> O.Todo
 getTodoForEdit list idx =
     case ListE.getAt idx (sortBy .number list) of
       Just todo -> todo
       Nothing -> O.getEmptyTodo 0
 
-setInitialUnit: KeyLists -> List Unit -> KeyLists
+setInitialUnit: O.KeyLists -> List O.Unit -> O.KeyLists
 setInitialUnit keyList newList = { keyList | unitList = Just newList }
 
-setInitialSource: KeyLists -> List Source -> KeyLists
+setInitialSource: O.KeyLists -> List O.Source -> O.KeyLists
 setInitialSource keyList newList = { keyList | sourceList = Just newList }
 
-setInitialTag: KeyLists -> List Tag -> KeyLists
+setInitialTag: O.KeyLists -> List O.Tag -> O.KeyLists
 setInitialTag keyList newList = { keyList | tagList = Just newList }
 
-setInitialPart: KeyLists -> List PartLight -> KeyLists
+setInitialPart: O.KeyLists -> List O.PartLight -> O.KeyLists
 setInitialPart keyList newList = { keyList | partList = Just newList }
 
-getAllUnits: Model -> Cmd Msg
-getAllUnits model = Api.getAllUnits SetUnitList model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllUnits")
+getAllUnits: O.Model -> Cmd TO.Msg
+getAllUnits model = Api.getAllUnits TO.SetUnitList model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllUnits")
 
-getAllSources: Model -> Cmd Msg
-getAllSources model = Api.getAllSources SetSourceList model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllSources")
+getAllSources: O.Model -> Cmd TO.Msg
+getAllSources model = Api.getAllSources TO.SetSourceList model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllSources")
 
-getAllTags: Model -> Cmd Msg
-getAllTags model = Api.getAllTags SetTagList model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllTags")
+getAllTags: O.Model -> Cmd TO.Msg
+getAllTags model = Api.getAllTags TO.SetTagList model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllTags")
 
-getAllParts: Model -> Cmd Msg
-getAllParts model = Api.getAllParts SetPartList model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllParts")
+getAllParts: O.Model -> Cmd TO.Msg
+getAllParts model = Api.getAllParts TO.SetPartList model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllParts")
 
-uploadImage: Model -> ImagePortData -> Cmd Msg
-uploadImage model image = Api.uploadImage UploadImage model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/uploadImage") image
+uploadImage: O.Model -> O.ImagePortData -> Cmd TO.Msg
+uploadImage model image = Api.uploadImage TO.UploadImage model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/uploadImage") image
 
-saveSource: Model -> Source -> Cmd Msg
-saveSource model newSource = Api.saveSource SavedSource model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/saveSource") newSource
+saveSource: O.Model -> O.Source -> Cmd TO.Msg
+saveSource model newSource = Api.saveSource TO.SavedSource model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/saveSource") newSource
 
-saveRecipe: Model -> Recipe -> Cmd Msg
-saveRecipe model newRecipe = Api.saveRecipe SavedRecipe model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/saveRecipe") newRecipe
+saveRecipe: O.Model -> O.Recipe -> Cmd TO.Msg
+saveRecipe model newRecipe = Api.saveRecipe TO.SavedRecipe model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/saveRecipe") newRecipe
 
-getTagtypeListForOverview : Model -> Cmd Msg
-getTagtypeListForOverview model = Api.getTagtypeListForOverview ListTagtypes model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllTagTypes")
+getTagtypeListForOverview : O.Model -> Cmd TO.Msg
+getTagtypeListForOverview model = Api.getTagtypeListForOverview TO.ListTagtypes model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllTagTypes")
 
-searchRecipe: Model -> Cmd Msg
-searchRecipe model = Api.searchRecipe ListRecipesForTag model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/findRecipeByName/?name=" ++ String.trim model.searchValue)
+searchRecipe: O.Model -> Cmd TO.Msg
+searchRecipe model = Api.searchRecipe TO.ListRecipesForTag model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/findRecipeByName/?name=" ++ String.trim model.searchValue)
 
-getRecipe: Model -> RecipeLight -> Cmd Msg
-getRecipe model rec = Api.getRecipe SetRecipe model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getRecipeById/?id=" ++ String.fromInt rec.id)
+getRecipe: O.Model -> O.RecipeLight -> Cmd TO.Msg
+getRecipe model rec = Api.getRecipe TO.SetRecipe model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getRecipeById/?id=" ++ String.fromInt rec.id)
 
-login: Model -> Cmd Msg
-login model = Api.login HandleLogin (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/login/?username=" ++ model.usernameForCheck ++ "&password=" ++ model.passwordForCheck)
+login: O.Model -> Cmd TO.Msg
+login model = Api.login TO.HandleLogin (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/login/?username=" ++ model.usernameForCheck ++ "&password=" ++ model.passwordForCheck)
 
-getRecipeListForTag: Model -> Maybe Tag -> Cmd Msg
+getRecipeListForTag: O.Model -> Maybe O.Tag -> Cmd TO.Msg
 getRecipeListForTag model selectedTag =
   let
     --_ = Debug.log "Tag: " selectedTag
@@ -133,7 +133,7 @@ getRecipeListForTag model selectedTag =
             Nothing -> -3
         Nothing -> -4
   in
-    Api.getRecipeListForTag ListRecipesForTag model.loginToken (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllRecipeByTagWithoutMeta/?id=" ++ (String.fromInt tagId))
+    Api.getRecipeListForTag TO.ListRecipesForTag model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllRecipeByTagWithoutMeta/?id=" ++ (String.fromInt tagId))
 
 httpErrorToMessage: Http.Error -> String
 httpErrorToMessage error =
@@ -145,14 +145,15 @@ httpErrorToMessage error =
     Http.BadUrl url -> "You defindes a wrong URL! " ++ url
     Http.Timeout -> "The time for request is out!"
 
-isLoggedIn: Maybe String -> Bool
-isLoggedIn loginToken =
-  case loginToken of
-    Just log -> if String.length log > 0
-      then True
-      else False
+isLoggedIn: Maybe O.Session -> Maybe O.Person -> Bool
+isLoggedIn session person =
+  case session of
+    Just log -> case person of
+      Just pers -> (Maybe.withDefault -1 log.person.id) == (Maybe.withDefault -2 pers.id)
+      Nothing -> String.length log.account.token > 0
     Nothing -> False
 
+--isOwnerOfRecipe
 
 isNotMember : ( List a, a ) -> Bool
 isNotMember a =

@@ -1,15 +1,15 @@
 module Pages.Utils exposing(alert, getSelectOption, getConfirmForm, onEnter, getEditButton, getEditHeader)
 
 import Html exposing (..)
-import Html.Attributes as Attr exposing (..)
-import Html.Events as Ev exposing (keyCode, on, onClick, onInput)
-import Json.Decode as Json exposing ( .. )
-import List exposing (..)
+import Html.Attributes as Attr
+import Html.Events as Ev
+import Json.Decode as Json
+import List
 
-import Devs.Objects as O exposing (..)
-import Devs.TypeObject as TO exposing (Msg)
+import Devs.Objects as O
+import Devs.TypeObject as TO
 
-getEditHeader: Bool -> String -> Msg -> Html Msg
+getEditHeader: Bool -> String -> TO.Msg -> Html TO.Msg
 getEditHeader isLoggedIn headerTxt event =
   if isLoggedIn
     then Html.span [
@@ -18,7 +18,7 @@ getEditHeader isLoggedIn headerTxt event =
     ][ Html.text headerTxt ]
     else Html.text headerTxt
 
-getEditButton: ServerParams -> Maybe Bool -> String -> Maybe String -> Msg -> List (Html.Attribute Msg) -> Html Msg
+getEditButton: O.ServerParams -> Maybe Bool -> String -> Maybe String -> TO.Msg -> List (Html.Attribute TO.Msg) -> Html TO.Msg
 getEditButton sp isLoggedIn bntImg link event styles =
   let
     btn = case link of
@@ -32,35 +32,35 @@ getEditButton sp isLoggedIn bntImg link event styles =
       then btn
       else Html.text ""
 
-alert : msg -> Maybe String -> Model -> Html msg
+alert : msg -> Maybe String -> O.Model -> Html msg
 alert event alertMsg model =
     case alertMsg of
         Just message ->
-            Html.div [ class "alert" ] [
-              Html.span [ class "close", onClick event ] [ Html.img[ class "editIcon", src (model.sp.iconPath ++ "close.png"), alt "close message"][] ]
+            Html.div [ Attr.class "alert" ] [
+              Html.span [ Attr.class "close", Ev.onClick event ] [ Html.img[ Attr.class "editIcon", Attr.src (model.sp.iconPath ++ "close.png"), Attr.alt "close message"][] ]
               , Html.text message
             ]
 
         Nothing ->
             Html.text ""
 
-getSelectOption: Html Msg
+getSelectOption: Html TO.Msg
 getSelectOption = Html.option[ ][ Html.text "Bitte wählen" ]
 
-getConfirmForm: Msg -> Msg -> String -> Model -> Html Msg
-getConfirmForm yesEvent noEvent msg model =
-  Html.div [ class "editFormBG" ][
-    Html.div [ class "confirmFormDiv" ] [
-      Html.div [ class "confirmMsgDiv" ][ Html.text msg ],
-      Html.div [ class "confirmFormActionDiv" ][
-        Html.button [ onClick yesEvent ][ Html.text "ja" ],
-        Html.button [ onClick noEvent ][ Html.text "nein" ]
+getConfirmForm: TO.Msg -> TO.Msg -> String -> Html TO.Msg
+getConfirmForm yesEvent noEvent msg =
+  Html.div [ Attr.class "editFormBG" ][
+    Html.div [ Attr.class "confirmFormDiv" ] [
+      Html.div [ Attr.class "confirmMsgDiv" ][ Html.text msg ],
+      Html.div [ Attr.class "confirmFormActionDiv" ][
+        Html.button [ Ev.onClick yesEvent ][ Html.text "ja" ],
+        Html.button [ Ev.onClick noEvent ][ Html.text "nein" ]
       ]
     ]
   ]
 
 
-onEnter : Msg -> Attribute Msg
+onEnter : TO.Msg -> Attribute TO.Msg
 onEnter msg =
     let
         isEnter code =
@@ -69,4 +69,4 @@ onEnter msg =
             else
                 Json.fail "not ENTER"
     in
-        on "keydown" (Json.andThen isEnter keyCode)
+        Ev.on "keydown" (Json.andThen isEnter Ev.keyCode)
