@@ -199,6 +199,9 @@ a:ACTIVE {
   background-image: linear-gradient(top, #e2e2e2, #7b7979);
 }
 
+#recipeOwner {
+  padding-top: 5px;
+}
 
 #recipeTags {
   padding-top: 5px;

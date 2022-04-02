@@ -10,6 +10,7 @@ import chefkoch.dto.IngredientDto;
 import chefkoch.dto.PartDto;
 import chefkoch.dto.PersonDto;
 import chefkoch.dto.RecipeDto;
+import chefkoch.dto.SessionDto;
 import chefkoch.dto.SourceDto;
 import chefkoch.dto.TagDto;
 import chefkoch.dto.TagtypeDto;
@@ -46,7 +47,7 @@ public interface RecipeService {
 
 	public Boolean savePassword(String username, String password);
 
-	public String login(String username, String password);
+	public SessionDto login(String username, String password);
 
 	public Person isTokenValid(HttpServletRequest request);
 
@@ -58,11 +59,27 @@ public interface RecipeService {
 
 	public Boolean addSource(Integer recipeId, SourceDto sourceDto) throws IllegalArgumentException;
 
+	public Boolean updateSource(SourceDto eleDto);
+
+	public Boolean deleteSource(Integer sourceId);
+
 	public Boolean addTag(Integer recipeId, TagDto tagDto) throws IllegalArgumentException;
+
+	public Boolean updateTag(TagDto eleDto);
+
+	public Boolean deleteTag(Integer tagId);
 
 	public Boolean addTodo(Integer recipeId, TodoDto todoDto) throws IllegalArgumentException;
 
+	public Boolean updateTodo(TodoDto eleDto);
+
+	public Boolean deleteTodo(Integer todoId);
+
 	public Boolean addIngredient(Integer recipeId, IngredientDto ingredientDto) throws IllegalArgumentException;
+
+	public Boolean updateIngredient(IngredientDto eleDto);
+
+	public Boolean deleteIngredient(Integer ingredientId);
 
 	public List<PersonDto> getAllPerson(Boolean sortedByName);
 }

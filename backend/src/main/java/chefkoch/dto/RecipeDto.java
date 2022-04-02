@@ -1,7 +1,6 @@
 package chefkoch.dto;
 
 import java.io.File;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,6 +31,7 @@ public class RecipeDto extends GenericDto {
 	private Double nv_fat;
 	private String image;
 	private SourceDto source;
+	private PersonDto person;
 	private Long source_page;
 	private Long aikz;
 	private List<TagDto> tags = new LinkedList<TagDto>();
@@ -58,6 +58,7 @@ public class RecipeDto extends GenericDto {
 		this.setSource(new SourceDto(recipe.getSource()));
 		this.setSource_page(recipe.getSource_page());
 		this.setAikz(recipe.getAikz());
+		this.setPerson(new PersonDto(recipe.getPerson()));
 		for(Tag o : recipe.getTags()) {
 			this.getTags().add(new TagDto(o));
 		}
@@ -269,5 +270,13 @@ public class RecipeDto extends GenericDto {
 	}
 	public void setTodos(List<TodoDto> todos) {
 		this.todos = todos;
+	}
+
+	public PersonDto getPerson() {
+		return person;
+	}
+
+	public void setPerson(PersonDto person) {
+		this.person = person;
 	}
 }

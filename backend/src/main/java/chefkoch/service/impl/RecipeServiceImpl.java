@@ -35,10 +35,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import chefkoch.dto.AccountDto;
 import chefkoch.dto.IngredientDto;
 import chefkoch.dto.PartDto;
 import chefkoch.dto.PersonDto;
 import chefkoch.dto.RecipeDto;
+import chefkoch.dto.SessionDto;
 import chefkoch.dto.SourceDto;
 import chefkoch.dto.TagDto;
 import chefkoch.dto.TagtypeDto;
@@ -314,8 +316,8 @@ public class RecipeServiceImpl implements RecipeService {
 	}
 
 	@Override
-	public String login(String username, String password) {
-		String token = null;
+	public SessionDto login(String username, String password) {
+		SessionDto session = null;
 		Boolean loggedIn = Boolean.FALSE;
 		Account acc = this.accountRepository.findAccountByUsername(username);
 		if(acc != null) {
@@ -341,15 +343,20 @@ public class RecipeServiceImpl implements RecipeService {
 			String expirationdateStr = simpleDateFormat.format(expirationdate);
 			System.out.println(expirationdateStr);
 			
-			token = StringUtil.hashPasswordWithSalt(un + "-" + expirationdateStr);
+			String token = StringUtil.hashPasswordWithSalt(un + "-" + expirationdateStr);
 			
 			acc.setExpirationdate(expirationdate);
 			acc.setToken(token);
 			
-			this.accountRepository.save(acc);
+			acc = this.accountRepository.save(acc);
+			
+			Person person = this.personRepository.findPersonByAccountId(acc.getId());
+			session = new SessionDto();
+			session.setAccount(new AccountDto(acc));
+			session.setPerson(new PersonDto(person));
 			
 		}
-		return token;
+		return session;
 	}
 
 	@Override
@@ -495,9 +502,51 @@ public class RecipeServiceImpl implements RecipeService {
 	}
 
 	@Override
+	public Boolean deleteIngredient(Integer ingredientId) throws IllegalArgumentException {
+		if (ingredientId == null) {
+			throw new IllegalArgumentException("error.ingredient");
+		} else {
+			Optional<Ingredient> ele = this.ingredientRepository.findById(ingredientId);
+			if (ele.isPresent()) {
+				this.ingredientRepository.delete(ele.get());
+				return Boolean.TRUE;
+			} else {
+				throw new IllegalArgumentException("keine Zutat mit der ID " + ingredientId.toString() + " gefunden!");
+			}
+		}
+	}
+	@Override
+	public Boolean updateIngredient(IngredientDto ingredientDto) throws IllegalArgumentException {
+		if (ingredientDto == null || ingredientDto.getId() == null) {
+			throw new IllegalArgumentException("error.ingredient");
+		} else {
+			if(ingredientDto.getId() != null) {
+				Optional<Ingredient> eleOpt = ingredientRepository.findById(ingredientDto.getId());
+				if (eleOpt.isPresent()) {
+					Ingredient ele = eleOpt.get();
+					ele.setComment(ingredientDto.getComment());
+					ele.setName(ingredientDto.getName());
+					if(ingredientDto.getPart() != null) {
+						ele.setPart(partRepository.findById(ingredientDto.getPart().getId()).get());
+					}
+					ele.setQuantity(ingredientDto.getQuantity());
+					ele.setSortorder(ingredientDto.getSortorder());
+					if(ingredientDto.getUnit() != null) {
+						ele.setUnit(unitRepository.findById(ingredientDto.getUnit().getId()).get());
+					}
+					ingredientRepository.save(ele);
+					return Boolean.TRUE;
+				} else {
+					throw new IllegalArgumentException("keine Zutat mit der ID " + ingredientDto.getId().toString() + " gefunden!");
+				}
+			}
+		}
+		return Boolean.FALSE;
+	}
+	@Override
 	public Boolean addIngredient(Integer recipeId, IngredientDto ingredientDto) throws IllegalArgumentException {
 		if (recipeId == null || ingredientDto == null) {
-			throw new IllegalArgumentException("error.source");
+			throw new IllegalArgumentException("error.ingredient");
 		} else {
 			Ingredient ele = null;
 			if(ingredientDto.getId() != null) {
@@ -520,9 +569,45 @@ public class RecipeServiceImpl implements RecipeService {
 	}
 	
 	@Override
+	public Boolean deleteTodo(Integer todoId) throws IllegalArgumentException {
+		if (todoId == null) {
+			throw new IllegalArgumentException("error.todo");
+		} else {
+			Optional<Todo> ele = this.todoRepository.findById(todoId);
+			if (ele.isPresent()) {
+				this.todoRepository.delete(ele.get());
+				return Boolean.TRUE;
+			} else {
+				throw new IllegalArgumentException("keine Aufgabe mit der ID " + todoId.toString() + " gefunden!");
+			}
+		}
+	}
+	@Override
+	public Boolean updateTodo(TodoDto todoDto) throws IllegalArgumentException {
+		if (todoDto == null || todoDto.getId() == null) {
+			throw new IllegalArgumentException("error.ingredient");
+		} else {
+			if(todoDto.getId() != null) {
+				Optional<Todo> eleOpt = todoRepository.findById(todoDto.getId());
+				if (eleOpt.isPresent()) {
+					Todo ele = eleOpt.get();
+					ele.setImage(todoDto.getImage());
+					ele.setImage_comment(todoDto.getImage_comment());
+					ele.setNumber(todoDto.getNumber());
+					ele.setText(todoDto.getText());
+					todoRepository.save(ele);
+					return Boolean.TRUE;
+				} else {
+					throw new IllegalArgumentException("keine Aufgabe mit der ID " + todoDto.getId().toString() + " gefunden!");
+				}
+			}
+		}
+		return Boolean.FALSE;
+	}
+	@Override
 	public Boolean addTodo(Integer recipeId, TodoDto todoDto) throws IllegalArgumentException {
 		if (recipeId == null || todoDto == null) {
-			throw new IllegalArgumentException("error.source");
+			throw new IllegalArgumentException("error.todo");
 		} else {
 			Todo ele = null;
 			if(todoDto.getId() != null) {
@@ -545,9 +630,45 @@ public class RecipeServiceImpl implements RecipeService {
 	}
 
 	@Override
+	public Boolean deleteTag(Integer tagId) throws IllegalArgumentException {
+		if (tagId == null) {
+			throw new IllegalArgumentException("error.tag");
+		} else {
+			Optional<Tag> ele = this.tagRepository.findById(tagId);
+			if (ele.isPresent()) {
+				this.tagRepository.delete(ele.get());
+				return Boolean.TRUE;
+			} else {
+				throw new IllegalArgumentException("kein Tag mit der ID " + tagId.toString() + " gefunden!");
+			}
+		}
+	}
+	@Override
+	public Boolean updateTag(TagDto tagDto) throws IllegalArgumentException {
+		if (tagDto == null || tagDto.getId() == null) {
+			throw new IllegalArgumentException("error.tag");
+		} else {
+			if(tagDto.getId() != null) {
+				Optional<Tag> eleOpt = tagRepository.findById(tagDto.getId());
+				if (eleOpt.isPresent()) {
+					Tag ele = eleOpt.get();
+					ele.setName(tagDto.getName());
+					if(tagDto.getTagtype() != null) {
+						ele.setTagType(tagtypeRepository.findById(tagDto.getTagtype().getId()).get());
+					}
+					tagRepository.save(ele);
+					return Boolean.TRUE;
+				} else {
+					throw new IllegalArgumentException("kein Tag mit der ID " + tagDto.getId().toString() + " gefunden!");
+				}
+			}
+		}
+		return Boolean.FALSE;
+	}
+	@Override
 	public Boolean addTag(Integer recipeId, TagDto tagDto) throws IllegalArgumentException {
 		if (recipeId == null || tagDto == null) {
-			throw new IllegalArgumentException("error.source");
+			throw new IllegalArgumentException("error.tag");
 		} else {
 			Tag ele = null;
 			if(tagDto.getId() != null) {
@@ -569,6 +690,41 @@ public class RecipeServiceImpl implements RecipeService {
 		return Boolean.FALSE;
 	}
 
+	@Override
+	public Boolean deleteSource(Integer sourceId) throws IllegalArgumentException {
+		if (sourceId == null) {
+			throw new IllegalArgumentException("error.source");
+		} else {
+			Optional<Source> ele = this.sourceRepository.findById(sourceId);
+			if (ele.isPresent()) {
+				this.sourceRepository.delete(ele.get());
+				return Boolean.TRUE;
+			} else {
+				throw new IllegalArgumentException("kein Quelle mit der ID " + sourceId.toString() + " gefunden!");
+			}
+		}
+	}
+	@Override
+	public Boolean updateSource(SourceDto sourceDto) throws IllegalArgumentException {
+		if (sourceDto == null || sourceDto.getId() == null) {
+			throw new IllegalArgumentException("error.source");
+		} else {
+			if(sourceDto.getId() != null) {
+				Optional<Source> eleOpt = sourceRepository.findById(sourceDto.getId());
+				if (eleOpt.isPresent()) {
+					Source ele = eleOpt.get();
+					ele.setIsbn(sourceDto.getIsbn());
+					ele.setName(sourceDto.getName());
+					ele.setYear(sourceDto.getYear());
+					sourceRepository.save(ele);
+					return Boolean.TRUE;
+				} else {
+					throw new IllegalArgumentException("kein Quelle mit der ID " + sourceDto.getId().toString() + " gefunden!");
+				}
+			}
+		}
+		return Boolean.FALSE;
+	}
 	@Override
 	public Boolean addSource(Integer recipeId, SourceDto sourceDto) throws IllegalArgumentException {
 		if (recipeId == null || sourceDto == null) {

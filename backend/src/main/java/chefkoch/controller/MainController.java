@@ -25,6 +25,7 @@ import chefkoch.dto.IngredientDto;
 import chefkoch.dto.PartDto;
 import chefkoch.dto.PersonDto;
 import chefkoch.dto.RecipeDto;
+import chefkoch.dto.SessionDto;
 import chefkoch.dto.SourceDto;
 import chefkoch.dto.TagDto;
 import chefkoch.dto.TagtypeDto;
@@ -67,6 +68,39 @@ public class MainController {
 		}
 	}
 
+	@GetMapping(path = "/deleteIngredient")
+	public @ResponseBody Boolean deleteIngredient(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer ingredientId) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
+			response.sendError(200, this.successMsg);
+			if(this.recipeService.deleteIngredient(ingredientId)) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				return Boolean.TRUE;
+			} else {
+				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Löschen einer Zutat");
+				return Boolean.FALSE;
+			}
+		} else {
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
+			return Boolean.FALSE;
+		}
+	}
+	@PostMapping("/updateIngredient")
+	public @ResponseBody Boolean updateIngredient(HttpServletRequest request, HttpServletResponse response, @RequestBody IngredientDto eleDto) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
+			if(this.recipeService.updateIngredient(eleDto)) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				return Boolean.TRUE;
+			} else {
+				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Ändern einer Zutat");
+				return Boolean.FALSE;
+			}
+		} else {
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
+			return Boolean.FALSE;
+		}
+	}
 	@PostMapping("/addIngredient")
 	public @ResponseBody Boolean addIngredient(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody IngredientDto eleDto) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
@@ -84,6 +118,39 @@ public class MainController {
 		}
 	}
 
+	@GetMapping(path = "/deleteTodo")
+	public @ResponseBody Boolean deleteTodo(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer todoId) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
+			response.sendError(200, this.successMsg);
+			if(this.recipeService.deleteTodo(todoId)) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				return Boolean.TRUE;
+			} else {
+				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Löschen einer Aufgabe");
+				return Boolean.FALSE;
+			}
+		} else {
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
+			return Boolean.FALSE;
+		}
+	}
+	@PostMapping("/updateTodo")
+	public @ResponseBody Boolean updateTodo(HttpServletRequest request, HttpServletResponse response, @RequestBody TodoDto eleDto) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
+			if(this.recipeService.updateTodo(eleDto)) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				return Boolean.TRUE;
+			} else {
+				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Ändern einer Aufgabe");
+				return Boolean.FALSE;
+			}
+		} else {
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
+			return Boolean.FALSE;
+		}
+	}
 	@PostMapping("/addTodo")
 	public @ResponseBody Boolean addTodo(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody TodoDto eleDto) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
@@ -101,6 +168,39 @@ public class MainController {
 		}
 	}
 
+	@GetMapping(path = "/deleteTag")
+	public @ResponseBody Boolean deleteTag(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer tagId) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
+			response.sendError(200, this.successMsg);
+			if(this.recipeService.deleteTag(tagId)) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				return Boolean.TRUE;
+			} else {
+				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Löschen einer Aufgabe");
+				return Boolean.FALSE;
+			}
+		} else {
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
+			return Boolean.FALSE;
+		}
+	}
+	@PostMapping("/updateTag")
+	public @ResponseBody Boolean updateTag(HttpServletRequest request, HttpServletResponse response, @RequestBody TagDto eleDto) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
+			if(this.recipeService.updateTag(eleDto)) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				return Boolean.TRUE;
+			} else {
+				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Ändern einer Aufgabe");
+				return Boolean.FALSE;
+			}
+		} else {
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
+			return Boolean.FALSE;
+		}
+	}
 	@PostMapping("/addTag")
 	public @ResponseBody Boolean addTag(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody TagDto eleDto) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
@@ -118,6 +218,39 @@ public class MainController {
 		}
 	}
 
+	@GetMapping(path = "/deleteSource")
+	public @ResponseBody Boolean deleteSource(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer sourceId) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
+			response.sendError(200, this.successMsg);
+			if(this.recipeService.deleteSource(sourceId)) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				return Boolean.TRUE;
+			} else {
+				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Löschen einer Aufgabe");
+				return Boolean.FALSE;
+			}
+		} else {
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
+			return Boolean.FALSE;
+		}
+	}
+	@PostMapping("/updateSource")
+	public @ResponseBody Boolean updateSource(HttpServletRequest request, HttpServletResponse response, @RequestBody SourceDto eleDto) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
+			if(this.recipeService.updateSource(eleDto)) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				return Boolean.TRUE;
+			} else {
+				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Ändern einer Aufgabe");
+				return Boolean.FALSE;
+			}
+		} else {
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
+			return Boolean.FALSE;
+		}
+	}
 	@PostMapping("/addSource")
 	public @ResponseBody Boolean addSource(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody SourceDto eleDto) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
@@ -188,14 +321,14 @@ public class MainController {
 	}
 
 	@GetMapping(path = "/login")
-	public @ResponseBody String login(HttpServletResponse response, @RequestParam String username, @RequestParam String password) {
-		String token = this.recipeService.login(username, password);
+	public @ResponseBody SessionDto login(HttpServletResponse response, @RequestParam String username, @RequestParam String password) {
+		SessionDto token = this.recipeService.login(username, password);
 		if(token != null) {
-			response.setHeader("token", token);
+			response.setHeader("token", token.getAccount().getToken());
 			System.out.println(token);
 			return token;
 		} else {
-			return "";
+			return null;
 		}
 	}
 
