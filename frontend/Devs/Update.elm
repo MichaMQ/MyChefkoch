@@ -2,7 +2,7 @@ module Devs.Update exposing (..)
 
 import Devs.Ports as Ports
 
-import List.Extra as ListE
+import List.Extra as List
 import UUID
 import Random
 import Debug
@@ -113,7 +113,7 @@ update msg model =
             sourceList = case model.kl.sourceList of
               Just srcList -> srcList
               Nothing -> []
-            newRec = case ( ListE.find ( \item -> item.uuid == sUuid ) sourceList ) of
+            newRec = case ( List.find ( \item -> item.uuid == sUuid ) sourceList ) of
               Just src -> (RecipeObj.setSource model.selectedRecipe src)
               Nothing -> model.selectedRecipe
           in
@@ -151,7 +151,7 @@ update msg model =
             tagList = case model.kl.tagList of
               Just tagListTmp -> tagListTmp
               Nothing -> []
-            newModel = case ( ListE.find ( \item -> item.uuid == tUuid ) tagList ) of
+            newModel = case ( List.find ( \item -> item.uuid == tUuid ) tagList ) of
               Just item -> { model | addTag = Just item }
               Nothing -> model
           in
@@ -179,21 +179,21 @@ update msg model =
           let
             newOrder = Maybe.withDefault 0 <| String.toInt val
             newIngreList = case model.selectedRecipe of
-              Just rec -> ListE.updateIf (\item -> item.uuid == iUuid) (\item -> {item | sortorder = newOrder}) rec.ingredients
+              Just rec -> List.updateIf (\item -> item.uuid == iUuid) (\item -> {item | sortorder = newOrder}) rec.ingredients
               Nothing -> []
           in
             ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
         SetIngreName iUuid val ->
           let
             newIngreList = case model.selectedRecipe of
-              Just rec -> ListE.updateIf (\item -> item.uuid == iUuid) (\item -> {item | name = val}) rec.ingredients
+              Just rec -> List.updateIf (\item -> item.uuid == iUuid) (\item -> {item | name = val}) rec.ingredients
               Nothing -> []
           in
             ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
         SetIngreComment iUuid val ->
           let
             newIngreList = case model.selectedRecipe of
-              Just rec -> ListE.updateIf (\item -> item.uuid == iUuid) (\item -> {item | comment = Just val}) rec.ingredients
+              Just rec -> List.updateIf (\item -> item.uuid == iUuid) (\item -> {item | comment = Just val}) rec.ingredients
               Nothing -> []
           in
             ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
@@ -201,7 +201,7 @@ update msg model =
           let
             newQuant = Maybe.withDefault 0 <| String.toFloat val
             newIngreList = case model.selectedRecipe of
-              Just rec -> ListE.updateIf (\item -> item.uuid == iUuid) (\item -> {item | quantity = Just newQuant}) rec.ingredients
+              Just rec -> List.updateIf (\item -> item.uuid == iUuid) (\item -> {item | quantity = Just newQuant}) rec.ingredients
               Nothing -> []
           in
             ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
@@ -210,7 +210,7 @@ update msg model =
             partKeyList = case model.kl.partList of
               Just list -> list
               Nothing -> []
-            newRec = Maybe.andThen (\part -> Maybe.andThen (\rec-> RecipeObj.setIngredients (Just rec) (ListE.updateIf (\item -> item.uuid == iUuid) (\item -> {item | part = Just part}) rec.ingredients)) (RecipeObj.setParts model.selectedRecipe part)) ( ListE.find ( \part -> part.uuid == pUuid ) partKeyList )
+            newRec = Maybe.andThen (\part -> Maybe.andThen (\rec-> RecipeObj.setIngredients (Just rec) (List.updateIf (\item -> item.uuid == iUuid) (\item -> {item | part = Just part}) rec.ingredients)) (RecipeObj.setParts model.selectedRecipe part)) ( List.find ( \part -> part.uuid == pUuid ) partKeyList )
           in
             ( { model | selectedRecipe = newRec } , Cmd.none)
         SetIngreUnit iUuid uUuid ->
@@ -218,20 +218,13 @@ update msg model =
             unitList = case model.kl.unitList of
               Just list -> list
               Nothing -> []
-            newIngreList = case ( ListE.find ( \unit -> unit.uuid == uUuid ) unitList ) of
+            newIngreList = case ( List.find ( \unit -> unit.uuid == uUuid ) unitList ) of
               Just unit -> case model.selectedRecipe of
-                Just rec -> ListE.updateIf (\item -> item.uuid == iUuid) (\item -> {item | unit = Just unit}) rec.ingredients
+                Just rec -> List.updateIf (\item -> item.uuid == iUuid) (\item -> {item | unit = Just unit}) rec.ingredients
                 Nothing -> []
               Nothing -> []
           in
             ( { model | selectedRecipe = (RecipeObj.setIngredients model.selectedRecipe newIngreList) } , Cmd.none)
-        RemoveIngreFromRecipe iUuid ->
-          let
-            newRec = case model.selectedRecipe of
-              Just rec -> Just { rec | ingredients = (List.filter (\item -> (item.uuid /= iUuid)) rec.ingredients) }
-              Nothing -> model.selectedRecipe
-          in
-            ( { model | selectedRecipe = newRec } , Cmd.none)
         AddTodoToRecipe ->
           let
             ( newUuid, newSeed ) = Random.step UUID.generator (DU.getSeed model)
@@ -241,28 +234,28 @@ update msg model =
           let
             newNr = Maybe.withDefault 0 <| String.toInt val
             newTodoList = case model.selectedRecipe of
-              Just rec -> ListE.updateIf (\item -> item.uuid == tUuid) (\item -> {item | number = newNr}) rec.todos
+              Just rec -> List.updateIf (\item -> item.uuid == tUuid) (\item -> {item | number = newNr}) rec.todos
               Nothing -> []
           in
             ( { model | selectedRecipe = (RecipeObj.setTodos model.selectedRecipe newTodoList) } , Cmd.none)
         SetTodoText tUuid val ->
           let
             newTodoList = case model.selectedRecipe of
-              Just rec -> ListE.updateIf (\item -> item.uuid == tUuid) (\item -> {item | text = val}) rec.todos
+              Just rec -> List.updateIf (\item -> item.uuid == tUuid) (\item -> {item | text = val}) rec.todos
               Nothing -> []
           in
             ( { model | selectedRecipe = (RecipeObj.setTodos model.selectedRecipe newTodoList) } , Cmd.none)
         SetTodoImg tUuid val ->
           let
             newTodoList = case model.selectedRecipe of
-              Just rec -> ListE.updateIf (\item -> item.uuid == tUuid) (\item -> {item | image = Just val}) rec.todos
+              Just rec -> List.updateIf (\item -> item.uuid == tUuid) (\item -> {item | image = Just val}) rec.todos
               Nothing -> []
           in
             ( { model | selectedRecipe = (RecipeObj.setTodos model.selectedRecipe newTodoList) } , Cmd.none)
         SetTodoImgComment tUuid val ->
           let
             newTodoList = case model.selectedRecipe of
-              Just rec -> ListE.updateIf (\item -> item.uuid == tUuid) (\item -> {item | image_comment = Just val}) rec.todos
+              Just rec -> List.updateIf (\item -> item.uuid == tUuid) (\item -> {item | image_comment = Just val}) rec.todos
               Nothing -> []
           in
             ( { model | selectedRecipe = (RecipeObj.setTodos model.selectedRecipe newTodoList) } , Cmd.none)
@@ -335,3 +328,50 @@ update msg model =
           ( model, Cmd.none)
         UploadImage (Err error) ->
           ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+        AddIncredient ingredient recipeId -> (model, DU.addIngredient model ingredient recipeId)
+        UpdateIncredient ingredient -> (model, DU.updateIncredient model ingredient)
+        RemoveEmptyIngretient ingredientUuid ->
+          let
+            newRec = case model.selectedRecipe of
+              Just rec -> Just { rec | ingredients = (List.filter (\item -> (item.uuid /= ingredientUuid)) rec.ingredients) }
+              Nothing -> model.selectedRecipe
+          in
+            ( { model | selectedRecipe = newRec } , Cmd.none)
+        DeleteIncredient ingredient -> (model, DU.deleteIngredient model ingredient)
+        DeleteSource sourceId -> (model, DU.deleteSource model sourceId)
+        DeleteTag tagId -> (model, DU.deleteTag model tagId)
+        DeleteTodo todoId -> (model, DU.deleteTodo model todoId)
+        UpdateIncredientResp (Ok _) -> ( model , Cmd.none)
+        UpdateIncredientResp (Err error) ->
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+        RemoveIngreFromRecipe ingredientUuid (Ok _) ->
+          let
+            newRec = case model.selectedRecipe of
+              Just rec -> Just { rec | ingredients = (List.filter (\item -> (item.uuid /= ingredientUuid)) rec.ingredients) }
+              Nothing -> model.selectedRecipe
+          in
+            ( { model | selectedRecipe = newRec } , Cmd.none)
+        RemoveIngreFromRecipe _ (Err error) ->
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+        AddIngreToRecipeResp (Ok ingre) ->
+          let
+            newRec = case model.selectedRecipe of
+              Just rec -> Just { rec | ingredients = List.updateIf (\item -> item.uuid == ingre.uuid) (\_ -> ingre) rec.ingredients }
+              Nothing -> model.selectedRecipe
+          in
+            ( { model | selectedRecipe = newRec } , Cmd.none)
+        AddIngreToRecipeResp (Err error) ->
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+        DeleteSourceResp sourceId (Ok _) ->
+          ( model , Cmd.none)
+        DeleteSourceResp _ (Err error) ->
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+        DeleteTagResp tagId (Ok isDeleted) ->
+          ( model , Cmd.none)
+        DeleteTagResp _ (Err error) ->
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+        DeleteTodoResp todoId (Ok isDeleted) ->
+          ( model , Cmd.none)
+        DeleteTodoResp _ (Err error) ->
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+        

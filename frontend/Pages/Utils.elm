@@ -18,12 +18,15 @@ getEditHeader isLoggedIn headerTxt event =
     ][ Html.text headerTxt ]
     else Html.text headerTxt
 
-getEditButton: O.ServerParams -> Maybe Bool -> String -> Maybe String -> TO.Msg -> List (Html.Attribute TO.Msg) -> Html TO.Msg
-getEditButton sp isLoggedIn bntImg link event styles =
+getEditButton: O.ServerParams -> Maybe Bool -> String -> Maybe String -> TO.Msg -> List (Html.Attribute TO.Msg) -> Maybe Int -> Html TO.Msg
+getEditButton sp isLoggedIn bntImg link event styles btnHeight =
   let
+    height = case btnHeight of
+      Just h -> h
+      Nothing -> 20
     btn = case link of
-      Just href -> Html.a (List.append styles [ Attr.class "amazonLink", Attr.target "_blank", Attr.href href ])[ Html.img[ Attr.src (sp.iconPath ++ bntImg), Attr.height 20 ][] ]
-      Nothing -> Html.button (List.append styles [ Ev.onClick event ])[ Html.img[ Attr.src (sp.iconPath ++ bntImg), Attr.height 20 ][] ]
+      Just href -> Html.a (List.append styles [ Attr.class "amazonLink", Attr.target "_blank", Attr.href href ])[ Html.img[ Attr.src (sp.iconPath ++ bntImg), Attr.height height ][] ]
+      Nothing -> Html.button (List.append styles [ Ev.onClick event ])[ Html.img[ Attr.src (sp.iconPath ++ bntImg), Attr.height height ][] ]
     showBtn = case isLoggedIn of
         Just bool -> bool
         Nothing -> False

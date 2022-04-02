@@ -32,6 +32,7 @@ import chefkoch.dto.TagtypeDto;
 import chefkoch.dto.TodoDto;
 import chefkoch.dto.UnitDto;
 import chefkoch.entity.Person;
+import chefkoch.requestObj.AddIngredient;
 import chefkoch.service.enums.BookPrintType;
 import chefkoch.service.iface.RecipeService;
 import chefkoch.util.XMLUtil;
@@ -55,7 +56,7 @@ public class MainController {
 	public ResponseEntity<SourceDto> saveSource(HttpServletRequest request, HttpServletResponse response, @RequestBody SourceDto source) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
-			response.sendError(200, this.successMsg);
+			response.setStatus(HttpServletResponse.SC_OK);
 			SourceDto savedSource = this.recipeService.saveSource(source);
 			System.out.println(XMLUtil.dumpElement(savedSource.toXml()));
 			final HttpHeaders httpHeaders= new HttpHeaders();
@@ -72,7 +73,6 @@ public class MainController {
 	public @ResponseBody Boolean deleteIngredient(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer ingredientId) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
-			response.sendError(200, this.successMsg);
 			if(this.recipeService.deleteIngredient(ingredientId)) {
 				response.setStatus(HttpServletResponse.SC_OK);
 				return Boolean.TRUE;
@@ -102,19 +102,20 @@ public class MainController {
 		}
 	}
 	@PostMapping("/addIngredient")
-	public @ResponseBody Boolean addIngredient(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody IngredientDto eleDto) throws IOException {
+	public @ResponseBody IngredientDto addIngredient(HttpServletRequest request, HttpServletResponse response, @RequestBody AddIngredient ele) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
-			if(this.recipeService.addIngredient(recipeId, eleDto)) {
+			IngredientDto newIngre = this.recipeService.addIngredient(ele.getRecipeId(), ele.getIngredientDto());
+			if(newIngre != null) {
 				response.setStatus(HttpServletResponse.SC_OK);
-				return Boolean.TRUE;
+				return newIngre;
 			} else {
 				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Hinzufügen einer Zutat");
-				return Boolean.FALSE;
+				return null;
 			}
 		} else {
 			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
-			return Boolean.FALSE;
+			return null;
 		}
 	}
 
@@ -122,7 +123,6 @@ public class MainController {
 	public @ResponseBody Boolean deleteTodo(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer todoId) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
-			response.sendError(200, this.successMsg);
 			if(this.recipeService.deleteTodo(todoId)) {
 				response.setStatus(HttpServletResponse.SC_OK);
 				return Boolean.TRUE;
@@ -152,19 +152,20 @@ public class MainController {
 		}
 	}
 	@PostMapping("/addTodo")
-	public @ResponseBody Boolean addTodo(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody TodoDto eleDto) throws IOException {
+	public @ResponseBody TodoDto addTodo(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody TodoDto eleDto) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
-			if(this.recipeService.addTodo(recipeId, eleDto)) {
+			TodoDto todo = this.recipeService.addTodo(recipeId, eleDto);
+			if(todo != null) {
 				response.setStatus(HttpServletResponse.SC_OK);
-				return Boolean.TRUE;
+				return todo;
 			} else {
 				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Hinzufügen eines Arbeitsschritts");
-				return Boolean.FALSE;
+				return null;
 			}
 		} else {
 			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
-			return Boolean.FALSE;
+			return null;
 		}
 	}
 
@@ -172,7 +173,6 @@ public class MainController {
 	public @ResponseBody Boolean deleteTag(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer tagId) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
-			response.sendError(200, this.successMsg);
 			if(this.recipeService.deleteTag(tagId)) {
 				response.setStatus(HttpServletResponse.SC_OK);
 				return Boolean.TRUE;
@@ -201,11 +201,11 @@ public class MainController {
 			return Boolean.FALSE;
 		}
 	}
-	@PostMapping("/addTag")
-	public @ResponseBody Boolean addTag(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody TagDto eleDto) throws IOException {
+	@GetMapping("/addTag")
+	public @ResponseBody Boolean addTag(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody Integer eleId) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
-			if(this.recipeService.addTag(recipeId, eleDto)) {
+			if(this.recipeService.addTag(recipeId, eleId)) {
 				response.setStatus(HttpServletResponse.SC_OK);
 				return Boolean.TRUE;
 			} else {
@@ -218,48 +218,15 @@ public class MainController {
 		}
 	}
 
-	@GetMapping(path = "/deleteSource")
-	public @ResponseBody Boolean deleteSource(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer sourceId) throws IOException {
+	@GetMapping("/updateSource")
+	public @ResponseBody Boolean updateSource(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody Integer eleId) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
-			response.sendError(200, this.successMsg);
-			if(this.recipeService.deleteSource(sourceId)) {
-				response.setStatus(HttpServletResponse.SC_OK);
-				return Boolean.TRUE;
-			} else {
-				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Löschen einer Aufgabe");
-				return Boolean.FALSE;
-			}
-		} else {
-			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
-			return Boolean.FALSE;
-		}
-	}
-	@PostMapping("/updateSource")
-	public @ResponseBody Boolean updateSource(HttpServletRequest request, HttpServletResponse response, @RequestBody SourceDto eleDto) throws IOException {
-		Person tokenIsValid = this.recipeService.isTokenValid(request);
-		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
-			if(this.recipeService.updateSource(eleDto)) {
+			if(this.recipeService.updateSource(recipeId, eleId)) {
 				response.setStatus(HttpServletResponse.SC_OK);
 				return Boolean.TRUE;
 			} else {
 				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Ändern einer Aufgabe");
-				return Boolean.FALSE;
-			}
-		} else {
-			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
-			return Boolean.FALSE;
-		}
-	}
-	@PostMapping("/addSource")
-	public @ResponseBody Boolean addSource(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody SourceDto eleDto) throws IOException {
-		Person tokenIsValid = this.recipeService.isTokenValid(request);
-		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
-			if(this.recipeService.addSource(recipeId, eleDto)) {
-				response.setStatus(HttpServletResponse.SC_OK);
-				return Boolean.TRUE;
-			} else {
-				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Hinzufügen einer Quelle");
 				return Boolean.FALSE;
 			}
 		} else {
@@ -300,7 +267,7 @@ public class MainController {
 	public @ResponseBody Boolean savePerson(HttpServletRequest request, HttpServletResponse response, @RequestParam String firstname, @RequestParam String surname, @RequestParam String username, @RequestParam String password, @RequestParam Boolean isAdmin) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
-			response.sendError(200, this.successMsg);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return this.recipeService.savePerson(firstname, surname, username, password, isAdmin);
 		} else {
 			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
@@ -312,7 +279,7 @@ public class MainController {
 	public @ResponseBody Boolean savePassword(HttpServletRequest request, HttpServletResponse response, @RequestParam String username, @RequestParam String password) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
-			response.sendError(200, this.successMsg);
+			response.setStatus(HttpServletResponse.SC_OK);
 			return this.recipeService.savePassword(username, password);
 		} else {
 			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
@@ -360,6 +327,7 @@ public class MainController {
 	public @ResponseBody Boolean removeRecipeById(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
+			response.setStatus(HttpServletResponse.SC_OK);
 			return recipeService.deleteRecipe(id);
 		} else {
 			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
@@ -368,7 +336,7 @@ public class MainController {
 	}
 
 	@GetMapping(path = "/getRecipeById")
-	public @ResponseBody RecipeDto getRecipeById(HttpServletRequest request, @RequestParam Integer id) {
+	public @ResponseBody RecipeDto getRecipeById(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id) {
 		this.recipeService.isTokenValid(request);
 		return recipeService.getRecipeById(id);
 	}

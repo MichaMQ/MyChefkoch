@@ -58,7 +58,6 @@ type Msg =
   | SetIngreUnit String String
   | SetIngreQuant String String
   | SetIngreComment String String
-  | RemoveIngreFromRecipe String
   | AddTodoToRecipe
   | SetTodoNr String String
   | SetTodoText String String
@@ -84,3 +83,16 @@ type Msg =
   | SetSearchInput String
   | SearchRecipe
   | UploadImage (Result Http.Error Bool)
+  | AddIncredient O.Ingredient Int
+  | UpdateIncredient O.Ingredient
+  | RemoveEmptyIngretient String
+  | DeleteIncredient O.Ingredient
+  | DeleteSource Int
+  | DeleteTag Int
+  | DeleteTodo Int
+  | UpdateIncredientResp (Result Http.Error Bool)
+  | RemoveIngreFromRecipe String (Result Http.Error Bool)
+  | AddIngreToRecipeResp (Result Http.Error O.Ingredient)
+  | DeleteSourceResp Int (Result Http.Error Bool)
+  | DeleteTagResp Int (Result Http.Error Bool)
+  | DeleteTodoResp Int (Result Http.Error Bool)

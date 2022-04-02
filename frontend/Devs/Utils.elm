@@ -9,6 +9,7 @@ import UUID exposing (UUID)
 import Devs.Objects as O
 import Devs.TypeObject as TO
 import Devs.BackendApi as Api
+import Devs.RecipeEncode as RE
 
 -- Functions
 getNewIngre: O.Model -> UUID -> O.Ingredient
@@ -104,6 +105,23 @@ saveSource model newSource = Api.saveSource TO.SavedSource model.session (model.
 
 saveRecipe: O.Model -> O.Recipe -> Cmd TO.Msg
 saveRecipe model newRecipe = Api.saveRecipe TO.SavedRecipe model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/saveRecipe") newRecipe
+
+addIngredient: O.Model -> O.Ingredient -> Int -> Cmd TO.Msg
+addIngredient model ingredient recipeId = Api.addIngredient TO.AddIngreToRecipeResp model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/addIngredient") (RE.addIncredientEncoder recipeId ingredient)
+
+updateIncredient: O.Model -> O.Ingredient -> Cmd TO.Msg
+updateIncredient model ingredient = Api.updateValue TO.UpdateIncredientResp model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/updateIngredient") (RE.ingreEncoder ingredient)
+
+deleteIngredient: O.Model -> O.Ingredient -> Cmd TO.Msg
+deleteIngredient model ingredient = case ingredient.id of
+  Just ingredientId -> Api.deleteValue (TO.RemoveIngreFromRecipe ingredient.uuid) model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/deleteIngredient?ingredientId=" ++ (String.fromInt ingredientId))
+  Nothing -> Cmd.none
+deleteSource: O.Model -> Int -> Cmd TO.Msg
+deleteSource model sourceId = Api.deleteValue (TO.DeleteSourceResp sourceId) model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/deleteSource?sourceId=" ++ (String.fromInt sourceId))
+deleteTag: O.Model -> Int -> Cmd TO.Msg
+deleteTag model tagId = Api.deleteValue (TO.DeleteTagResp tagId) model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/deleteTag?tagId=" ++ (String.fromInt tagId))
+deleteTodo: O.Model -> Int -> Cmd TO.Msg
+deleteTodo model todoId = Api.deleteValue (TO.DeleteTodoResp todoId) model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/deleteTodo?todoId=" ++ (String.fromInt todoId))
 
 getTagtypeListForOverview : O.Model -> Cmd TO.Msg
 getTagtypeListForOverview model = Api.getTagtypeListForOverview TO.ListTagtypes model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllTagTypes")

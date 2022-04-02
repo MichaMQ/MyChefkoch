@@ -1,4 +1,4 @@
-module Devs.RecipeEncode exposing ( sourceEncoder,recipeEncoder,imageEncoder,partEncoder )
+module Devs.RecipeEncode exposing ( sourceEncoder,recipeEncoder,imageEncoder,partEncoder,addIncredientEncoder,ingreEncoder )
 
 --import Json.Decode as Decode exposing (Decoder, field, succeed)
 --import Json.Decode.Extra exposing (andMap)
@@ -154,3 +154,9 @@ sourceEncoder src =
           ]
     in
       Encode.object list
+
+addIncredientEncoder: Int -> O.Ingredient -> Encode.Value
+addIncredientEncoder recipeId ingre =  Encode.object [
+    ("recipeId", Encode.int recipeId)
+    , ("ingredientDto", ingreEncoder ingre)
+  ]

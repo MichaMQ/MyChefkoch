@@ -508,7 +508,7 @@ public class RecipeServiceImpl implements RecipeService {
 		} else {
 			Optional<Ingredient> ele = this.ingredientRepository.findById(ingredientId);
 			if (ele.isPresent()) {
-				this.ingredientRepository.delete(ele.get());
+				this.ingredientRepository.deleteById(ingredientId);
 				return Boolean.TRUE;
 			} else {
 				throw new IllegalArgumentException("keine Zutat mit der ID " + ingredientId.toString() + " gefunden!");
@@ -544,28 +544,31 @@ public class RecipeServiceImpl implements RecipeService {
 		return Boolean.FALSE;
 	}
 	@Override
-	public Boolean addIngredient(Integer recipeId, IngredientDto ingredientDto) throws IllegalArgumentException {
+	public IngredientDto addIngredient(Integer recipeId, IngredientDto ingredientDto) throws IllegalArgumentException {
 		if (recipeId == null || ingredientDto == null) {
 			throw new IllegalArgumentException("error.ingredient");
 		} else {
-			Ingredient ele = null;
-			if(ingredientDto.getId() != null) {
-				Optional<Ingredient> eleOpt = ingredientRepository.findById(ingredientDto.getId());
-				if (eleOpt.isPresent()) {
-					ele = eleOpt.get();
+			Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
+			if (recipeOptional.isPresent()) {
+				Recipe recipe = recipeOptional.get();
+				Ingredient ele = new Ingredient();
+				ele.setComment(ingredientDto.getComment());
+				ele.setName(ingredientDto.getName());
+				if(ingredientDto.getPart() != null) {
+					ele.setPart(partRepository.findById(ingredientDto.getPart().getId()).get());
 				}
-			}
-			if(ele != null) {
-				Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
-				if (recipeOptional.isPresent()) {
-					Recipe recipe = recipeOptional.get();
-					recipe.getIngredients().add(ele);
-					recipeRepository.save(recipe);
-					return Boolean.TRUE;
+				ele.setQuantity(ingredientDto.getQuantity());
+				ele.setSortorder(ingredientDto.getSortorder());
+				if(ingredientDto.getUnit() != null) {
+					ele.setUnit(unitRepository.findById(ingredientDto.getUnit().getId()).get());
 				}
+				ele.setRecipe(recipe);
+				ele.setUuid(ingredientDto.getUuid());
+				ele = this.ingredientRepository.save(ele);
+				return new IngredientDto(ele);
 			}
 		}
-		return Boolean.FALSE;
+		return null;
 	}
 	
 	@Override
@@ -605,28 +608,25 @@ public class RecipeServiceImpl implements RecipeService {
 		return Boolean.FALSE;
 	}
 	@Override
-	public Boolean addTodo(Integer recipeId, TodoDto todoDto) throws IllegalArgumentException {
+	public TodoDto addTodo(Integer recipeId, TodoDto todoDto) throws IllegalArgumentException {
 		if (recipeId == null || todoDto == null) {
 			throw new IllegalArgumentException("error.todo");
 		} else {
-			Todo ele = null;
-			if(todoDto.getId() != null) {
-				Optional<Todo> eleOpt = todoRepository.findById(todoDto.getId());
-				if (eleOpt.isPresent()) {
-					ele = eleOpt.get();
-				}
-			}
-			if(ele != null) {
-				Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
-				if (recipeOptional.isPresent()) {
-					Recipe recipe = recipeOptional.get();
-					recipe.getTodos().add(ele);
-					recipeRepository.save(recipe);
-					return Boolean.TRUE;
-				}
+			Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
+			if (recipeOptional.isPresent()) {
+				Recipe recipe = recipeOptional.get();
+				Todo ele = new Todo();
+				ele.setImage(todoDto.getImage());
+				ele.setImage_comment(todoDto.getImage_comment());
+				ele.setNumber(todoDto.getNumber());
+				ele.setText(todoDto.getText());
+				ele.setRecipe(recipe);
+				ele.setUuid(todoDto.getUuid());
+				ele = todoRepository.save(ele);
+				return new TodoDto(ele);
 			}
 		}
-		return Boolean.FALSE;
+		return null;
 	}
 
 	@Override
@@ -666,88 +666,44 @@ public class RecipeServiceImpl implements RecipeService {
 		return Boolean.FALSE;
 	}
 	@Override
-	public Boolean addTag(Integer recipeId, TagDto tagDto) throws IllegalArgumentException {
-		if (recipeId == null || tagDto == null) {
+	public Boolean addTag(Integer recipeId, Integer tagId) throws IllegalArgumentException {
+		if (recipeId == null || tagId == null) {
 			throw new IllegalArgumentException("error.tag");
 		} else {
-			Tag ele = null;
-			if(tagDto.getId() != null) {
-				Optional<Tag> eleOpt = tagRepository.findById(tagDto.getId());
-				if (eleOpt.isPresent()) {
-					ele = eleOpt.get();
-				}
-			}
-			if(ele != null) {
-				Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
-				if (recipeOptional.isPresent()) {
-					Recipe recipe = recipeOptional.get();
-					recipe.getTags().add(ele);
-					recipeRepository.save(recipe);
-					return Boolean.TRUE;
-				}
+			Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
+			Optional<Tag> tagOptional = this.tagRepository.findById(tagId);
+			if (recipeOptional.isPresent() && tagOptional.isPresent()) {
+				Recipe recipe = recipeOptional.get();
+				Tag tag = tagOptional.get();
+				
+				Recipe_Tag recipeTag = new Recipe_Tag();
+				recipeTag.setRecipe_id(Long.valueOf(recipe.getId().longValue()));
+				recipeTag.setTag_id(Long.valueOf(tag.getId().longValue()));
+				this.recipeTagRepository.save(recipeTag);
+				return Boolean.TRUE;
+			} else {
+				throw new IllegalArgumentException("keinen Tag mit der ID " + tagId.toString() + " gefunden!");
 			}
 		}
-		return Boolean.FALSE;
 	}
 
 	@Override
-	public Boolean deleteSource(Integer sourceId) throws IllegalArgumentException {
-		if (sourceId == null) {
+	public Boolean updateSource(Integer recipeId, Integer sourceId) throws IllegalArgumentException {
+		if (recipeId == null || sourceId == null) {
 			throw new IllegalArgumentException("error.source");
 		} else {
-			Optional<Source> ele = this.sourceRepository.findById(sourceId);
-			if (ele.isPresent()) {
-				this.sourceRepository.delete(ele.get());
+			Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
+			Optional<Source> sourceOptional = this.sourceRepository.findById(sourceId);
+			if (recipeOptional.isPresent() && sourceOptional.isPresent()) {
+				Recipe recipe = recipeOptional.get();
+				Source source = sourceOptional.get();
+				recipe.setSource(source);
+				recipeRepository.save(recipe);
 				return Boolean.TRUE;
 			} else {
 				throw new IllegalArgumentException("kein Quelle mit der ID " + sourceId.toString() + " gefunden!");
 			}
 		}
-	}
-	@Override
-	public Boolean updateSource(SourceDto sourceDto) throws IllegalArgumentException {
-		if (sourceDto == null || sourceDto.getId() == null) {
-			throw new IllegalArgumentException("error.source");
-		} else {
-			if(sourceDto.getId() != null) {
-				Optional<Source> eleOpt = sourceRepository.findById(sourceDto.getId());
-				if (eleOpt.isPresent()) {
-					Source ele = eleOpt.get();
-					ele.setIsbn(sourceDto.getIsbn());
-					ele.setName(sourceDto.getName());
-					ele.setYear(sourceDto.getYear());
-					sourceRepository.save(ele);
-					return Boolean.TRUE;
-				} else {
-					throw new IllegalArgumentException("kein Quelle mit der ID " + sourceDto.getId().toString() + " gefunden!");
-				}
-			}
-		}
-		return Boolean.FALSE;
-	}
-	@Override
-	public Boolean addSource(Integer recipeId, SourceDto sourceDto) throws IllegalArgumentException {
-		if (recipeId == null || sourceDto == null) {
-			throw new IllegalArgumentException("error.source");
-		} else {
-			Source ele = null;
-			if(sourceDto.getId() != null) {
-				Optional<Source> eleOpt = sourceRepository.findById(sourceDto.getId());
-				if (eleOpt.isPresent()) {
-					ele = eleOpt.get();
-				}
-			}
-			if(ele != null) {
-				Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
-				if (recipeOptional.isPresent()) {
-					Recipe recipe = recipeOptional.get();
-					recipe.setSource(ele);
-					recipeRepository.save(recipe);
-					return Boolean.TRUE;
-				}
-			}
-		}
-		return Boolean.FALSE;
 	}
 	
 	@Override

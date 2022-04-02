@@ -43,7 +43,7 @@ viewRecipe session rec sp =
     amazonLink = case rec.source of
       Just source -> case source.isbn of
 --        Just isbn -> Html.a [ class "amazonLink", target "_blank", href ("https://www.amazon.de/gp/search/ref=sr_adv_b/?unfiltered=1&field-isbn=" ++ isbn ++ "&sort=relevancerank") ][ Html.img[ src (sp.iconPath ++ "amazon.png"), height 20 ][] ]
-        Just isbn -> PU.getEditButton sp (Just True) "amazon.png" (Just (amazonUrl ++ (String.replace "-" "" isbn))) TO.NoOp []
+        Just isbn -> PU.getEditButton sp (Just True) "amazon.png" (Just (amazonUrl ++ (String.replace "-" "" isbn))) TO.NoOp [] Nothing
         Nothing -> Html.text ""
       Nothing -> Html.text ""
     number_comment = case rec.number_comment of
@@ -74,8 +74,8 @@ viewRecipe session rec sp =
           Html.h2 [ Attr.style "float" "left", Attr.style "margin-right" "5px" ][
             PU.getEditHeader (DU.isLoggedIn session (Just rec.person)) header (TO.ToggleEditForm O.BasicForm)
           ]
-          , PU.getEditButton sp (Just (DU.isLoggedIn session (Just rec.person))) "save.png" Nothing TO.SaveRecipe [Attr.style "margin-top" "10px"]
-          , PU.getEditButton sp (Just (DU.isLoggedIn session (Just rec.person))) "delete.png" Nothing TO.ConfirmDelete [Attr.style "margin-top" "10px"]
+          , PU.getEditButton sp (Just (DU.isLoggedIn session (Just rec.person))) "save.png" Nothing TO.SaveRecipe [Attr.style "margin-top" "10px"] Nothing
+          , PU.getEditButton sp (Just (DU.isLoggedIn session (Just rec.person))) "delete.png" Nothing TO.ConfirmDelete [Attr.style "margin-top" "10px"] Nothing
         ]
         , Html.div [ Attr.id "recipeSource", Attr.style "clear" "both" ][ Html.text (rec_source ++ sourcePage ++ sourceYear ++ sourceIsbn), amazonLink ]
         , Html.div [ Attr.id "recipeOwner" ][ Html.text owner ]

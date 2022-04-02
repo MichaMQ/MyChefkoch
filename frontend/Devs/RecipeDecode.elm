@@ -1,4 +1,4 @@
-module Devs.RecipeDecode exposing ( tagtypeDecoder,recipeLightDecoder,recipeDecoder,unitDecoder,sourceDecoder,tagDecoder,partLightDecoder,sessionDecoder )
+module Devs.RecipeDecode exposing ( tagtypeDecoder,recipeLightDecoder,recipeDecoder,unitDecoder,sourceDecoder,tagDecoder,partLightDecoder,sessionDecoder,ingrDecoder )
 
 import Json.Decode as Decode exposing (Decoder, field)
 import Json.Decode.Extra exposing (andMap)

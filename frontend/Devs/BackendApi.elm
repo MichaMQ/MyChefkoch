@@ -41,6 +41,18 @@ saveSource event session url newSource =
     --Http.post {url=url, body=(Http.jsonBody jsonValue), expect=Http.expectJson event sourceDecoder}
     myRequest "POST" url (Http.expectJson event RD.sourceDecoder) session (Just jsonValue)
 
+addIngredient: (Result Http.Error O.Ingredient -> TO.Msg) -> Maybe O.Session -> String -> Encode.Value -> Cmd TO.Msg
+addIngredient event session url newValue = myRequest "POST" url (Http.expectJson event RD.ingrDecoder) session (Just newValue)
+
+addValue: (Result Http.Error Bool -> TO.Msg) -> Maybe O.Session -> String -> Encode.Value -> Cmd TO.Msg
+addValue event session url newValue = myRequest "POST" url (Http.expectJson event Decode.bool) session (Just newValue)
+
+updateValue: (Result Http.Error Bool -> TO.Msg) -> Maybe O.Session -> String -> Encode.Value -> Cmd TO.Msg
+updateValue event session url newValue = myRequest "POST" url (Http.expectJson event Decode.bool) session (Just newValue)
+
+deleteValue: (Result Http.Error Bool -> TO.Msg) -> Maybe O.Session -> String -> Cmd TO.Msg
+deleteValue event session url = myRequest "GET" url (Http.expectJson event Decode.bool) session Nothing
+
 getAllUnits: (Result Http.Error (List O.Unit) -> TO.Msg) -> Maybe O.Session -> String -> Cmd TO.Msg
 getAllUnits event session url = myRequest "GET" url (Http.expectJson event (Decode.list RD.unitDecoder)) session Nothing
 
