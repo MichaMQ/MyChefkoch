@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 
 import chefkoch.dto.IngredientDto;
 import chefkoch.dto.PartDto;
+import chefkoch.dto.PersonDto;
 import chefkoch.dto.RecipeDto;
 import chefkoch.dto.SourceDto;
 import chefkoch.dto.TagDto;
@@ -46,6 +47,7 @@ import chefkoch.dto.UnitDto;
 import chefkoch.entity.Account;
 import chefkoch.entity.Ingredient;
 import chefkoch.entity.Part;
+import chefkoch.entity.Person;
 import chefkoch.entity.Recipe;
 import chefkoch.entity.Recipe_Tag;
 import chefkoch.entity.Source;
@@ -58,6 +60,7 @@ import chefkoch.fop.FopInterface;
 import chefkoch.repo.iface.AccountRepository;
 import chefkoch.repo.iface.IngredientRepository;
 import chefkoch.repo.iface.PartRepository;
+import chefkoch.repo.iface.PersonRepository;
 import chefkoch.repo.iface.RecipeRepository;
 import chefkoch.repo.iface.RecipeTagRepository;
 import chefkoch.repo.iface.SourceRepository;
@@ -68,6 +71,7 @@ import chefkoch.repo.iface.UnitCategoryRepository;
 import chefkoch.repo.iface.UnitRepository;
 import chefkoch.service.enums.AccountType;
 import chefkoch.service.enums.BookPrintType;
+import chefkoch.service.enums.Role;
 import chefkoch.service.iface.RecipeService;
 import chefkoch.util.StringUtil;
 import chefkoch.util.TimeUtil;
@@ -111,10 +115,12 @@ public class RecipeServiceImpl implements RecipeService {
 	private RecipeTagRepository recipeTagRepository;
 	@Autowired
 	private UnitCategoryRepository unitCategoryRepository;
+	@Autowired
+	private PersonRepository personRepository;
 
 	@Override
 	public void initUuids() {
-		Iterable<Recipe> list1 = recipeRepository.findAll();
+		Iterable<Recipe> list1 = recipeRepository.findAllWhereUuisIsNull();
 		boolean toSave = false;
 		for(Recipe e : list1) {
 			if(e.getUuid() == null) {
@@ -125,7 +131,7 @@ public class RecipeServiceImpl implements RecipeService {
 		if(toSave) {
 			recipeRepository.saveAll(list1);
 		}
-		Iterable<Account> list2 = accountRepository.findAll();
+		Iterable<Account> list2 = accountRepository.findAllWhereUuisIsNull();
 		toSave = false;
 		for(Account e : list2) {
 			if(e.getUuid() == null) {
@@ -136,7 +142,7 @@ public class RecipeServiceImpl implements RecipeService {
 		if(toSave) {
 			accountRepository.saveAll(list2);
 		}
-		Iterable<Ingredient> list3 = ingredientRepository.findAll();
+		Iterable<Ingredient> list3 = ingredientRepository.findAllWhereUuisIsNull();
 		toSave = false;
 		for(Ingredient e : list3) {
 			if(e.getUuid() == null) {
@@ -147,7 +153,7 @@ public class RecipeServiceImpl implements RecipeService {
 		if(toSave) {
 			ingredientRepository.saveAll(list3);
 		}
-		Iterable<Part> list4 = partRepository.findAll();
+		Iterable<Part> list4 = partRepository.findAllWhereUuisIsNull();
 		toSave = false;
 		for(Part e : list4) {
 			if(e.getUuid() == null) {
@@ -158,7 +164,7 @@ public class RecipeServiceImpl implements RecipeService {
 		if(toSave) {
 			partRepository.saveAll(list4);
 		}
-		Iterable<Recipe_Tag> list5 = recipeTagRepository.findAll();
+		Iterable<Recipe_Tag> list5 = recipeTagRepository.findAllWhereUuisIsNull();
 		toSave = false;
 		for(Recipe_Tag e : list5) {
 			if(e.getUuid() == null) {
@@ -169,7 +175,7 @@ public class RecipeServiceImpl implements RecipeService {
 		if(toSave) {
 			recipeTagRepository.saveAll(list5);
 		}
-		Iterable<Source> list6 = sourceRepository.findAll();
+		Iterable<Source> list6 = sourceRepository.findAllWhereUuisIsNull();
 		toSave = false;
 		for(Source e : list6) {
 			if(e.getUuid() == null) {
@@ -180,7 +186,7 @@ public class RecipeServiceImpl implements RecipeService {
 		if(toSave) {
 			sourceRepository.saveAll(list6);
 		}
-		Iterable<Tag_Type> list7 = tagtypeRepository.findAll();
+		Iterable<Tag_Type> list7 = tagtypeRepository.findAllWhereUuisIsNull();
 		toSave = false;
 		for(Tag_Type e : list7) {
 			if(e.getUuid() == null) {
@@ -191,7 +197,7 @@ public class RecipeServiceImpl implements RecipeService {
 		if(toSave) {
 			tagtypeRepository.saveAll(list7);
 		}
-		Iterable<Tag> list8 = tagRepository.findAll();
+		Iterable<Tag> list8 = tagRepository.findAllWhereUuisIsNull();
 		toSave = false;
 		for(Tag e : list8) {
 			if(e.getUuid() == null) {
@@ -202,7 +208,7 @@ public class RecipeServiceImpl implements RecipeService {
 		if(toSave) {
 			tagRepository.saveAll(list8);
 		}
-		Iterable<Todo> list9 = todoRepository.findAll();
+		Iterable<Todo> list9 = todoRepository.findAllWhereUuisIsNull();
 		toSave = false;
 		for(Todo e : list9) {
 			if(e.getUuid() == null) {
@@ -213,7 +219,7 @@ public class RecipeServiceImpl implements RecipeService {
 		if(toSave) {
 			todoRepository.saveAll(list9);
 		}
-		Iterable<Unit_Category> list10 = unitCategoryRepository.findAll();
+		Iterable<Unit_Category> list10 = unitCategoryRepository.findAllWhereUuisIsNull();
 		toSave = false;
 		for(Unit_Category e : list10) {
 			if(e.getUuid() == null) {
@@ -224,7 +230,7 @@ public class RecipeServiceImpl implements RecipeService {
 		if(toSave) {
 			unitCategoryRepository.saveAll(list10);
 		}
-		Iterable<Unit> list11 = unitRepository.findAll();
+		Iterable<Unit> list11 = unitRepository.findAllWhereUuisIsNull();
 		toSave = false;
 		for(Unit e : list11) {
 			if(e.getUuid() == null) {
@@ -235,11 +241,22 @@ public class RecipeServiceImpl implements RecipeService {
 		if(toSave) {
 			unitRepository.saveAll(list11);
 		}
+		Iterable<Person> list12 = personRepository.findAllWhereUuisIsNull();
+		toSave = false;
+		for(Person e : list12) {
+			if(e.getUuid() == null) {
+				e.setUuid(UUID.randomUUID().toString());
+				toSave = true;
+			}
+		}
+		if(toSave) {
+			personRepository.saveAll(list12);
+		}
 	}
 	
 	@Override
-	public Boolean isTokenValid(HttpServletRequest request) {
-		Boolean tokenIsValid = Boolean.FALSE;
+	public Person isTokenValid(HttpServletRequest request) {
+		Person tokenIsValid = null;
 		String token = request.getHeader("token");
 		System.out.println("----------- Refresh token!");
 		if(token != null) {
@@ -249,10 +266,35 @@ public class RecipeServiceImpl implements RecipeService {
 				Date expirationdate = TimeUtil.addMinutesToDate(30, new Date());
 				acc.setExpirationdate(expirationdate);
 				this.accountRepository.save(acc);
-				tokenIsValid = true;
+				tokenIsValid = this.personRepository.findPersonByAccountId(acc.getId());
 			} else { System.out.println("----------- Token or date isn't valid!"); }
 		} else { System.out.println("----------- No token given!"); }
 		return tokenIsValid;
+	}
+
+	@Override
+	public Boolean savePerson(String firstname, String surname, String username, String password, Boolean isAdmin) {
+		Account acc = this.accountRepository.findAccountByUsername(username);
+		if(acc == null) {
+			acc = new Account();
+			acc.setUsername(username);
+			acc.setType(AccountType.HASH);
+			String hashedPassword = StringUtil.hashPasswordWithSalt(password);
+			acc.setPasswordhash(hashedPassword);
+			acc = accountRepository.save(acc);
+		}
+		Role role = Role.USER;
+		if(isAdmin) {
+			role = Role.ADMIN;
+		}
+		Person person = new Person();
+		person.setFirstname(firstname);
+		person.setSurname(surname);
+		person.setRole(role);
+		person.setAccount(acc);
+		personRepository.save(person);
+		
+		return Boolean.TRUE;
 	}
 
 	@Override
@@ -285,6 +327,9 @@ public class RecipeServiceImpl implements RecipeService {
 			} else {
 				if(passwordFromAccount.equals(password)) {
 					loggedIn = Boolean.TRUE;
+					acc.setType(AccountType.HASH);
+					String hashedPassword = StringUtil.hashPasswordWithSalt(password);
+					acc.setPasswordhash(hashedPassword);
 				}
 			}
 		}
@@ -433,9 +478,14 @@ public class RecipeServiceImpl implements RecipeService {
 			throw new IllegalArgumentException("error.recipe");
 		} else {
 			Source source = new Source();
-			Optional<Source> srcOpt= this.sourceRepository.findById(sourceDto.getId());
-			if (srcOpt.isPresent()) {
-				source = srcOpt.get();
+			if(sourceDto.getId() != null) {
+				Optional<Source> srcOpt= this.sourceRepository.findById(sourceDto.getId());
+				if (srcOpt.isPresent()) {
+					source = srcOpt.get();
+				}
+			}
+			if(source.getUuid() == null) {
+				source.setUuid(sourceDto.getUuid());
 			}
 			source.setName(sourceDto.getName());
 			source.setIsbn(sourceDto.getIsbn());
@@ -444,6 +494,135 @@ public class RecipeServiceImpl implements RecipeService {
 		}		
 	}
 
+	@Override
+	public Boolean addIngredient(Integer recipeId, IngredientDto ingredientDto) throws IllegalArgumentException {
+		if (recipeId == null || ingredientDto == null) {
+			throw new IllegalArgumentException("error.source");
+		} else {
+			Ingredient ele = null;
+			if(ingredientDto.getId() != null) {
+				Optional<Ingredient> eleOpt = ingredientRepository.findById(ingredientDto.getId());
+				if (eleOpt.isPresent()) {
+					ele = eleOpt.get();
+				}
+			}
+			if(ele != null) {
+				Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
+				if (recipeOptional.isPresent()) {
+					Recipe recipe = recipeOptional.get();
+					recipe.getIngredients().add(ele);
+					recipeRepository.save(recipe);
+					return Boolean.TRUE;
+				}
+			}
+		}
+		return Boolean.FALSE;
+	}
+	
+	@Override
+	public Boolean addTodo(Integer recipeId, TodoDto todoDto) throws IllegalArgumentException {
+		if (recipeId == null || todoDto == null) {
+			throw new IllegalArgumentException("error.source");
+		} else {
+			Todo ele = null;
+			if(todoDto.getId() != null) {
+				Optional<Todo> eleOpt = todoRepository.findById(todoDto.getId());
+				if (eleOpt.isPresent()) {
+					ele = eleOpt.get();
+				}
+			}
+			if(ele != null) {
+				Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
+				if (recipeOptional.isPresent()) {
+					Recipe recipe = recipeOptional.get();
+					recipe.getTodos().add(ele);
+					recipeRepository.save(recipe);
+					return Boolean.TRUE;
+				}
+			}
+		}
+		return Boolean.FALSE;
+	}
+
+	@Override
+	public Boolean addTag(Integer recipeId, TagDto tagDto) throws IllegalArgumentException {
+		if (recipeId == null || tagDto == null) {
+			throw new IllegalArgumentException("error.source");
+		} else {
+			Tag ele = null;
+			if(tagDto.getId() != null) {
+				Optional<Tag> eleOpt = tagRepository.findById(tagDto.getId());
+				if (eleOpt.isPresent()) {
+					ele = eleOpt.get();
+				}
+			}
+			if(ele != null) {
+				Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
+				if (recipeOptional.isPresent()) {
+					Recipe recipe = recipeOptional.get();
+					recipe.getTags().add(ele);
+					recipeRepository.save(recipe);
+					return Boolean.TRUE;
+				}
+			}
+		}
+		return Boolean.FALSE;
+	}
+
+	@Override
+	public Boolean addSource(Integer recipeId, SourceDto sourceDto) throws IllegalArgumentException {
+		if (recipeId == null || sourceDto == null) {
+			throw new IllegalArgumentException("error.source");
+		} else {
+			Source ele = null;
+			if(sourceDto.getId() != null) {
+				Optional<Source> eleOpt = sourceRepository.findById(sourceDto.getId());
+				if (eleOpt.isPresent()) {
+					ele = eleOpt.get();
+				}
+			}
+			if(ele != null) {
+				Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
+				if (recipeOptional.isPresent()) {
+					Recipe recipe = recipeOptional.get();
+					recipe.setSource(ele);
+					recipeRepository.save(recipe);
+					return Boolean.TRUE;
+				}
+			}
+		}
+		return Boolean.FALSE;
+	}
+	
+	@Override
+	public RecipeDto addRecipe(Person person, RecipeDto recipeDto) throws IllegalArgumentException {
+		if (recipeDto == null) {
+			throw new IllegalArgumentException("error.recipe");
+		} else {
+			Recipe recipe = new Recipe();
+			if(recipeDto.getId() != null) {
+				Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeDto.getId());
+				if (recipeOptional.isPresent()) {
+					recipe = recipeOptional.get();
+				}
+			}
+			recipe.setName(recipeDto.getName());
+			recipe.setAikz(recipeDto.getAikz());
+			recipe.setImage(recipeDto.getImage());
+			recipe.setNumber(recipeDto.getNumber());
+			recipe.setNumber_comment(recipeDto.getNumber_comment());
+			recipe.setNv_carbohydrates(recipeDto.getNv_carbohydrates());
+			recipe.setNv_energy(recipeDto.getNv_energy());
+			recipe.setNv_fat(recipeDto.getNv_fat());
+			recipe.setNv_protein(recipeDto.getNv_protein());
+			recipe.setNv_size(recipeDto.getNv_size());
+			recipe.setSource_page(recipeDto.getSource_page());
+			recipe.setTranslate(recipeDto.getTranslate());
+			recipe.setPerson(person);
+			return new RecipeDto(recipeRepository.save(recipe), this.imgPath);
+		}
+	}
+	
 	@Override
 	public RecipeDto saveRecipe(RecipeDto recipeDto) throws IllegalArgumentException {
 		if (recipeDto == null) {
@@ -609,6 +788,19 @@ public class RecipeServiceImpl implements RecipeService {
 		return allPartDto;
 	}
 
+	@Override
+	public List<PersonDto> getAllPerson(Boolean sortedByName) {
+		List<Person> allPerson = (List<Person>) personRepository.findAll();
+		List<PersonDto> allPersonDto = new LinkedList<PersonDto>();
+		for (Person person : allPerson) {
+			allPersonDto.add(new PersonDto(person));
+		}
+		if (sortedByName.booleanValue()) {
+			Collections.sort(allPersonDto);
+		}
+		return allPersonDto;
+	}
+
 	public String getDumpXMLToLog() {
 		return dumpXMLToLog;
 	}
@@ -720,4 +912,13 @@ public class RecipeServiceImpl implements RecipeService {
 	public void setUnitCategoryRepository(UnitCategoryRepository unitCategoryRepository) {
 		this.unitCategoryRepository = unitCategoryRepository;
 	}
+
+	public PersonRepository getPersonRepository() {
+		return personRepository;
+	}
+
+	public void setPersonRepository(PersonRepository personRepository) {
+		this.personRepository = personRepository;
+	}
+
 }

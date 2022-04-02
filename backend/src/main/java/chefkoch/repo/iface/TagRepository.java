@@ -10,4 +10,7 @@ import chefkoch.entity.Tag;
 public interface TagRepository extends CrudRepository<Tag, Integer> {
 	@Query("SELECT t FROM Tag t WHERE t.tagType.id = ?1 ORDER BY t.name")
 	List<Tag> findTagByTagtypeId(Integer tagtypeId);
+
+	@Query("SELECT t FROM Tag t WHERE t.uuid IS NULL")
+	List<Tag> findAllWhereUuisIsNull();
 }

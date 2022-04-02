@@ -77,6 +77,11 @@ public class Recipe {
 	@JoinColumn(name = "source_id")
 	private Source source;
 
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "person_id")
+	@NotNull
+	private Person person;
+
 	private Long source_page;
 
 	private Long aikz;
@@ -221,5 +226,13 @@ public class Recipe {
 
 	public void setTodos(Set<Todo> todos) {
 		this.todos = todos;
+	}
+
+	public Person getPerson() {
+		return person;
+	}
+
+	public void setPerson(Person person) {
+		this.person = person;
 	}
 }

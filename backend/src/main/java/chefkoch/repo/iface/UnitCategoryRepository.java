@@ -1,5 +1,8 @@
 package chefkoch.repo.iface;
 
+import java.util.List;
+
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import chefkoch.entity.Unit_Category;
@@ -8,5 +11,8 @@ import chefkoch.entity.Unit_Category;
 //CRUD refers Create, Read, Update, Delete
 
 public interface UnitCategoryRepository extends CrudRepository<Unit_Category, Integer> {
+
+	@Query("SELECT t FROM Unit_Category t WHERE t.uuid IS NULL")
+	List<Unit_Category> findAllWhereUuisIsNull();
 
 }

@@ -6,12 +6,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.ResponseEntity;
 
+import chefkoch.dto.IngredientDto;
 import chefkoch.dto.PartDto;
+import chefkoch.dto.PersonDto;
 import chefkoch.dto.RecipeDto;
 import chefkoch.dto.SourceDto;
 import chefkoch.dto.TagDto;
 import chefkoch.dto.TagtypeDto;
+import chefkoch.dto.TodoDto;
 import chefkoch.dto.UnitDto;
+import chefkoch.entity.Person;
 import chefkoch.service.enums.BookPrintType;
 
 public interface RecipeService {
@@ -44,7 +48,21 @@ public interface RecipeService {
 
 	public String login(String username, String password);
 
-	public Boolean isTokenValid(HttpServletRequest request);
+	public Person isTokenValid(HttpServletRequest request);
 
 	public void initUuids();
+
+	public Boolean savePerson(String firstname, String surname, String username, String password, Boolean isAdmin);
+
+	public RecipeDto addRecipe(Person person, RecipeDto recipeDto) throws IllegalArgumentException;
+
+	public Boolean addSource(Integer recipeId, SourceDto sourceDto) throws IllegalArgumentException;
+
+	public Boolean addTag(Integer recipeId, TagDto tagDto) throws IllegalArgumentException;
+
+	public Boolean addTodo(Integer recipeId, TodoDto todoDto) throws IllegalArgumentException;
+
+	public Boolean addIngredient(Integer recipeId, IngredientDto ingredientDto) throws IllegalArgumentException;
+
+	public List<PersonDto> getAllPerson(Boolean sortedByName);
 }

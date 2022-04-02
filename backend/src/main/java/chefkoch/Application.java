@@ -6,12 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 
 import chefkoch.service.iface.RecipeService;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {ErrorMvcAutoConfiguration.class})
 public class Application {
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
 	 

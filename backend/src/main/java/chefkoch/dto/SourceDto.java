@@ -24,10 +24,11 @@ public class SourceDto extends GenericDto {
 
 	public Element toXml() {
 		Element srcEle = new Element("source");
-		srcEle.setAttribute("id", this.getId().toString());
+		srcEle.setAttribute("id", StringUtil.toString(this.getId()));
 		srcEle.addContent((new Element("name")).addContent(StringUtil.toString(this.getName())));
 		srcEle.addContent((new Element("year")).addContent(StringUtil.toString(this.getYear())));
 		srcEle.addContent((new Element("isbn")).addContent(StringUtil.toString(this.getIsbn())));
+		srcEle.addContent((new Element("uuid")).addContent(StringUtil.toString(this.getUuid())));
 		return srcEle;
 	}
 	

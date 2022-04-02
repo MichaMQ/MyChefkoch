@@ -5,29 +5,37 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
+import chefkoch.dto.IngredientDto;
 import chefkoch.dto.PartDto;
+import chefkoch.dto.PersonDto;
 import chefkoch.dto.RecipeDto;
 import chefkoch.dto.SourceDto;
 import chefkoch.dto.TagDto;
 import chefkoch.dto.TagtypeDto;
+import chefkoch.dto.TodoDto;
 import chefkoch.dto.UnitDto;
+import chefkoch.entity.Person;
 import chefkoch.service.enums.BookPrintType;
 import chefkoch.service.iface.RecipeService;
+import chefkoch.util.XMLUtil;
 
-@Controller // This means that this class is a Controller
+@RestController // This means that this class is a Controller
 @RequestMapping(path = "/RecipeServer/api/v1") // This means URL's start with /demo (after Application path)
 
 public class MainController {
@@ -36,24 +44,116 @@ public class MainController {
 	
 	private final String timeoutMsg = "Timeout der Authentifizierung!";
 	private final String successMsg = "Request processed successful!";
+	private final Boolean isLocalTest = Boolean.TRUE;
 	
-	@PostMapping("/saveSource")
-	SourceDto saveSource(HttpServletRequest request, HttpServletResponse response, @RequestBody SourceDto source) throws IOException {
-		Boolean tokenIsValid = this.recipeService.isTokenValid(request);
-		if(tokenIsValid.booleanValue()) {
+	@RequestMapping(value = "/saveSource",
+			method = RequestMethod.POST,
+      consumes = {MediaType.APPLICATION_JSON},
+      produces = {MediaType.APPLICATION_JSON})
+	@ResponseBody
+	public ResponseEntity<SourceDto> saveSource(HttpServletRequest request, HttpServletResponse response, @RequestBody SourceDto source) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
 			response.sendError(200, this.successMsg);
-			return this.recipeService.saveSource(source);
+			SourceDto savedSource = this.recipeService.saveSource(source);
+			System.out.println(XMLUtil.dumpElement(savedSource.toXml()));
+			final HttpHeaders httpHeaders= new HttpHeaders();
+	    httpHeaders.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+	    return new ResponseEntity<SourceDto>(savedSource, httpHeaders, HttpStatus.OK);
+			//return savedSource;
 		} else {
 			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
 			return null;
 		}
 	}
+
+	@PostMapping("/addIngredient")
+	public @ResponseBody Boolean addIngredient(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody IngredientDto eleDto) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
+			if(this.recipeService.addIngredient(recipeId, eleDto)) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				return Boolean.TRUE;
+			} else {
+				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Hinzufügen einer Zutat");
+				return Boolean.FALSE;
+			}
+		} else {
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
+			return Boolean.FALSE;
+		}
+	}
+
+	@PostMapping("/addTodo")
+	public @ResponseBody Boolean addTodo(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody TodoDto eleDto) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
+			if(this.recipeService.addTodo(recipeId, eleDto)) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				return Boolean.TRUE;
+			} else {
+				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Hinzufügen eines Arbeitsschritts");
+				return Boolean.FALSE;
+			}
+		} else {
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
+			return Boolean.FALSE;
+		}
+	}
+
+	@PostMapping("/addTag")
+	public @ResponseBody Boolean addTag(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody TagDto eleDto) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
+			if(this.recipeService.addTag(recipeId, eleDto)) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				return Boolean.TRUE;
+			} else {
+				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Hinzufügen eines Tags");
+				return Boolean.FALSE;
+			}
+		} else {
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
+			return Boolean.FALSE;
+		}
+	}
+
+	@PostMapping("/addSource")
+	public @ResponseBody Boolean addSource(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody SourceDto eleDto) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
+			if(this.recipeService.addSource(recipeId, eleDto)) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				return Boolean.TRUE;
+			} else {
+				response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "Fehler beim Hinzufügen einer Quelle");
+				return Boolean.FALSE;
+			}
+		} else {
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
+			return Boolean.FALSE;
+		}
+	}
+
+	@PostMapping("/addRecipe")
+	public @ResponseBody RecipeDto addRecipe(HttpServletRequest request, HttpServletResponse response, @RequestBody RecipeDto recipe) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		RecipeDto savedRecipe = null;
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
+			savedRecipe = this.recipeService.addRecipe(tokenIsValid, recipe);
+			response.setStatus(HttpServletResponse.SC_OK);
+		} else {
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
+			savedRecipe = null;
+		}
+		return savedRecipe;
+	}
 	
 	@PostMapping("/saveRecipe")
-	RecipeDto saveRecipe(HttpServletRequest request, HttpServletResponse response, @RequestBody RecipeDto recipe) throws IOException {
-		Boolean tokenIsValid = this.recipeService.isTokenValid(request);
+	public @ResponseBody RecipeDto saveRecipe(HttpServletRequest request, HttpServletResponse response, @RequestBody RecipeDto recipe) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		RecipeDto savedRecipe = null;
-		if(tokenIsValid.booleanValue()) {
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
 			savedRecipe = this.recipeService.saveRecipe(recipe);
 			response.setStatus(HttpServletResponse.SC_OK);
 		} else {
@@ -63,10 +163,22 @@ public class MainController {
 		return savedRecipe;
 	}
 	
+	@GetMapping(path = "/savePerson")
+	public @ResponseBody Boolean savePerson(HttpServletRequest request, HttpServletResponse response, @RequestParam String firstname, @RequestParam String surname, @RequestParam String username, @RequestParam String password, @RequestParam Boolean isAdmin) throws IOException {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
+			response.sendError(200, this.successMsg);
+			return this.recipeService.savePerson(firstname, surname, username, password, isAdmin);
+		} else {
+			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
+			return Boolean.FALSE;
+		}
+	}
+
 	@GetMapping(path = "/savePassword")
 	public @ResponseBody Boolean savePassword(HttpServletRequest request, HttpServletResponse response, @RequestParam String username, @RequestParam String password) throws IOException {
-		Boolean tokenIsValid = this.recipeService.isTokenValid(request);
-		if(tokenIsValid.booleanValue()) {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
 			response.sendError(200, this.successMsg);
 			return this.recipeService.savePassword(username, password);
 		} else {
@@ -113,8 +225,8 @@ public class MainController {
 
 	@GetMapping(path = "/removeRecipeById")
 	public @ResponseBody Boolean removeRecipeById(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id) throws IOException {
-		Boolean tokenIsValid = this.recipeService.isTokenValid(request);
-		if(tokenIsValid.booleanValue()) {
+		Person tokenIsValid = this.recipeService.isTokenValid(request);
+		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
 			return recipeService.deleteRecipe(id);
 		} else {
 			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, this.timeoutMsg);
@@ -180,6 +292,19 @@ public class MainController {
 	public @ResponseBody Iterable<PartDto> getAllParts(HttpServletRequest request) {
 		this.recipeService.isTokenValid(request);
 		return recipeService.getAllParts(Boolean.FALSE);
+	}
+
+	@GetMapping(path = "/getAllPerson")
+	public @ResponseBody Iterable<PersonDto> getAllPerson(HttpServletRequest request) {
+		this.recipeService.isTokenValid(request);
+		return recipeService.getAllPerson(Boolean.FALSE);
+	}
+
+	@GetMapping(path = "/initUuids")
+	public @ResponseBody Boolean initUuids(HttpServletRequest request) {
+		this.recipeService.isTokenValid(request);
+		recipeService.initUuids();
+		return Boolean.TRUE;
 	}
 
 	@ExceptionHandler
