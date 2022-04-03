@@ -469,9 +469,14 @@ public class RecipeServiceImpl implements RecipeService {
 	@Override
 	public Boolean deleteRecipe(Integer id) throws IllegalArgumentException {
 		boolean isDeleted = false;
-		Optional<Recipe> recipe = this.recipeRepository.findById(id);
-		if (recipe.isPresent()) {
-			this.recipeRepository.delete(recipe.get());
+		Optional<Recipe> recipeOpt = this.recipeRepository.findById(id);
+		if (recipeOpt.isPresent()) {
+			Recipe recipe = recipeOpt.get();
+			for(Tag tag : recipe.getTags()) {
+				recipe.getTags().remove(tag);
+			}
+			this.recipeRepository.save(recipe);
+			this.recipeRepository.delete(recipe);
 			isDeleted = true;
 		} else {
 			throw new IllegalArgumentException("kein Rezeot mit der ID " + id.toString() + " gefunden!");
@@ -630,17 +635,19 @@ public class RecipeServiceImpl implements RecipeService {
 	}
 
 	@Override
-	public Boolean deleteTag(Integer tagId) throws IllegalArgumentException {
-		if (tagId == null) {
+	public Boolean removeTagFromRecipe(Integer recipeId, Integer tagId) throws IllegalArgumentException {
+		if (tagId == null || recipeId == null) {
 			throw new IllegalArgumentException("error.tag");
 		} else {
-			Optional<Tag> ele = this.tagRepository.findById(tagId);
-			if (ele.isPresent()) {
-				this.tagRepository.delete(ele.get());
-				return Boolean.TRUE;
-			} else {
-				throw new IllegalArgumentException("kein Tag mit der ID " + tagId.toString() + " gefunden!");
+			
+			List<Recipe_Tag> ele = this.recipeTagRepository.findByTagIdAndRecipeId(Long.valueOf(recipeId.longValue()),Long.valueOf(tagId.longValue()));
+			for(Recipe_Tag item : ele) {
+				this.recipeTagRepository.delete(item);
 			}
+			if (ele.isEmpty()) {
+				throw new IllegalArgumentException("keine Tagzuordnung mit der ID " + tagId.toString() + " gefunden!");
+			}
+			return Boolean.TRUE;
 		}
 	}
 	@Override
@@ -666,7 +673,7 @@ public class RecipeServiceImpl implements RecipeService {
 		return Boolean.FALSE;
 	}
 	@Override
-	public Boolean addTag(Integer recipeId, Integer tagId) throws IllegalArgumentException {
+	public Boolean addTagToRecipe(Integer recipeId, Integer tagId) throws IllegalArgumentException {
 		if (recipeId == null || tagId == null) {
 			throw new IllegalArgumentException("error.tag");
 		} else {
@@ -675,11 +682,8 @@ public class RecipeServiceImpl implements RecipeService {
 			if (recipeOptional.isPresent() && tagOptional.isPresent()) {
 				Recipe recipe = recipeOptional.get();
 				Tag tag = tagOptional.get();
-				
-				Recipe_Tag recipeTag = new Recipe_Tag();
-				recipeTag.setRecipe_id(Long.valueOf(recipe.getId().longValue()));
-				recipeTag.setTag_id(Long.valueOf(tag.getId().longValue()));
-				this.recipeTagRepository.save(recipeTag);
+				recipe.getTags().add(tag);
+				this.recipeRepository.save(recipe);
 				return Boolean.TRUE;
 			} else {
 				throw new IllegalArgumentException("keinen Tag mit der ID " + tagId.toString() + " gefunden!");
@@ -772,7 +776,15 @@ public class RecipeServiceImpl implements RecipeService {
 			src.setIsbn(srcDto.getIsbn());
 			src.setYear(srcDto.getYear());
 			recipe.setSource(src);
-			
+
+			PersonDto personDto = recipeDto.getPerson();
+			if(personDto.getId() != null) {
+				Optional<Person> persOpt = personRepository.findById(personDto.getId());
+				if (persOpt.isPresent()) {
+					recipe.setPerson(persOpt.get());
+				}
+			}
+
 			recipe.setTags(new HashSet<>());
 			for(TagDto tagDto : recipeDto.getTags()) {
 				Tag tag = new Tag();

@@ -1,45 +1,45 @@
 module Pages.EditorTabs.Tab2 exposing(showTab, showTagOption)
 
 import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onClick, onInput, on)
-import Html.Events.Extra as EvE exposing (onChange)
-import List exposing (..)
+import Html.Attributes as Attr
+import Html.Events as Ev
+import Html.Events.Extra as Ev
+import List
 
-import Devs.Objects as Objects exposing (..)
-import Devs.TypeObject as TO exposing (Msg)
+import Devs.Objects as O
+import Devs.TypeObject as TO
 -- View
 
-showTab: Model -> Html Msg
+showTab: O.Model -> Html TO.Msg
 showTab model =
   let
     recForEdit = case model.selectedRecipe of
       Just rec -> rec
-      Nothing -> Objects.getEmptyRecipe
+      Nothing -> O.getEmptyRecipe
     initialTagList = case model.kl.tagList of
       Just tags -> tags
       Nothing -> []
   in
-        Html.div[ class "showTabContent" ][
+        Html.div[ Attr.class "showTabContent" ][
           Html.div[][
-            Html.table [ ]( List.map (showTagDiv initialTagList) (sortBy .name recForEdit.tags) )
+            Html.table [ ]( List.map (showTagDiv initialTagList) (List.sortBy .name recForEdit.tags) )
           ],
           Html.div[][
-            Html.button [ onClick TO.ChooseNewTag ][ Html.text "Tag hinzufügen" ]
+            Html.button [ Ev.onClick TO.ChooseNewTag ][ Html.text "Tag hinzufügen" ]
             --,Html.button [][ Html.text "+" ]
           ]
         ]
 
-showTagDiv: List Tag -> Tag -> Html Msg
+showTagDiv: List O.Tag -> O.Tag -> Html TO.Msg
 showTagDiv initialTagList tag =
   Html.tr[][
     Html.td[][ Html.text (tag.name ++ " (" ++ tag.tagType.name ++ ")") ],
-    Html.td[][ Html.button [ onClick (TO.RemoveTagFromRec tag.uuid) ][ Html.text "-" ] ]
+    Html.td[][ Html.button [ Ev.onClick (TO.DeleteTag tag) ][ Html.text "-" ] ]
   ]
 
-showTagOption: Tag -> Tag -> Html Msg
+showTagOption: O.Tag -> O.Tag -> Html TO.Msg
 showTagOption tagListValue tag =
   let
     selectedVal = if tagListValue.uuid == tag.uuid then True else False
   in
-    Html.option[ value tag.uuid, selected selectedVal ][ Html.text (tag.name ++ " (" ++ tag.tagType.name ++ ")") ]
+    Html.option[ Attr.value tag.uuid, Attr.selected selectedVal ][ Html.text (tag.name ++ " (" ++ tag.tagType.name ++ ")") ]

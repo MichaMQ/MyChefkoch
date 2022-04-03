@@ -170,11 +170,11 @@ public class MainController {
 		}
 	}
 
-	@GetMapping(path = "/deleteTag")
-	public @ResponseBody Boolean deleteTag(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer tagId) throws IOException {
+	@GetMapping(path = "/removeTagFromRecipe")
+	public @ResponseBody Boolean removeTagFromRecipe(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer recipeId, @RequestParam Integer tagId) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
-			if(this.recipeService.deleteTag(tagId)) {
+			if(this.recipeService.removeTagFromRecipe(recipeId, tagId)) {
 				response.setStatus(HttpServletResponse.SC_OK);
 				return Boolean.TRUE;
 			} else {
@@ -202,11 +202,12 @@ public class MainController {
 			return Boolean.FALSE;
 		}
 	}
-	@GetMapping("/addTag")
-	public @ResponseBody Boolean addTag(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody Integer eleId) throws IOException {
+
+	@GetMapping(path = "/addTagToRecipe")
+	public @ResponseBody Boolean addTagToRecipe(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer recipeId, @RequestParam Integer tagId) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
-			if(this.recipeService.addTag(recipeId, eleId)) {
+			if(this.recipeService.addTagToRecipe(recipeId, tagId)) {
 				response.setStatus(HttpServletResponse.SC_OK);
 				return Boolean.TRUE;
 			} else {
@@ -219,7 +220,7 @@ public class MainController {
 		}
 	}
 
-	@GetMapping("/updateSource")
+	@GetMapping(path = "/updateSource")
 	public @ResponseBody Boolean updateSource(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody Integer eleId) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {

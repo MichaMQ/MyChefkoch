@@ -92,9 +92,6 @@ viewSourceForm model =
 viewEditForm: O.Model -> Html TO.Msg
 viewEditForm model =
   let
-    recipeForEdit = case model.selectedRecipe of
-      Just rec -> rec
-      Nothing -> O.getEmptyRecipe
     editForm = case model.showEditForm of
       Just ef -> ef
       Nothing -> O.None

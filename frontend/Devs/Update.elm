@@ -7,7 +7,7 @@ import UUID
 import Random
 import Debug
 
-import Devs.Objects as O
+import Devs.Objects as O exposing (getEmptyRecipe)
 import Devs.TypeObject exposing (..)
 import Devs.Recipe as RecipeObj
 import Devs.Utils as DU
@@ -17,6 +17,8 @@ update : Msg -> O.Model -> ( O.Model, Cmd Msg )
 update msg model =
     case msg of
         NoOp -> ( model , Cmd.none )
+        NoOpWS (Ok _) -> ( model, Cmd.none)
+        NoOpWS (Err error) -> ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         Initialize initData ->
           let
             sp = model.sp
@@ -58,6 +60,7 @@ update msg model =
               Just error -> ( { model | recAlertMessage = Just (DU.httpErrorToMessage error session.msg), session = Nothing }, Cmd.none)
               Nothing -> (model, Cmd.none)
         HandleLogin (Err error) -> ( { model | recAlertMessage = Just (DU.httpErrorToMessage error Nothing), session = Nothing }, Cmd.none)
+        Logout -> ({model|session=Nothing}, Cmd.none)
         ShowOverView -> ( { model | selectedRecipe = Nothing, selectedTag = Nothing }, Cmd.none )
         ToggleEditForm formEnum ->
           let
@@ -76,9 +79,13 @@ update msg model =
         InsertRecipe ->
           let
             ( newUuid, newSeed ) = Random.step UUID.generator (DU.getSeed model)
-            newRec = O.getEmptyRecipe
+            newRec = case model.session of
+              Just session -> case session.person of
+                Just person -> { getEmptyRecipe | person = person}
+                Nothing -> getEmptyRecipe
+              Nothing -> getEmptyRecipe
           in
-            ( { model | currentSeed = Just newSeed, selectedRecipe = Just {newRec | uuid = UUID.toString newUuid} }, Cmd.none )
+            ( { model | currentSeed = Just newSeed, showEditForm = Just O.BasicForm, selectedRecipe = Just {newRec | uuid = UUID.toString newUuid} }, Cmd.none )
         SaveRecipe ->
           let
             errorMsg = Maybe.andThen (\rec -> DU.validateRecipe rec) model.selectedRecipe
@@ -90,13 +97,15 @@ update msg model =
               Nothing -> case model.selectedRecipe of
                 Just newRecipe -> ( model, DU.saveRecipe model newRecipe )
                 Nothing -> ( model, Cmd.none )
-        SavedRecipe (Ok savedRecipe) -> ( { model | selectedRecipe = Just savedRecipe, recAlertMessage = Nothing }, Cmd.none )
+        SavedRecipe (Ok savedRecipe) -> ( { model | selectedRecipe = Just savedRecipe, showEditForm = Nothing, recAlertMessage = Nothing }, Cmd.none )
         SavedRecipe (Err error) ->
           let
             _ = Debug.log "error: " error
           in
             ( { model | recAlertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
-        DeleteRecipe -> ( { model | deleteRecipe = False, selectedTag = Nothing, recipesOfSelectedTag = Nothing, selectedRecipe = Nothing, newSource = Nothing }, Cmd.none )
+        DeleteRecipe -> case model.selectedRecipe of
+          Just recipe -> ( { model | deleteRecipe = False, selectedTag = Nothing, recipesOfSelectedTag = Nothing, selectedRecipe = Nothing, newSource = Nothing }, DU.removeRecipeById model recipe.id )
+          Nothing -> (model, Cmd.none)
         CloseRecipeAlert -> ( { model | recAlertMessage = Nothing }, Cmd.none )
         SetAikz val ->           ( { model | selectedRecipe = (RecipeObj.setAikz model.selectedRecipe val) } , Cmd.none)
         SetName val ->           ( { model | selectedRecipe = (RecipeObj.setName model.selectedRecipe val) } , Cmd.none)
@@ -154,21 +163,13 @@ update msg model =
             tagList = case model.kl.tagList of
               Just tagListTmp -> tagListTmp
               Nothing -> []
-            newModel = case ( List.find ( \item -> item.uuid == tUuid ) tagList ) of
-              Just item -> { model | addTag = Just item }
-              Nothing -> model
           in
-            ( newModel , Cmd.none)
-        RemoveTagFromRec tUuid ->
-          let
-            newTagList = case model.selectedRecipe of
-              Just rec -> List.filter (\item -> (item.uuid /= tUuid)) rec.tags
-              Nothing -> []
-          in
-            ( { model | selectedRecipe = (RecipeObj.setTags model.selectedRecipe newTagList) } , Cmd.none)
+            case ( List.find ( \item -> item.uuid == tUuid ) tagList ) of
+              Just item -> ({ model | addTag = Just item }, Cmd.none)
+              Nothing -> (model, Cmd.none)
         AddTagToRecipe ->
-          case model.addTag of
-            Just newTag -> ( { model | addTag = Nothing, alertMessage = Nothing, selectedRecipe = (RecipeObj.addToTags model.selectedRecipe newTag) } , Cmd.none)
+          case model.addTag of --, selectedRecipe = (RecipeObj.addToTags model.selectedRecipe newTag)
+            Just newTag -> ( { model | addTag = Nothing, alertMessage = Nothing } , DU.addTagToRecipe model newTag model.selectedRecipe)
             Nothing -> ( { model | alertMessage = Just "Bitte einen Tag auswählen." }, Cmd.none)
         CancelAddTag ->
           ( { model | addTag = Nothing, alertMessage = Nothing } , Cmd.none)
@@ -334,8 +335,11 @@ update msg model =
           in
             ( { model | selectedRecipe = newRec } , Cmd.none)
         DeleteIncredient ingredient -> (model, DU.deleteIngredient model ingredient)
-        DeleteSource sourceId -> (model, DU.deleteSource model sourceId)
-        DeleteTag tagId -> (model, DU.deleteTag model tagId)
+        DeleteTag tag -> case model.selectedRecipe of
+          Just rec -> case rec.id of
+            Just recId -> (model, DU.removeTagFromRecipe model tag recId)
+            Nothing -> (model, Cmd.none)
+          Nothing -> (model, Cmd.none)
         AddTodo todo recipeId -> (model, DU.addTodo model todo recipeId)
         UpdateTodo todo -> (model, DU.updateTodo model todo)
         RemoveEmptyTodo todoUuid ->
@@ -388,12 +392,19 @@ update msg model =
             ( { model | selectedRecipe = newRec } , Cmd.none)
         AddTodoToRecipeResp (Err error) ->
           ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
-        DeleteSourceResp sourceId (Ok _) ->
-          ( model , Cmd.none)
-        DeleteSourceResp _ (Err error) ->
+        AddTagToRecipeResp newTag (Ok _) ->
+          case model.selectedRecipe of
+            Just recipe -> ( {model|selectedRecipe=Just {recipe|tags=List.append recipe.tags [newTag]}}, Cmd.none)
+            Nothing -> ( model, Cmd.none)
+        AddTagToRecipeResp _ (Err error) ->
           ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
-        DeleteTagResp tagId (Ok isDeleted) ->
-          ( model , Cmd.none)
-        DeleteTagResp _ (Err error) ->
+        RemoveTagFromRec tUuid (Ok _) ->
+          let
+            newTagList = case model.selectedRecipe of
+              Just rec -> List.filter (\item -> (item.uuid /= tUuid)) rec.tags
+              Nothing -> []
+          in
+            ( { model | selectedRecipe = (RecipeObj.setTags model.selectedRecipe newTagList) } , Cmd.none)
+        RemoveTagFromRec _ (Err error) ->
           ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         

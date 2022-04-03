@@ -59,11 +59,11 @@ public interface RecipeService {
 
 	public Boolean updateSource(Integer recipeId, Integer sourceId);
 
-	public Boolean addTag(Integer recipeId, Integer tagId) throws IllegalArgumentException;
+	public Boolean addTagToRecipe(Integer recipeId, Integer tagId) throws IllegalArgumentException;
 
 	public Boolean updateTag(TagDto eleDto);
 
-	public Boolean deleteTag(Integer tagId);
+	public Boolean removeTagFromRecipe(Integer recipeId, Integer tagId);
 
 	public TodoDto addTodo(Integer recipeId, TodoDto todoDto) throws IllegalArgumentException;
 

@@ -44,33 +44,41 @@ viewOverview model alertMsg =
       then Utils.getConfirmForm TO.DeleteRecipe TO.CancelDelete "Soll das Rezept wirklich gelöscht werden?"
       else Html.text ""
     actionButton = if DU.isLoggedIn model.session Nothing
-      then Html.button [ onClick TO.InsertRecipe ][ Html.text "hinzufügen" ]
-      else Html.button [ class "loginBtn", onClick TO.GetLoginForm ][ Html.text "einloggen" ]
+      then [
+          Html.button [ onClick TO.InsertRecipe ][ Html.text "hinzufügen" ]
+          , Html.button [ onClick TO.Logout ][ Html.text "ausloggen" ]
+        ]
+      else [Html.button [ class "loginBtn", onClick TO.GetLoginForm ][ Html.text "einloggen" ]]
     printBookLink = model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/printBookDownload"
   in
     Html.div[][
       sourceForm, tagForm, editForm, loginForm, confirmDeleteForm,
       Html.h1 [class "noprint"][ Html.text "Meine Rezeptesammlung" ],
       Html.div [ id "searchDiv", class "noprint"][
-        Html.div [ id "searchForm" ][
-          Html.input [
-            type_ "text",
-            name "searchField",
-            class "searchField",
-            placeholder "Welches Rezept suchst du?",
-            value model.searchValue,
-            onInput TO.SetSearchInput,
-            Utils.onEnter TO.SearchRecipe
-          ][],
-          Html.button [
-            name "searchButton",
-            value "search",
-            onClick TO.SearchRecipe
-          ][ Html.text "suche" ],
-          actionButton,
-          Html.a [ href printBookLink ] [ Html.text "Buch drucken" ]
---          Html.button [ onClick PrintBook ][ Html.text "Buch drucken" ]
-        ]
+        Html.div [ id "searchForm" ](
+          List.concat[
+            [
+              Html.input [
+                type_ "text",
+                name "searchField",
+                class "searchField",
+                placeholder "Welches Rezept suchst du?",
+                value model.searchValue,
+                onInput TO.SetSearchInput,
+                Utils.onEnter TO.SearchRecipe
+              ][],
+              Html.button [
+                name "searchButton",
+                value "search",
+                onClick TO.SearchRecipe
+              ][ Html.text "suche" ]
+            ],actionButton,
+            [
+              Html.a [ href printBookLink ] [ Html.text "Buch drucken" ]
+    --          Html.button [ onClick PrintBook ][ Html.text "Buch drucken" ]
+            ]
+          ]
+        )
       ], alertMsg,
       content
     ]

@@ -46,13 +46,7 @@ validateRecipe rec =
     if String.isEmpty rec.name
       then Just "Es muss ein Namen eingegeben werden."
       else case rec.source of
-        Just _ -> if List.isEmpty rec.ingredients
-          then Just "Es muss mindestens eine Zutat eingegeben werden."
-          else if List.isEmpty rec.todos
-            then Just "Es muss mindestens eine Anweisung eingegeben werden."
-            else if List.isEmpty rec.tags
-              then Just "Es muss mindestens ein Tag eingegeben werden."
-              else Nothing
+        Just _ -> Nothing
         Nothing -> Just "Es muss eine Quelle angegeben werden."
 
 getSeed: O.Model -> Random.Seed
@@ -106,6 +100,11 @@ saveSource model newSource = Api.saveSource TO.SavedSource model.session (model.
 saveRecipe: O.Model -> O.Recipe -> Cmd TO.Msg
 saveRecipe model newRecipe = Api.saveRecipe TO.SavedRecipe model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/saveRecipe") newRecipe
 
+removeRecipeById: O.Model -> Maybe Int -> Cmd TO.Msg
+removeRecipeById model recipeId = case recipeId of
+  Just recId -> Api.deleteValue TO.NoOpWS model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/removeRecipeById?id=" ++ (String.fromInt recId))
+  Nothing -> Cmd.none
+
 addIngredient: O.Model -> O.Ingredient -> Int -> Cmd TO.Msg
 addIngredient model ingredient recipeId = Api.addIngredient TO.AddIngreToRecipeResp model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/addIngredient") (RE.addIncredientEncoder recipeId ingredient)
 
@@ -116,11 +115,20 @@ deleteIngredient: O.Model -> O.Ingredient -> Cmd TO.Msg
 deleteIngredient model ingredient = case ingredient.id of
   Just ingredientId -> Api.deleteValue (TO.RemoveIngreFromRecipe ingredient.uuid) model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/deleteIngredient?ingredientId=" ++ (String.fromInt ingredientId))
   Nothing -> Cmd.none
-deleteSource: O.Model -> Int -> Cmd TO.Msg
-deleteSource model sourceId = Api.deleteValue (TO.DeleteSourceResp sourceId) model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/deleteSource?sourceId=" ++ (String.fromInt sourceId))
-deleteTag: O.Model -> Int -> Cmd TO.Msg
-deleteTag model tagId = Api.deleteValue (TO.DeleteTagResp tagId) model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/deleteTag?tagId=" ++ (String.fromInt tagId))
 
+addTagToRecipe: O.Model -> O.Tag -> Maybe O.Recipe -> Cmd TO.Msg
+addTagToRecipe model tag recipeObj = case tag.id of
+  Just tagId -> case recipeObj of
+    Just recipe -> case recipe.id of
+      Just recipeId -> Api.deleteValue (TO.AddTagToRecipeResp tag) model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/addTagToRecipe?recipeId=" ++ (String.fromInt recipeId) ++ "&tagId=" ++ (String.fromInt tagId))
+      Nothing -> Cmd.none
+    Nothing -> Cmd.none
+  Nothing -> Cmd.none
+
+removeTagFromRecipe: O.Model -> O.Tag -> Int -> Cmd TO.Msg
+removeTagFromRecipe model tag recipeId = case tag.id of
+  Just tagId -> Api.deleteValue (TO.RemoveTagFromRec tag.uuid) model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/removeTagFromRecipe?recipeId=" ++ (String.fromInt recipeId) ++ "&tagId=" ++ (String.fromInt tagId))
+  Nothing -> Cmd.none
 
 addTodo: O.Model -> O.Todo -> Int -> Cmd TO.Msg
 addTodo model todo recipeId = Api.addTodo TO.AddTodoToRecipeResp model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/addTodo") (RE.addTodoEncoder recipeId todo)

@@ -1,6 +1,7 @@
 module Pages.EditorTabs.Tab1 exposing(showTab)
 
 import Html exposing (..)
+import Html.Extra as Html
 import Html.Attributes as Attr
 import Html.Events as Ev
 import Html.Events.Extra as Ev
@@ -39,6 +40,18 @@ showTab model =
     sourceValue = case mod_rec.source of
       Just val -> val
       Nothing -> O.getEmptySource
+    carbohydratesValue = case mod_rec.nv_carbohydrates of
+      Just val -> String.fromFloat val
+      Nothing -> ""
+    fatValue = case mod_rec.nv_fat of
+      Just val -> String.fromFloat val
+      Nothing -> ""
+    proteinValue = case mod_rec.nv_protein of
+      Just val -> String.fromFloat val
+      Nothing -> ""
+    energyValue = case mod_rec.nv_energy of
+      Just val -> String.fromFloat val
+      Nothing -> ""
     imgValue = case mod_rec.image of
       Just val -> val
       Nothing -> ""
@@ -73,21 +86,43 @@ showTab model =
             Html.div[][
               Html.label [ Attr.for "source_page" ][ Html.text "Seitenangabe" ],
               Html.input [ Attr.type_ "number", Ev.onInput TO.SetSourcePage, Attr.id "source_page", Attr.value sourcePageValue ][]
-            ],
-            Html.div[](
+            ]
+            , Html.div[][
+              Html.label [ Attr.for "nv_energy" ][ Html.text "Kalorien" ],
+              Html.input [ Attr.type_ "number", Ev.onInput TO.SetEnergy, Attr.placeholder "in kCal pro Portion", Attr.step "0.1", Attr.id "nv_energy", Attr.value energyValue ][]
+            ]
+            , Html.div[][
+              Html.label [ Attr.for "nv_carbohydrates" ][ Html.text "Kohlenhydrate" ],
+              Html.input [ Attr.type_ "number", Ev.onInput TO.SetCarbo, Attr.placeholder "in g pro Portion", Attr.step "0.1", Attr.id "nv_carbohydrates", Attr.value carbohydratesValue ][]
+            ]
+            , Html.div[][
+              Html.label [ Attr.for "nv_fat" ][ Html.text "Fett" ],
+              Html.input [ Attr.type_ "number", Ev.onInput TO.SetFat, Attr.placeholder "in g pro Portion", Attr.step "0.1", Attr.id "nv_fat", Attr.value fatValue ][]
+            ]
+            , Html.div[][
+              Html.label [ Attr.for "nv_protein" ][ Html.text "Eiweiß" ],
+              Html.input [ Attr.type_ "number", Ev.onInput TO.SetProt, Attr.placeholder "in g pro Portion", Attr.step "0.1", Attr.id "nv_protein", Attr.value proteinValue ][]
+            ]
+            {-
+            , Html.div[](
               List.append
                 [Html.label [ Attr.for "image" ][ Html.text "Bild" ]]
                 (getImageField model mod_rec)
               )
+              -}
           ],
-          (viewImagePreview model.recImage)
+          (viewImagePreview model.recImage mod_rec.image)
         ]
 
-viewImagePreview : Maybe O.ImagePortData -> Html TO.Msg
-viewImagePreview image =
+viewImagePreview : Maybe O.ImagePortData -> Maybe String -> Html TO.Msg
+viewImagePreview image base64Img =
   case image of
     Just img -> Html.figure [][ Html.img[ Attr.src img.contents, Attr.title img.filename ][] ]
-    Nothing -> Html.text ""
+    Nothing -> case base64Img of
+      Just imgSrc -> if String.startsWith "/" imgSrc
+        then Html.div[Attr.style "display" "inline-block"][Html.figure [][ Html.img[ Attr.class "recipeImg", Attr.src ("data:image/jpeg;base64," ++ imgSrc) ][] ]]
+        else Html.nothing
+      Nothing -> Html.nothing
 
 getImageField: O.Model -> O.Recipe -> List (Html TO.Msg)
 getImageField model rec =

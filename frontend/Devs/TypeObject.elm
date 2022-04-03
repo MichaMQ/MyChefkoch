@@ -7,6 +7,7 @@ import Devs.Objects as O
 -- Types
 type Msg =
   NoOp
+  | NoOpWS (Result Http.Error Bool)
   | Initialize O.InitData
   | ImageSelected
   | ImageRead O.ImagePortData
@@ -16,6 +17,7 @@ type Msg =
   | SetUsernameForCheck String
   | SetPasswortForCheck String
   | Login
+  | Logout
   | HandleLogin (Result Http.Error O.Session)
   | ShowRecipesOfTag (Maybe O.Tag)
   | ShowRecipe (Maybe O.RecipeLight)
@@ -48,7 +50,6 @@ type Msg =
   | SavedSource (Result Http.Error (O.Source))
   | ChooseNewTag
   | SetChoosenTag String
-  | RemoveTagFromRec String
   | CancelAddTag
   | AddTagToRecipe
   | AddIngreToRecipe
@@ -86,8 +87,7 @@ type Msg =
   | UpdateIncredient O.Ingredient
   | RemoveEmptyIngretient String
   | DeleteIncredient O.Ingredient
-  | DeleteSource Int
-  | DeleteTag Int
+  | DeleteTag O.Tag
   | AddTodo O.Todo Int
   | UpdateTodo O.Todo
   | RemoveEmptyTodo String
@@ -101,6 +101,5 @@ type Msg =
   | RemoveTodoFromRecipe String (Result Http.Error Bool)
   | AddTodoToRecipeResp (Result Http.Error O.Todo)
 
-  | DeleteSourceResp Int (Result Http.Error Bool)
-  | DeleteTagResp Int (Result Http.Error Bool)
- -- | DeleteTodoResp Int (Result Http.Error Bool)
+  | AddTagToRecipeResp O.Tag (Result Http.Error Bool)
+  | RemoveTagFromRec String  (Result Http.Error Bool)

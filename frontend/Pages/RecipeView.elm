@@ -1,6 +1,7 @@
 module Pages.RecipeView exposing(viewRecipe)
 
 import Html exposing (..)
+import Html.Extra as Html
 import Html.Attributes as Attr
 import Html.Events as Ev
 import List
@@ -77,11 +78,29 @@ viewRecipe session rec sp =
           --, PU.getEditButton sp (Just (DU.isLoggedIn session (Just rec.person))) "save.png" Nothing TO.SaveRecipe [Attr.style "margin-top" "10px"] Nothing
           , PU.getEditButton sp (Just (DU.isLoggedIn session (Just rec.person))) "delete.png" Nothing TO.ConfirmDelete [Attr.style "margin-top" "10px"] Nothing
         ]
-        , Html.div [ Attr.id "recipeSource", Attr.style "clear" "both" ][ Html.text (rec_source ++ sourcePage ++ sourceYear ++ sourceIsbn), amazonLink ]
-        , Html.div [ Attr.id "recipeOwner" ][ Html.text owner ]
-        , Html.div [ Attr.id "recipeTags" ][
-          PU.getEditHeader (DU.isLoggedIn session (Just rec.person)) "Tags:" (TO.ToggleEditForm O.TagForm)
-          , Html.text (" " ++ (String.join ", " (List.map getTagName (List.sortBy .name rec.tags))))
+        , Html.div[ Attr.style "clear" "both" ][]
+        , Html.div[][
+          Html.div[ Attr.style "display" "inline-block" ][
+            Html.div [ Attr.id "recipeSource" ][ Html.text (rec_source ++ sourcePage ++ sourceYear ++ sourceIsbn), amazonLink ]
+            , Html.div [ Attr.id "recipeOwner" ][ Html.text owner ]
+            , Html.div [ Attr.id "recipeTags" ][
+              PU.getEditHeader (DU.isLoggedIn session (Just rec.person)) "Tags:" (TO.ToggleEditForm O.TagForm)
+              , Html.text (" " ++ (String.join ", " (List.map getTagName (List.sortBy .name rec.tags))))
+            ]
+          ], Html.div[ Attr.style "display" "inline-block", Attr.style "padding-left" "15px" ][
+            case rec.nv_energy of
+              Just energy -> Html.div [ Attr.id "nv_energy" ][ Html.text ("Kalorien: " ++ String.fromFloat energy ++ " kCal") ]
+              Nothing -> Html.nothing
+            , case rec.nv_carbohydrates of
+              Just carbohydrates -> Html.div [ Attr.id "nv_carbohydrates" ][ Html.text ("Kohlenhydrate: " ++ String.fromFloat carbohydrates ++ " g") ]
+              Nothing -> Html.nothing
+            , case rec.nv_fat of
+              Just fat -> Html.div [ Attr.id "nv_fat" ][ Html.text ("Fett:" ++ String.fromFloat fat ++ " g") ]
+              Nothing -> Html.nothing
+            , case rec.nv_protein of
+              Just protein -> Html.div [ Attr.id "nv_protein" ][ Html.text ("Eiweiß: " ++ String.fromFloat protein ++ " g") ]
+              Nothing -> Html.nothing
+          ]
         ]
         , Html.figure [][ recImage, Html.figcaption [][ rec_number ] ],
         Html.div [ Attr.id "recipe" ][

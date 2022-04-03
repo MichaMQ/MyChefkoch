@@ -29,6 +29,20 @@ imageEncoder img = Encode.object [ ( "contents", Encode.string img.contents )
   , ( "filename", Encode.string img.filename )
   ]
 
+roleEncoder: O.Role -> Encode.Value
+roleEncoder role = case role of
+    O.ADMIN -> Encode.string "ADMIN"
+    O.USER -> Encode.string "USER"
+
+personEncoder: O.Person -> Encode.Value
+personEncoder td =
+    Encode.object [ ( "id", encodeInt td.id )
+    , ( "firstname", Encode.string td.firstname )
+    , ( "surname", Encode.string td.surname )
+    , ( "role", roleEncoder td.role )
+    , ( "uuid", Encode.string td.uuid )
+    ]
+
 recipeEncoder: O.Recipe -> Encode.Value
 recipeEncoder rec =
     let
@@ -51,6 +65,7 @@ recipeEncoder rec =
           , ( "source", case rec.source of
             Just val -> sourceEncoder val
             Nothing -> Encode.null )
+          , ( "person", personEncoder rec.person)
           , ( "ingredients", Encode.list ingreEncoder rec.ingredients )
           , ( "tags", Encode.list tagEncoder rec.tags )
           , ( "todos", Encode.list todoEncoder rec.todos )
