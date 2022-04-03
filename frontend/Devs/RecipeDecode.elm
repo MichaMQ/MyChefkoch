@@ -1,4 +1,4 @@
-module Devs.RecipeDecode exposing ( tagtypeDecoder,recipeLightDecoder,recipeDecoder,unitDecoder,sourceDecoder,tagDecoder,partLightDecoder,sessionDecoder,ingrDecoder )
+module Devs.RecipeDecode exposing ( .. )
 
 import Json.Decode as Decode exposing (Decoder, field)
 import Json.Decode.Extra exposing (andMap)
@@ -6,6 +6,7 @@ import Json.Decode.Extra exposing (andMap)
 --import Json.Encode.Extra as JsonE exposing (..)
 
 import Devs.Objects as O
+import Http
 
 tagtypeShortDecoder : Decoder O.TagtypeShort
 tagtypeShortDecoder = Decode.map3 O.TagtypeShort
@@ -102,6 +103,13 @@ accountTypeDecoder = Decode.string |>
       somethingElse -> Decode.fail <| "Unknown accountType: " ++ somethingElse
   )
 
+httpErrorDecoder: Decoder Http.Error
+httpErrorDecoder = Decode.int |>
+  Decode.andThen (\str ->
+    if str >= 300 && str < 500 then Decode.succeed (Http.BadStatus str)
+    else Decode.succeed (Http.BadBody "")
+  )
+
 accountDecoder: Decoder O.Account
 accountDecoder = Decode.map7 O.Account
   (field "id" Decode.int)
@@ -122,7 +130,7 @@ personDecoder = Decode.map5 O.Person
 
 todoDecoder : Decoder O.Todo
 todoDecoder = Decode.map6 O.Todo
-  (field "id" Decode.int)
+  (Decode.maybe <| field "id" Decode.int)
   (Decode.maybe <| field "image" Decode.string)
   (Decode.maybe <| field "image_comment" Decode.string)
   (field "number" Decode.int)
@@ -139,9 +147,11 @@ recipeLightDecoder = Decode.map3 O.RecipeLight
   (field "uuid" Decode.string)
 
 sessionDecoder: Decoder O.Session
-sessionDecoder = Decode.map2 O.Session
-  (field "person" personDecoder)
-  (field "account" accountDecoder)
+sessionDecoder = Decode.map4 O.Session
+  (Decode.maybe <| field "person" personDecoder)
+  (Decode.maybe <| field "account" accountDecoder)
+  (Decode.maybe <| field "stateCode" httpErrorDecoder)
+  (Decode.maybe <| field "msg" Decode.string)
 
 recipeDecoder : Decode.Decoder O.Recipe
 recipeDecoder =

@@ -222,7 +222,7 @@ public class RecipeDto extends GenericDto {
 		return image;
 	}
 	public void setImage(String image, String imgPath) {
-		if(image != null) {
+		if(image != null && !image.startsWith("/")) {
 			String imgCode = Base64Util.encodeToBase64(imgPath + "/" + image);
 			this.image = imgCode;
 		} else {

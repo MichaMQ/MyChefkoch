@@ -63,7 +63,6 @@ type Msg =
   | SetTodoText String String
   | SetTodoImg String String
   | SetTodoImgComment String String
-  | RemoveTodoFromRecipe String
   | CancelRecipeEdit
   | ConfirmDelete
   | CancelDelete
@@ -89,10 +88,19 @@ type Msg =
   | DeleteIncredient O.Ingredient
   | DeleteSource Int
   | DeleteTag Int
-  | DeleteTodo Int
+  | AddTodo O.Todo Int
+  | UpdateTodo O.Todo
+  | RemoveEmptyTodo String
+  | DeleteTodo O.Todo
+
   | UpdateIncredientResp (Result Http.Error Bool)
   | RemoveIngreFromRecipe String (Result Http.Error Bool)
   | AddIngreToRecipeResp (Result Http.Error O.Ingredient)
+  
+  | UpdateTodoResp (Result Http.Error Bool)
+  | RemoveTodoFromRecipe String (Result Http.Error Bool)
+  | AddTodoToRecipeResp (Result Http.Error O.Todo)
+
   | DeleteSourceResp Int (Result Http.Error Bool)
   | DeleteTagResp Int (Result Http.Error Bool)
-  | DeleteTodoResp Int (Result Http.Error Bool)
+ -- | DeleteTodoResp Int (Result Http.Error Bool)

@@ -5,6 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
 import Devs.Objects as O
 import Devs.TypeObject as TO
+import Devs.Utils as DU
 --import Debug exposing (log)
 
 --import Recipe as RecipeObj
@@ -35,17 +36,14 @@ viewOverview model alertMsg =
       Just _ -> EW.viewAddTagForm model
       Nothing -> Html.text ""
     loginForm = case model.session of
-      Just session -> if String.length session.account.token == 0
-        then LW.getLoginForm model
-        else Html.text ""
+      Just _ -> if DU.isLoggedIn model.session Nothing
+        then Html.text ""
+        else LW.getLoginForm model
       Nothing -> Html.text ""
     confirmDeleteForm = if model.deleteRecipe
       then Utils.getConfirmForm TO.DeleteRecipe TO.CancelDelete "Soll das Rezept wirklich gelöscht werden?"
       else Html.text ""
-    isLoggedIn = case model.session of
-      Just session -> String.length session.account.token > 0
-      Nothing -> False
-    actionButton = if isLoggedIn == True
+    actionButton = if DU.isLoggedIn model.session Nothing
       then Html.button [ onClick TO.InsertRecipe ][ Html.text "hinzufügen" ]
       else Html.button [ class "loginBtn", onClick TO.GetLoginForm ][ Html.text "einloggen" ]
     printBookLink = model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/printBookDownload"

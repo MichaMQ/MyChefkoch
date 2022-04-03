@@ -1,23 +1,23 @@
 module Pages.EditorTabs.Tab1 exposing(showTab)
 
 import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onClick, onInput, on)
-import Html.Events.Extra as EvE exposing (onChange)
-import List exposing (..)
+import Html.Attributes as Attr
+import Html.Events as Ev
+import Html.Events.Extra as Ev
+import List as List
 import Json.Decode as Json
 
-import Devs.Objects as Objects exposing (..)
-import Devs.TypeObject as TO exposing (Msg)
-import Pages.Utils as PU exposing (getSelectOption)
+import Devs.Objects as O
+import Devs.TypeObject as TO
+import Pages.Utils as PU
 -- View
 
-showTab: Model -> Html Msg
+showTab: O.Model -> Html TO.Msg
 showTab model =
   let
     mod_rec = case model.selectedRecipe of
       Just rec -> rec
-      Nothing -> Objects.getEmptyRecipe
+      Nothing -> O.getEmptyRecipe
     initialSrcList = case model.kl.sourceList of
       Just src -> src
       Nothing -> []
@@ -38,69 +38,69 @@ showTab model =
       Nothing -> ""
     sourceValue = case mod_rec.source of
       Just val -> val
-      Nothing -> Objects.getEmptySource
+      Nothing -> O.getEmptySource
     imgValue = case mod_rec.image of
       Just val -> val
       Nothing -> ""
   in
-        Html.div[ class "showTabContent" ][
-          Html.div[ style "float" "left" ][
+        Html.div[ Attr.class "showTabContent" ][
+          Html.div[ Attr.style "float" "left" ][
             Html.div[][
-              Html.label [ for "id" ][ Html.text "ID" ],
-              Html.input [ type_ "text", id "id", value idValue, disabled True ][]
+              Html.label [ Attr.for "id" ][ Html.text "ID" ],
+              Html.input [ Attr.type_ "text", Attr.id "id", Attr.value idValue, Attr.disabled True ][]
             ],
             Html.div[][
-              Html.label [ for "name" ][ Html.text "Name *" ],
-              Html.input [ type_ "text", autofocus True, onInput TO.SetName, id "name", value mod_rec.name ][]
+              Html.label [ Attr.for "name" ][ Html.text "Name *" ],
+              Html.input [ Attr.type_ "text", Attr.autofocus True, Ev.onInput TO.SetName, Attr.id "name", Attr.value mod_rec.name ][]
             ],
             Html.div[][
-              Html.label [ for "translate" ][ Html.text "Übersetzung" ],
-              Html.input [ type_ "text", onInput TO.SetTranslate, id "translate", value translateValue ][]
+              Html.label [ Attr.for "translate" ][ Html.text "Übersetzung" ],
+              Html.input [ Attr.type_ "text", Ev.onInput TO.SetTranslate, Attr.id "translate", Attr.value translateValue ][]
             ],
             Html.div[][
-              Html.label [ for "number" ][ Html.text "Portionen" ],
-              Html.input [ type_ "number", onInput TO.SetNumber, id "number", value numberValue ][]
+              Html.label [ Attr.for "number" ][ Html.text "Portionen" ],
+              Html.input [ Attr.type_ "number", Ev.onInput TO.SetNumber, Attr.id "number", Attr.value numberValue ][]
             ],
             Html.div[][
-              Html.label [ for "number_comment" ][ Html.text "Port.-Kom." ],
-              Html.input [ type_ "text", onInput TO.SetNumberComment, id "number_comment", value numberCommentValue ][]
+              Html.label [ Attr.for "number_comment" ][ Html.text "Port.-Kom." ],
+              Html.input [ Attr.type_ "text", Ev.onInput TO.SetNumberComment, Attr.id "number_comment", Attr.value numberCommentValue ][]
             ],
             Html.div[][
-              Html.label [ for "source" ][ Html.text "Quelle *" ],
-              Html.select [ id "source", EvE.onChange TO.SetSource ] (List.append [PU.getSelectOption](List.map (showSourceOption sourceValue) (sortBy .name initialSrcList))),
-              Html.button [ onClick TO.AddNewSource ][ Html.text "+" ]
+              Html.label [ Attr.for "source" ][ Html.text "Quelle *" ],
+              Html.select [ Attr.id "source", Ev.onChange TO.SetSource ] (List.append [PU.getSelectOption](List.map (showSourceOption sourceValue) (List.sortBy .name initialSrcList))),
+              Html.button [ Ev.onClick TO.AddNewSource ][ Html.text "+" ]
             ],
             Html.div[][
-              Html.label [ for "source_page" ][ Html.text "Seitenangabe" ],
-              Html.input [ type_ "number", onInput TO.SetSourcePage, id "source_page", value sourcePageValue ][]
+              Html.label [ Attr.for "source_page" ][ Html.text "Seitenangabe" ],
+              Html.input [ Attr.type_ "number", Ev.onInput TO.SetSourcePage, Attr.id "source_page", Attr.value sourcePageValue ][]
             ],
             Html.div[](
               List.append
-                [Html.label [ for "image" ][ Html.text "Bild" ]]
+                [Html.label [ Attr.for "image" ][ Html.text "Bild" ]]
                 (getImageField model mod_rec)
               )
           ],
           (viewImagePreview model.recImage)
         ]
 
-viewImagePreview : Maybe ImagePortData -> Html Msg
+viewImagePreview : Maybe O.ImagePortData -> Html TO.Msg
 viewImagePreview image =
   case image of
-    Just img -> Html.figure [][ Html.img[ src img.contents, title img.filename ][] ]
+    Just img -> Html.figure [][ Html.img[ Attr.src img.contents, Attr.title img.filename ][] ]
     Nothing -> Html.text ""
 
-getImageField: Model -> Recipe -> List (Html Msg)
+getImageField: O.Model -> O.Recipe -> List (Html TO.Msg)
 getImageField model rec =
   let
     field = case rec.image of
       Just imgValue -> [
-        Html.input [ type_ "text", id "image", value imgValue, disabled True ][],
-        Html.button [ onClick TO.RemoveImageFromRecipe ][ Html.text "-" ]]
-      Nothing -> [Html.input [ class "fileUploadInput", on "change" (Json.succeed TO.ImageSelected), type_ "file", id "recImage", accept "image/*" ][]]
+        Html.input [ Attr.type_ "text", Attr.id "image", Attr.value imgValue, Attr.disabled True ][],
+        Html.button [ Ev.onClick TO.RemoveImageFromRecipe ][ Html.text "-" ]]
+      Nothing -> [Html.input [ Attr.class "fileUploadInput", Ev.on "change" (Json.succeed TO.ImageSelected), Attr.type_ "file", Attr.id "recImage", Attr.accept "image/*" ][]]
   in
     field
 
-showSourceOption: Source -> Source -> Html Msg
+showSourceOption: O.Source -> O.Source -> Html TO.Msg
 showSourceOption selectedValue src =
   let
     src_year = case src.year of
@@ -110,4 +110,4 @@ showSourceOption selectedValue src =
       then True
       else False
   in
-    Html.option[ value (src.uuid), selected selectedVal ][ Html.text (src.name ++ src_year) ]
+    Html.option[ Attr.value (src.uuid), Attr.selected selectedVal ][ Html.text (src.name ++ src_year) ]

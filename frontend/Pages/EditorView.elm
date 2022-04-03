@@ -1,14 +1,15 @@
 module Pages.EditorView exposing(viewEditForm, viewSourceForm, viewAddTagForm)
 
 import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onClick, onInput)
-import Html.Events.Extra as EvE
-import List exposing (..)
+import Html.Extra as Html
+import Html.Attributes as Attr
+import Html.Events as Ev
+import Html.Events.Extra as Ev
+import List as List
 --import Json.Decode as Json
 
-import Devs.Objects as O exposing (..)
-import Devs.TypeObject as TO exposing (Msg)
+import Devs.Objects as O
+import Devs.TypeObject as TO
 import Pages.Utils as PU
 import Pages.EditorTabs.Tab1 as Tab1
 import Pages.EditorTabs.Tab2 as Tab2
@@ -19,29 +20,29 @@ import Pages.EditorTabs.Tab5 as Tab5
 
 --type alias Source = {id: Maybe Int, isbn: Maybe String, name: String, year: Maybe String}
 
-viewAddTagForm: Model -> Html Msg
+viewAddTagForm: O.Model -> Html TO.Msg
 viewAddTagForm model =
   let
     initialTagList = case model.kl.tagList of
       Just tags -> tags
       Nothing -> []
   in
-    Html.div [ class "srcFormBG" ][
-      Html.div [ class "srcFormDiv" ] [
-        Html.div[ class "srcFormDivRow"][
+    Html.div [ Attr.class "srcFormBG" ][
+      Html.div [ Attr.class "srcFormDiv" ] [
+        Html.div[ Attr.class "srcFormDivRow"][
           Html.div[][
-            Html.select [ EvE.onChange TO.SetChoosenTag ] (List.append [PU.getSelectOption](List.map (Tab2.showTagOption O.getEmptyTag) (sortBy .name initialTagList)))
+            Html.select [ Ev.onChange TO.SetChoosenTag ] (List.append [PU.getSelectOption](List.map (Tab2.showTagOption O.getEmptyTag) (List.sortBy .name initialTagList)))
           ]
         ], PU.alert TO.CloseLoginAlert model.subAlertMessage model,
-        Html.div [ class "editFormActionDiv" ][
-          Html.button [ onClick TO.AddTagToRecipe ][ Html.text "zuordnen" ],
-          Html.button [ onClick TO.CancelAddTag ][ Html.text "abbrechen" ]
+        Html.div [ Attr.class "editFormActionDiv" ][
+          Html.button [ Ev.onClick TO.AddTagToRecipe ][ Html.text "zuordnen" ],
+          Html.button [ Ev.onClick TO.CancelAddTag ][ Html.text "abbrechen" ]
         ]
       ]
     ]
 
 
-viewSourceForm: Model -> Html Msg
+viewSourceForm: O.Model -> Html TO.Msg
 viewSourceForm model =
   let
     newSrc = case model.newSource of
@@ -59,9 +60,9 @@ viewSourceForm model =
       Just val -> val
       Nothing -> ""
   in
-    Html.div [ class "srcFormBG" ][
-      Html.div [ class "srcFormDiv" ] [
-        Html.div[ class "srcFormDivRow"][
+    Html.div [ Attr.class "srcFormBG" ][
+      Html.div [ Attr.class "srcFormDiv" ] [
+        Html.div[ Attr.class "srcFormDivRow"][
           {-
           Html.div[][
             Html.label [ for "id" ][ Html.text "ID" ],
@@ -69,26 +70,26 @@ viewSourceForm model =
           ],
           -}
           Html.div[][
-            Html.label [ for "name" ][ Html.text "Name *" ],
-            Html.input [ type_ "text", onInput TO.SetSrcName, id "name", value newSrc.name ][]
+            Html.label [ Attr.for "name" ][ Html.text "Name *" ],
+            Html.input [ Attr.type_ "text", Ev.onInput TO.SetSrcName, Attr.id "name", Attr.value newSrc.name ][]
           ],
           Html.div[][
-            Html.label [ for "isbn" ][ Html.text "ISBN" ],
-            Html.input [ type_ "text", onInput TO.SetSrcIsbn, id "isbn", value isbnValue ][]
+            Html.label [ Attr.for "isbn" ][ Html.text "ISBN" ],
+            Html.input [ Attr.type_ "text", Ev.onInput TO.SetSrcIsbn, Attr.id "isbn", Attr.value isbnValue ][]
           ],
           Html.div[][
-            Html.label [ for "year" ][ Html.text "Jahr" ],
-            Html.input [ type_ "text", onInput TO.SetSrcYear, id "year", value yearValue ][]
+            Html.label [ Attr.for "year" ][ Html.text "Jahr" ],
+            Html.input [ Attr.type_ "text", Ev.onInput TO.SetSrcYear, Attr.id "year", Attr.value yearValue ][]
           ]
         ], PU.alert TO.CloseLoginAlert model.subAlertMessage model,
-        Html.div [ class "editFormActionDiv" ][
-          Html.button [ onClick TO.SaveNewSource ][ Html.text "speichern" ],
-          Html.button [ onClick TO.CancelSourceEdit ][ Html.text "abbrechen" ]
+        Html.div [ Attr.class "editFormActionDiv" ][
+          Html.button [ Ev.onClick TO.SaveNewSource ][ Html.text "speichern" ],
+          Html.button [ Ev.onClick TO.CancelSourceEdit ][ Html.text "abbrechen" ]
         ]
       ]
     ]
 
-viewEditForm: Model -> Html Msg
+viewEditForm: O.Model -> Html TO.Msg
 viewEditForm model =
   let
     recipeForEdit = case model.selectedRecipe of
@@ -98,17 +99,20 @@ viewEditForm model =
       Just ef -> ef
       Nothing -> O.None
   in
-    Html.div [ class "editFormBG" ][
-      Html.div [ class "editFormDiv" ] [
+    Html.div [ Attr.class "editFormBG" ][
+      Html.div [ Attr.class "editFormDiv" ] [
         case editForm of
-          BasicForm -> Tab1.showTab model
-          TagForm -> Tab2.showTab model
-          IngredientForm -> Tab3.showTab model
-          TodoForm -> Tab4.showTab model
-          FootValueForm -> Tab5.showTab model
-          None -> Html.text ""
-        , Html.div [ class "editFormActionDiv" ][
-          Html.button [ onClick (TO.ToggleEditForm O.None) ][ Html.text "schließen" ]
+          O.BasicForm -> Tab1.showTab model
+          O.TagForm -> Tab2.showTab model
+          O.IngredientForm -> Tab3.showTab model
+          O.TodoForm -> Tab4.showTab model
+          O.FootValueForm -> Tab5.showTab model
+          O.None -> Html.text ""
+        , Html.div [ Attr.class "editFormActionDiv" ][
+            Html.button [ Ev.onClick (TO.ToggleEditForm O.None) ][ Html.text "schließen" ]
+            , if editForm == O.BasicForm
+              then Html.button [ Ev.onClick TO.SaveRecipe ][ Html.text "speichern" ]
+              else Html.nothing
         ]
       ]
     ]

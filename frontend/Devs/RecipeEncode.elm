@@ -1,4 +1,4 @@
-module Devs.RecipeEncode exposing ( sourceEncoder,recipeEncoder,imageEncoder,partEncoder,addIncredientEncoder,ingreEncoder )
+module Devs.RecipeEncode exposing ( .. )
 
 --import Json.Decode as Decode exposing (Decoder, field, succeed)
 --import Json.Decode.Extra exposing (andMap)
@@ -61,7 +61,7 @@ recipeEncoder rec =
 
 todoEncoder: O.Todo -> Encode.Value
 todoEncoder td =
-    Encode.object [ ( "id", Encode.int td.id )
+    Encode.object [ ( "id", encodeInt td.id )
     , ( "number", Encode.int td.number )
     , ( "text", Encode.string td.text )
     , ( "image", encodeString td.image )
@@ -160,3 +160,10 @@ addIncredientEncoder recipeId ingre =  Encode.object [
     ("recipeId", Encode.int recipeId)
     , ("ingredientDto", ingreEncoder ingre)
   ]
+
+addTodoEncoder: Int -> O.Todo -> Encode.Value
+addTodoEncoder recipeId todo =  Encode.object [
+    ("recipeId", Encode.int recipeId)
+    , ("todoDto", todoEncoder todo)
+  ]
+

@@ -33,6 +33,7 @@ import chefkoch.dto.TodoDto;
 import chefkoch.dto.UnitDto;
 import chefkoch.entity.Person;
 import chefkoch.requestObj.AddIngredient;
+import chefkoch.requestObj.AddTodo;
 import chefkoch.service.enums.BookPrintType;
 import chefkoch.service.iface.RecipeService;
 import chefkoch.util.XMLUtil;
@@ -152,10 +153,10 @@ public class MainController {
 		}
 	}
 	@PostMapping("/addTodo")
-	public @ResponseBody TodoDto addTodo(HttpServletRequest request, HttpServletResponse response, @RequestBody Integer recipeId, @RequestBody TodoDto eleDto) throws IOException {
+	public @ResponseBody TodoDto addTodo(HttpServletRequest request, HttpServletResponse response, @RequestBody AddTodo eleDto) throws IOException {
 		Person tokenIsValid = this.recipeService.isTokenValid(request);
 		if(tokenIsValid != null || this.isLocalTest.booleanValue()) {
-			TodoDto todo = this.recipeService.addTodo(recipeId, eleDto);
+			TodoDto todo = this.recipeService.addTodo(eleDto.getRecipeId(), eleDto.getTodoDto());
 			if(todo != null) {
 				response.setStatus(HttpServletResponse.SC_OK);
 				return todo;
@@ -288,14 +289,16 @@ public class MainController {
 	}
 
 	@GetMapping(path = "/login")
-	public @ResponseBody SessionDto login(HttpServletResponse response, @RequestParam String username, @RequestParam String password) {
+	public @ResponseBody SessionDto login(HttpServletResponse response, @RequestParam String username, @RequestParam String password) throws IOException {
 		SessionDto token = this.recipeService.login(username, password);
 		if(token != null) {
 			response.setHeader("token", token.getAccount().getToken());
+			response.setStatus(HttpServletResponse.SC_OK);
 			System.out.println(token);
 			return token;
 		} else {
-			return null;
+			//response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Fehlerhafter Login");
+			return SessionDto.getStateCode(HttpServletResponse.SC_UNAUTHORIZED, "Fehlerhafter Login") ;
 		}
 	}
 

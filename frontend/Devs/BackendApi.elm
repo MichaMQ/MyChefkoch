@@ -44,8 +44,8 @@ saveSource event session url newSource =
 addIngredient: (Result Http.Error O.Ingredient -> TO.Msg) -> Maybe O.Session -> String -> Encode.Value -> Cmd TO.Msg
 addIngredient event session url newValue = myRequest "POST" url (Http.expectJson event RD.ingrDecoder) session (Just newValue)
 
-addValue: (Result Http.Error Bool -> TO.Msg) -> Maybe O.Session -> String -> Encode.Value -> Cmd TO.Msg
-addValue event session url newValue = myRequest "POST" url (Http.expectJson event Decode.bool) session (Just newValue)
+addTodo: (Result Http.Error O.Todo -> TO.Msg) -> Maybe O.Session -> String -> Encode.Value -> Cmd TO.Msg
+addTodo event session url newValue = myRequest "POST" url (Http.expectJson event RD.todoDecoder) session (Just newValue)
 
 updateValue: (Result Http.Error Bool -> TO.Msg) -> Maybe O.Session -> String -> Encode.Value -> Cmd TO.Msg
 updateValue event session url newValue = myRequest "POST" url (Http.expectJson event Decode.bool) session (Just newValue)
@@ -85,9 +85,13 @@ myRequest: String -> String -> (Http.Expect TO.Msg) -> Maybe O.Session -> Maybe 
 myRequest method url expect session content =
   let
       header = case session of
-        Just reqSession -> if String.length reqSession.account.token > 0
-          then [(Http.header "session" reqSession.account.token)]
-          else []
+        Just reqSession -> 
+          let
+            loggedAccount = Maybe.withDefault O.getEmptyAccount reqSession.account
+          in
+            if String.length loggedAccount.token > 0
+              then [(Http.header "session" loggedAccount.token)]
+              else []
         Nothing -> []
       body = case content of
         Just reqBody -> Http.jsonBody reqBody

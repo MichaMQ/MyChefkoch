@@ -5809,25 +5809,11 @@ var author$project$Devs$Objects$getEmptyRecipe = {
 	translate: elm$core$Maybe$Nothing,
 	uuid: TSFoster$elm_uuid$UUID$toString(TSFoster$elm_uuid$UUID$nil)
 };
-var author$project$Devs$Objects$Session = F2(
-	function (person, account) {
-		return {account: account, person: person};
+var author$project$Devs$Objects$Session = F4(
+	function (person, account, stateCode, msg) {
+		return {account: account, msg: msg, person: person, stateCode: stateCode};
 	});
-var author$project$Devs$Objects$Account = F7(
-	function (id, username, passwordhash, token, accountType, expirationdate, uuid) {
-		return {accountType: accountType, expirationdate: expirationdate, id: id, passwordhash: passwordhash, token: token, username: username, uuid: uuid};
-	});
-var author$project$Devs$Objects$INIT = {$: 'INIT'};
-var author$project$Devs$Objects$getEmptyAccount = A7(
-	author$project$Devs$Objects$Account,
-	-1,
-	'',
-	'',
-	'',
-	author$project$Devs$Objects$INIT,
-	'',
-	TSFoster$elm_uuid$UUID$toString(TSFoster$elm_uuid$UUID$nil));
-var author$project$Devs$Objects$getEmptySession = A2(author$project$Devs$Objects$Session, author$project$Devs$Objects$getEmptyPerson, author$project$Devs$Objects$getEmptyAccount);
+var author$project$Devs$Objects$getEmptySession = A4(author$project$Devs$Objects$Session, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing);
 var author$project$Devs$Objects$getEmptySource = {
 	id: elm$core$Maybe$Nothing,
 	isbn: elm$core$Maybe$Nothing,
@@ -6635,6 +6621,20 @@ var author$project$Devs$Recipe$setTranslate = F2(
 			},
 			recipe);
 	});
+var author$project$Devs$Objects$Account = F7(
+	function (id, username, passwordhash, token, accountType, expirationdate, uuid) {
+		return {accountType: accountType, expirationdate: expirationdate, id: id, passwordhash: passwordhash, token: token, username: username, uuid: uuid};
+	});
+var author$project$Devs$Objects$INIT = {$: 'INIT'};
+var author$project$Devs$Objects$getEmptyAccount = A7(
+	author$project$Devs$Objects$Account,
+	-1,
+	'',
+	'',
+	'',
+	author$project$Devs$Objects$INIT,
+	'',
+	TSFoster$elm_uuid$UUID$toString(TSFoster$elm_uuid$UUID$nil));
 var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
 var elm$core$Basics$compare = _Utils_compare;
@@ -7398,9 +7398,10 @@ var author$project$Devs$BackendApi$myRequest = F5(
 		var header = function () {
 			if (session.$ === 'Just') {
 				var reqSession = session.a;
-				return (elm$core$String$length(reqSession.account.token) > 0) ? _List_fromArray(
+				var loggedAccount = A2(elm$core$Maybe$withDefault, author$project$Devs$Objects$getEmptyAccount, reqSession.account);
+				return (elm$core$String$length(loggedAccount.token) > 0) ? _List_fromArray(
 					[
-						A2(elm$http$Http$header, 'session', reqSession.account.token)
+						A2(elm$http$Http$header, 'session', loggedAccount.token)
 					]) : _List_Nil;
 			} else {
 				return _List_Nil;
@@ -7725,6 +7726,82 @@ var author$project$Devs$Utils$addIngredient = F3(
 			model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/addIngredient'))),
 			A2(author$project$Devs$RecipeEncode$addIncredientEncoder, recipeId, ingredient));
 	});
+var author$project$Devs$Objects$Todo = F6(
+	function (id, image, image_comment, number, text, uuid) {
+		return {id: id, image: image, image_comment: image_comment, number: number, text: text, uuid: uuid};
+	});
+var elm$json$Json$Decode$map6 = _Json_map6;
+var author$project$Devs$RecipeDecode$todoDecoder = A7(
+	elm$json$Json$Decode$map6,
+	author$project$Devs$Objects$Todo,
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'image', elm$json$Json$Decode$string)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'image_comment', elm$json$Json$Decode$string)),
+	A2(elm$json$Json$Decode$field, 'number', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'text', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
+var author$project$Devs$BackendApi$addTodo = F4(
+	function (event, session, url, newValue) {
+		return A5(
+			author$project$Devs$BackendApi$myRequest,
+			'POST',
+			url,
+			A2(elm$http$Http$expectJson, event, author$project$Devs$RecipeDecode$todoDecoder),
+			session,
+			elm$core$Maybe$Just(newValue));
+	});
+var author$project$Devs$RecipeEncode$todoEncoder = function (td) {
+	return elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'id',
+				author$project$Devs$RecipeEncode$encodeInt(td.id)),
+				_Utils_Tuple2(
+				'number',
+				elm$json$Json$Encode$int(td.number)),
+				_Utils_Tuple2(
+				'text',
+				elm$json$Json$Encode$string(td.text)),
+				_Utils_Tuple2(
+				'image',
+				author$project$Devs$RecipeEncode$encodeString(td.image)),
+				_Utils_Tuple2(
+				'image_comment',
+				author$project$Devs$RecipeEncode$encodeString(td.image_comment)),
+				_Utils_Tuple2(
+				'uuid',
+				elm$json$Json$Encode$string(td.uuid))
+			]));
+};
+var author$project$Devs$RecipeEncode$addTodoEncoder = F2(
+	function (recipeId, todo) {
+		return elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'recipeId',
+					elm$json$Json$Encode$int(recipeId)),
+					_Utils_Tuple2(
+					'todoDto',
+					author$project$Devs$RecipeEncode$todoEncoder(todo))
+				]));
+	});
+var author$project$Devs$TypeObject$AddTodoToRecipeResp = function (a) {
+	return {$: 'AddTodoToRecipeResp', a: a};
+};
+var author$project$Devs$Utils$addTodo = F3(
+	function (model, todo, recipeId) {
+		return A4(
+			author$project$Devs$BackendApi$addTodo,
+			author$project$Devs$TypeObject$AddTodoToRecipeResp,
+			model.session,
+			model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/addTodo'))),
+			A2(author$project$Devs$RecipeEncode$addTodoEncoder, recipeId, todo));
+	});
 var elm$json$Json$Decode$bool = _Json_decodeBool;
 var author$project$Devs$BackendApi$deleteValue = F3(
 	function (event, session, url) {
@@ -7780,17 +7857,23 @@ var author$project$Devs$Utils$deleteTag = F2(
 			model.session,
 			model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + ('/deleteTag?tagId=' + elm$core$String$fromInt(tagId))))));
 	});
-var author$project$Devs$TypeObject$DeleteTodoResp = F2(
+var author$project$Devs$TypeObject$RemoveTodoFromRecipe = F2(
 	function (a, b) {
-		return {$: 'DeleteTodoResp', a: a, b: b};
+		return {$: 'RemoveTodoFromRecipe', a: a, b: b};
 	});
 var author$project$Devs$Utils$deleteTodo = F2(
-	function (model, todoId) {
-		return A3(
-			author$project$Devs$BackendApi$deleteValue,
-			author$project$Devs$TypeObject$DeleteTodoResp(todoId),
-			model.session,
-			model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + ('/deleteTodo?todoId=' + elm$core$String$fromInt(todoId))))));
+	function (model, todo) {
+		var _n0 = todo.id;
+		if (_n0.$ === 'Just') {
+			var todoId = _n0.a;
+			return A3(
+				author$project$Devs$BackendApi$deleteValue,
+				author$project$Devs$TypeObject$RemoveTodoFromRecipe(todo.uuid),
+				model.session,
+				model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + ('/deleteTodo?todoId=' + elm$core$String$fromInt(todoId))))));
+		} else {
+			return elm$core$Platform$Cmd$none;
+		}
 	});
 var elm$json$Json$Decode$list = _Json_decodeList;
 var author$project$Devs$BackendApi$getAllParts = F3(
@@ -7988,7 +8071,7 @@ var author$project$Devs$Utils$getNewIngre = F2(
 	});
 var author$project$Devs$Objects$getEmptyTodo = function (newNumber) {
 	return {
-		id: 0,
+		id: elm$core$Maybe$Nothing,
 		image: elm$core$Maybe$Nothing,
 		image_comment: elm$core$Maybe$Nothing,
 		number: newNumber,
@@ -8111,22 +8194,6 @@ var author$project$Devs$RecipeDecode$personDecoder = A6(
 	A2(elm$json$Json$Decode$field, 'role', author$project$Devs$RecipeDecode$roleDecoder),
 	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
 var author$project$Devs$RecipeDecode$tagListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$tagDecoder);
-var author$project$Devs$Objects$Todo = F6(
-	function (id, image, image_comment, number, text, uuid) {
-		return {id: id, image: image, image_comment: image_comment, number: number, text: text, uuid: uuid};
-	});
-var elm$json$Json$Decode$map6 = _Json_map6;
-var author$project$Devs$RecipeDecode$todoDecoder = A7(
-	elm$json$Json$Decode$map6,
-	author$project$Devs$Objects$Todo,
-	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'image', elm$json$Json$Decode$string)),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'image_comment', elm$json$Json$Decode$string)),
-	A2(elm$json$Json$Decode$field, 'number', elm$json$Json$Decode$int),
-	A2(elm$json$Json$Decode$field, 'text', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
 var author$project$Devs$RecipeDecode$todoListDecoder = elm$json$Json$Decode$list(author$project$Devs$RecipeDecode$todoDecoder);
 var elm$json$Json$Decode$map2 = _Json_map2;
 var elm_community$json_extra$Json$Decode$Extra$andMap = elm$json$Json$Decode$map2(elm$core$Basics$apR);
@@ -8359,23 +8426,42 @@ var author$project$Devs$TypeObject$ListTagtypes = function (a) {
 var author$project$Devs$Utils$getTagtypeListForOverview = function (model) {
 	return A3(author$project$Devs$BackendApi$getTagtypeListForOverview, author$project$Devs$TypeObject$ListTagtypes, model.session, model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/getAllTagTypes'))));
 };
-var author$project$Devs$Utils$httpErrorToMessage = function (error) {
-	switch (error.$) {
-		case 'NetworkError':
-			return 'Is the server running?';
-		case 'BadStatus':
-			var response = error.a;
-			return elm$core$String$fromInt(response);
-		case 'BadBody':
-			var response = error.a;
-			return response;
-		case 'BadUrl':
-			var url = error.a;
-			return 'You defindes a wrong URL! ' + url;
-		default:
-			return 'The time for request is out!';
-	}
-};
+var author$project$Devs$Utils$httpErrorToMessage = F2(
+	function (error, msg) {
+		switch (error.$) {
+			case 'NetworkError':
+				return 'Is the server running?';
+			case 'BadStatus':
+				var response = error.a;
+				return _Utils_ap(
+					elm$core$String$fromInt(response),
+					function () {
+						if (msg.$ === 'Just') {
+							var m = msg.a;
+							return ' (' + (m + ')');
+						} else {
+							return '';
+						}
+					}());
+			case 'BadBody':
+				var response = error.a;
+				return _Utils_ap(
+					response,
+					function () {
+						if (msg.$ === 'Just') {
+							var m = msg.a;
+							return ' (' + (m + ')');
+						} else {
+							return '';
+						}
+					}());
+			case 'BadUrl':
+				var url = error.a;
+				return 'You defindes a wrong URL! ' + url;
+			default:
+				return 'The time for request is out!';
+		}
+	});
 var author$project$Devs$Objects$HASH = {$: 'HASH'};
 var author$project$Devs$RecipeDecode$accountTypeDecoder = A2(
 	elm$json$Json$Decode$andThen,
@@ -8402,11 +8488,26 @@ var author$project$Devs$RecipeDecode$accountDecoder = A8(
 	A2(elm$json$Json$Decode$field, 'accountType', author$project$Devs$RecipeDecode$accountTypeDecoder),
 	A2(elm$json$Json$Decode$field, 'expirationdate', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'uuid', elm$json$Json$Decode$string));
-var author$project$Devs$RecipeDecode$sessionDecoder = A3(
-	elm$json$Json$Decode$map2,
+var elm$core$Basics$ge = _Utils_ge;
+var author$project$Devs$RecipeDecode$httpErrorDecoder = A2(
+	elm$json$Json$Decode$andThen,
+	function (str) {
+		return ((str >= 300) && (str < 500)) ? elm$json$Json$Decode$succeed(
+			elm$http$Http$BadStatus(str)) : elm$json$Json$Decode$succeed(
+			elm$http$Http$BadBody(''));
+	},
+	elm$json$Json$Decode$int);
+var author$project$Devs$RecipeDecode$sessionDecoder = A5(
+	elm$json$Json$Decode$map4,
 	author$project$Devs$Objects$Session,
-	A2(elm$json$Json$Decode$field, 'person', author$project$Devs$RecipeDecode$personDecoder),
-	A2(elm$json$Json$Decode$field, 'account', author$project$Devs$RecipeDecode$accountDecoder));
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'person', author$project$Devs$RecipeDecode$personDecoder)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'account', author$project$Devs$RecipeDecode$accountDecoder)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'stateCode', author$project$Devs$RecipeDecode$httpErrorDecoder)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'msg', elm$json$Json$Decode$string)));
 var author$project$Devs$BackendApi$login = F2(
 	function (event, url) {
 		return A5(
@@ -8476,30 +8577,6 @@ var author$project$Devs$RecipeEncode$tagEncoder = function (tag) {
 			elm$json$Json$Encode$string(tag.uuid))
 		]);
 	return elm$json$Json$Encode$object(list);
-};
-var author$project$Devs$RecipeEncode$todoEncoder = function (td) {
-	return elm$json$Json$Encode$object(
-		_List_fromArray(
-			[
-				_Utils_Tuple2(
-				'id',
-				elm$json$Json$Encode$int(td.id)),
-				_Utils_Tuple2(
-				'number',
-				elm$json$Json$Encode$int(td.number)),
-				_Utils_Tuple2(
-				'text',
-				elm$json$Json$Encode$string(td.text)),
-				_Utils_Tuple2(
-				'image',
-				author$project$Devs$RecipeEncode$encodeString(td.image)),
-				_Utils_Tuple2(
-				'image_comment',
-				author$project$Devs$RecipeEncode$encodeString(td.image_comment)),
-				_Utils_Tuple2(
-				'uuid',
-				elm$json$Json$Encode$string(td.uuid))
-			]));
 };
 var elm$json$Json$Encode$list = F2(
 	function (func, entries) {
@@ -8700,6 +8777,18 @@ var author$project$Devs$Utils$updateIncredient = F2(
 			model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/updateIngredient'))),
 			author$project$Devs$RecipeEncode$ingreEncoder(ingredient));
 	});
+var author$project$Devs$TypeObject$UpdateTodoResp = function (a) {
+	return {$: 'UpdateTodoResp', a: a};
+};
+var author$project$Devs$Utils$updateTodo = F2(
+	function (model, todo) {
+		return A4(
+			author$project$Devs$BackendApi$updateValue,
+			author$project$Devs$TypeObject$UpdateTodoResp,
+			model.session,
+			model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/updateTodo'))),
+			author$project$Devs$RecipeEncode$todoEncoder(todo));
+	});
 var author$project$Devs$RecipeEncode$imageEncoder = function (img) {
 	return elm$json$Json$Encode$object(
 		_List_fromArray(
@@ -8872,20 +8961,40 @@ var author$project$Devs$Update$update = F2(
 			case 'HandleLogin':
 				if (msg.a.$ === 'Ok') {
 					var session = msg.a.a;
-					return (elm$core$String$length(session.account.token) > 0) ? _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								alertMessage: elm$core$Maybe$Nothing,
-								session: elm$core$Maybe$Just(session)
-							}),
-						elm$core$Platform$Cmd$none) : _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								alertMessage: elm$core$Maybe$Just('Mindestens eine der eingegeben Daten ist falsch!')
-							}),
-						elm$core$Platform$Cmd$none);
+					var _n1 = session.account;
+					if (_n1.$ === 'Just') {
+						var account = _n1.a;
+						return (elm$core$String$length(account.token) > 0) ? _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									alertMessage: elm$core$Maybe$Nothing,
+									session: elm$core$Maybe$Just(session)
+								}),
+							elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									alertMessage: elm$core$Maybe$Just('Mindestens eine der eingegeben Daten ist falsch!')
+								}),
+							elm$core$Platform$Cmd$none);
+					} else {
+						var _n2 = session.stateCode;
+						if (_n2.$ === 'Just') {
+							var error = _n2.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										recAlertMessage: elm$core$Maybe$Just(
+											A2(author$project$Devs$Utils$httpErrorToMessage, error, session.msg)),
+										session: elm$core$Maybe$Nothing
+									}),
+								elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+						}
+					}
 				} else {
 					var error = msg.a.a;
 					return _Utils_Tuple2(
@@ -8893,7 +9002,8 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								recAlertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing)),
+								session: elm$core$Maybe$Nothing
 							}),
 						elm$core$Platform$Cmd$none);
 				}
@@ -8955,12 +9065,12 @@ var author$project$Devs$Update$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'InsertRecipe':
 				var newRec = author$project$Devs$Objects$getEmptyRecipe;
-				var _n2 = A2(
+				var _n4 = A2(
 					elm$random$Random$step,
 					TSFoster$elm_uuid$UUID$generator,
 					author$project$Devs$Utils$getSeed(model));
-				var newUuid = _n2.a;
-				var newSeed = _n2.b;
+				var newUuid = _n4.a;
+				var newSeed = _n4.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -8981,8 +9091,8 @@ var author$project$Devs$Update$update = F2(
 						return author$project$Devs$Utils$validateRecipe(rec);
 					},
 					model.selectedRecipe);
-				var _n3 = A2(elm$core$Debug$log, 'selectedRecipe: ', model.selectedRecipe);
-				var _n4 = A2(elm$core$Debug$log, 'errorMsg: ', errorMsg);
+				var _n5 = A2(elm$core$Debug$log, 'selectedRecipe: ', model.selectedRecipe);
+				var _n6 = A2(elm$core$Debug$log, 'errorMsg: ', errorMsg);
 				if (errorMsg.$ === 'Just') {
 					var msg1 = errorMsg.a;
 					return _Utils_Tuple2(
@@ -8993,9 +9103,9 @@ var author$project$Devs$Update$update = F2(
 							}),
 						elm$core$Platform$Cmd$none);
 				} else {
-					var _n6 = model.selectedRecipe;
-					if (_n6.$ === 'Just') {
-						var newRecipe = _n6.a;
+					var _n8 = model.selectedRecipe;
+					if (_n8.$ === 'Just') {
+						var newRecipe = _n8.a;
 						return _Utils_Tuple2(
 							model,
 							A2(author$project$Devs$Utils$saveRecipe, model, newRecipe));
@@ -9016,13 +9126,13 @@ var author$project$Devs$Update$update = F2(
 						elm$core$Platform$Cmd$none);
 				} else {
 					var error = msg.a.a;
-					var _n7 = A2(elm$core$Debug$log, 'error: ', error);
+					var _n9 = A2(elm$core$Debug$log, 'error: ', error);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{
 								recAlertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
 							}),
 						elm$core$Platform$Cmd$none);
 				}
@@ -9161,23 +9271,23 @@ var author$project$Devs$Update$update = F2(
 			case 'SetSource':
 				var sUuid = msg.a;
 				var sourceList = function () {
-					var _n9 = model.kl.sourceList;
-					if (_n9.$ === 'Just') {
-						var srcList = _n9.a;
+					var _n11 = model.kl.sourceList;
+					if (_n11.$ === 'Just') {
+						var srcList = _n11.a;
 						return srcList;
 					} else {
 						return _List_Nil;
 					}
 				}();
 				var newRec = function () {
-					var _n8 = A2(
+					var _n10 = A2(
 						elm_community$list_extra$List$Extra$find,
 						function (item) {
 							return _Utils_eq(item.uuid, sUuid);
 						},
 						sourceList);
-					if (_n8.$ === 'Just') {
-						var src = _n8.a;
+					if (_n10.$ === 'Just') {
+						var src = _n10.a;
 						return A2(author$project$Devs$Recipe$setSource, model.selectedRecipe, src);
 					} else {
 						return model.selectedRecipe;
@@ -9190,12 +9300,12 @@ var author$project$Devs$Update$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'AddNewSource':
 				var emptySource = author$project$Devs$Objects$getEmptySource;
-				var _n10 = A2(
+				var _n12 = A2(
 					elm$random$Random$step,
 					TSFoster$elm_uuid$UUID$generator,
 					author$project$Devs$Utils$getSeed(model));
-				var newUuid = _n10.a;
-				var newSeed = _n10.b;
+				var newUuid = _n12.a;
+				var newSeed = _n12.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -9244,9 +9354,9 @@ var author$project$Devs$Update$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'SaveNewSource':
 				var newSource = function () {
-					var _n11 = model.newSource;
-					if (_n11.$ === 'Just') {
-						var src = _n11.a;
+					var _n13 = model.newSource;
+					if (_n13.$ === 'Just') {
+						var src = _n13.a;
 						return src;
 					} else {
 						return author$project$Devs$Objects$getEmptySource;
@@ -9265,9 +9375,9 @@ var author$project$Devs$Update$update = F2(
 				if (msg.a.$ === 'Ok') {
 					var savedSource = msg.a.a;
 					var newSourceList = function () {
-						var _n12 = model.kl.sourceList;
-						if (_n12.$ === 'Just') {
-							var srcList = _n12.a;
+						var _n14 = model.kl.sourceList;
+						if (_n14.$ === 'Just') {
+							var srcList = _n14.a;
 							return A2(
 								elm$core$List$append,
 								srcList,
@@ -9293,7 +9403,7 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								alertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
 							}),
 						elm$core$Platform$Cmd$none);
 				}
@@ -9308,23 +9418,23 @@ var author$project$Devs$Update$update = F2(
 			case 'SetChoosenTag':
 				var tUuid = msg.a;
 				var tagList = function () {
-					var _n14 = model.kl.tagList;
-					if (_n14.$ === 'Just') {
-						var tagListTmp = _n14.a;
+					var _n16 = model.kl.tagList;
+					if (_n16.$ === 'Just') {
+						var tagListTmp = _n16.a;
 						return tagListTmp;
 					} else {
 						return _List_Nil;
 					}
 				}();
 				var newModel = function () {
-					var _n13 = A2(
+					var _n15 = A2(
 						elm_community$list_extra$List$Extra$find,
 						function (item) {
 							return _Utils_eq(item.uuid, tUuid);
 						},
 						tagList);
-					if (_n13.$ === 'Just') {
-						var item = _n13.a;
+					if (_n15.$ === 'Just') {
+						var item = _n15.a;
 						return _Utils_update(
 							model,
 							{
@@ -9338,9 +9448,9 @@ var author$project$Devs$Update$update = F2(
 			case 'RemoveTagFromRec':
 				var tUuid = msg.a;
 				var newTagList = function () {
-					var _n15 = model.selectedRecipe;
-					if (_n15.$ === 'Just') {
-						var rec = _n15.a;
+					var _n17 = model.selectedRecipe;
+					if (_n17.$ === 'Just') {
+						var rec = _n17.a;
 						return A2(
 							elm$core$List$filter,
 							function (item) {
@@ -9359,9 +9469,9 @@ var author$project$Devs$Update$update = F2(
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'AddTagToRecipe':
-				var _n16 = model.addTag;
-				if (_n16.$ === 'Just') {
-					var newTag = _n16.a;
+				var _n18 = model.addTag;
+				if (_n18.$ === 'Just') {
+					var newTag = _n18.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -9387,12 +9497,12 @@ var author$project$Devs$Update$update = F2(
 						{addTag: elm$core$Maybe$Nothing, alertMessage: elm$core$Maybe$Nothing}),
 					elm$core$Platform$Cmd$none);
 			case 'AddIngreToRecipe':
-				var _n17 = A2(
+				var _n19 = A2(
 					elm$random$Random$step,
 					TSFoster$elm_uuid$UUID$generator,
 					author$project$Devs$Utils$getSeed(model));
-				var newUuid = _n17.a;
-				var newSeed = _n17.b;
+				var newUuid = _n19.a;
+				var newSeed = _n19.b;
 				var newIngre = A2(author$project$Devs$Utils$getNewIngre, model, newUuid);
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -9410,9 +9520,9 @@ var author$project$Devs$Update$update = F2(
 					0,
 					elm$core$String$toInt(val));
 				var newIngreList = function () {
-					var _n18 = model.selectedRecipe;
-					if (_n18.$ === 'Just') {
-						var rec = _n18.a;
+					var _n20 = model.selectedRecipe;
+					if (_n20.$ === 'Just') {
+						var rec = _n20.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9439,9 +9549,9 @@ var author$project$Devs$Update$update = F2(
 				var iUuid = msg.a;
 				var val = msg.b;
 				var newIngreList = function () {
-					var _n19 = model.selectedRecipe;
-					if (_n19.$ === 'Just') {
-						var rec = _n19.a;
+					var _n21 = model.selectedRecipe;
+					if (_n21.$ === 'Just') {
+						var rec = _n21.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9468,9 +9578,9 @@ var author$project$Devs$Update$update = F2(
 				var iUuid = msg.a;
 				var val = msg.b;
 				var newIngreList = function () {
-					var _n20 = model.selectedRecipe;
-					if (_n20.$ === 'Just') {
-						var rec = _n20.a;
+					var _n22 = model.selectedRecipe;
+					if (_n22.$ === 'Just') {
+						var rec = _n22.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9503,9 +9613,9 @@ var author$project$Devs$Update$update = F2(
 					0,
 					elm$core$String$toFloat(val));
 				var newIngreList = function () {
-					var _n21 = model.selectedRecipe;
-					if (_n21.$ === 'Just') {
-						var rec = _n21.a;
+					var _n23 = model.selectedRecipe;
+					if (_n23.$ === 'Just') {
+						var rec = _n23.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9534,9 +9644,9 @@ var author$project$Devs$Update$update = F2(
 				var iUuid = msg.a;
 				var pUuid = msg.b;
 				var partKeyList = function () {
-					var _n22 = model.kl.partList;
-					if (_n22.$ === 'Just') {
-						var list = _n22.a;
+					var _n24 = model.kl.partList;
+					if (_n24.$ === 'Just') {
+						var list = _n24.a;
 						return list;
 					} else {
 						return _List_Nil;
@@ -9582,26 +9692,26 @@ var author$project$Devs$Update$update = F2(
 				var iUuid = msg.a;
 				var uUuid = msg.b;
 				var unitList = function () {
-					var _n25 = model.kl.unitList;
-					if (_n25.$ === 'Just') {
-						var list = _n25.a;
+					var _n27 = model.kl.unitList;
+					if (_n27.$ === 'Just') {
+						var list = _n27.a;
 						return list;
 					} else {
 						return _List_Nil;
 					}
 				}();
 				var newIngreList = function () {
-					var _n23 = A2(
+					var _n25 = A2(
 						elm_community$list_extra$List$Extra$find,
 						function (unit) {
 							return _Utils_eq(unit.uuid, uUuid);
 						},
 						unitList);
-					if (_n23.$ === 'Just') {
-						var unit = _n23.a;
-						var _n24 = model.selectedRecipe;
-						if (_n24.$ === 'Just') {
-							var rec = _n24.a;
+					if (_n25.$ === 'Just') {
+						var unit = _n25.a;
+						var _n26 = model.selectedRecipe;
+						if (_n26.$ === 'Just') {
+							var rec = _n26.a;
 							return A3(
 								elm_community$list_extra$List$Extra$updateIf,
 								function (item) {
@@ -9630,12 +9740,12 @@ var author$project$Devs$Update$update = F2(
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'AddTodoToRecipe':
-				var _n26 = A2(
+				var _n28 = A2(
 					elm$random$Random$step,
 					TSFoster$elm_uuid$UUID$generator,
 					author$project$Devs$Utils$getSeed(model));
-				var newUuid = _n26.a;
-				var newSeed = _n26.b;
+				var newUuid = _n28.a;
+				var newSeed = _n28.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -9655,9 +9765,9 @@ var author$project$Devs$Update$update = F2(
 					0,
 					elm$core$String$toInt(val));
 				var newTodoList = function () {
-					var _n27 = model.selectedRecipe;
-					if (_n27.$ === 'Just') {
-						var rec = _n27.a;
+					var _n29 = model.selectedRecipe;
+					if (_n29.$ === 'Just') {
+						var rec = _n29.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9684,9 +9794,9 @@ var author$project$Devs$Update$update = F2(
 				var tUuid = msg.a;
 				var val = msg.b;
 				var newTodoList = function () {
-					var _n28 = model.selectedRecipe;
-					if (_n28.$ === 'Just') {
-						var rec = _n28.a;
+					var _n30 = model.selectedRecipe;
+					if (_n30.$ === 'Just') {
+						var rec = _n30.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9713,9 +9823,9 @@ var author$project$Devs$Update$update = F2(
 				var tUuid = msg.a;
 				var val = msg.b;
 				var newTodoList = function () {
-					var _n29 = model.selectedRecipe;
-					if (_n29.$ === 'Just') {
-						var rec = _n29.a;
+					var _n31 = model.selectedRecipe;
+					if (_n31.$ === 'Just') {
+						var rec = _n31.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9744,9 +9854,9 @@ var author$project$Devs$Update$update = F2(
 				var tUuid = msg.a;
 				var val = msg.b;
 				var newTodoList = function () {
-					var _n30 = model.selectedRecipe;
-					if (_n30.$ === 'Just') {
-						var rec = _n30.a;
+					var _n32 = model.selectedRecipe;
+					if (_n32.$ === 'Just') {
+						var rec = _n32.a;
 						return A3(
 							elm_community$list_extra$List$Extra$updateIf,
 							function (item) {
@@ -9770,32 +9880,6 @@ var author$project$Devs$Update$update = F2(
 						{
 							selectedRecipe: A2(author$project$Devs$Recipe$setTodos, model.selectedRecipe, newTodoList)
 						}),
-					elm$core$Platform$Cmd$none);
-			case 'RemoveTodoFromRecipe':
-				var tUuid = msg.a;
-				var newRec = function () {
-					var _n31 = model.selectedRecipe;
-					if (_n31.$ === 'Just') {
-						var rec = _n31.a;
-						return elm$core$Maybe$Just(
-							_Utils_update(
-								rec,
-								{
-									todos: A2(
-										elm$core$List$filter,
-										function (item) {
-											return !_Utils_eq(item.uuid, tUuid);
-										},
-										rec.todos)
-								}));
-					} else {
-						return model.selectedRecipe;
-					}
-				}();
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{selectedRecipe: newRec}),
 					elm$core$Platform$Cmd$none);
 			case 'CancelRecipeEdit':
 				return _Utils_Tuple2(
@@ -9869,7 +9953,7 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								alertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
 							}),
 						elm$core$Platform$Cmd$none);
 				}
@@ -9890,7 +9974,7 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								alertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
 							}),
 						elm$core$Platform$Cmd$none);
 				}
@@ -9917,9 +10001,9 @@ var author$project$Devs$Update$update = F2(
 				if (msg.a.$ === 'Ok') {
 					var recipe = msg.a.a;
 					var number_for_display = function () {
-						var _n32 = recipe.number;
-						if (_n32.$ === 'Just') {
-							var n = _n32.a;
+						var _n33 = recipe.number;
+						if (_n33.$ === 'Just') {
+							var n = _n33.a;
 							return n;
 						} else {
 							return 1;
@@ -9944,7 +10028,7 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								alertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
 							}),
 						elm$core$Platform$Cmd$none);
 				}
@@ -9965,7 +10049,7 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								alertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
 							}),
 						elm$core$Platform$Cmd$none);
 				}
@@ -9986,7 +10070,7 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								alertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
 							}),
 						elm$core$Platform$Cmd$none);
 				}
@@ -10007,7 +10091,7 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								alertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
 							}),
 						elm$core$Platform$Cmd$none);
 				}
@@ -10028,7 +10112,7 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								alertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
 							}),
 						elm$core$Platform$Cmd$none);
 				}
@@ -10042,7 +10126,7 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								alertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
 							}),
 						elm$core$Platform$Cmd$none);
 				}
@@ -10060,9 +10144,9 @@ var author$project$Devs$Update$update = F2(
 			case 'RemoveEmptyIngretient':
 				var ingredientUuid = msg.a;
 				var newRec = function () {
-					var _n33 = model.selectedRecipe;
-					if (_n33.$ === 'Just') {
-						var rec = _n33.a;
+					var _n34 = model.selectedRecipe;
+					if (_n34.$ === 'Just') {
+						var rec = _n34.a;
 						return elm$core$Maybe$Just(
 							_Utils_update(
 								rec,
@@ -10098,11 +10182,48 @@ var author$project$Devs$Update$update = F2(
 				return _Utils_Tuple2(
 					model,
 					A2(author$project$Devs$Utils$deleteTag, model, tagId));
-			case 'DeleteTodo':
-				var todoId = msg.a;
+			case 'AddTodo':
+				var todo = msg.a;
+				var recipeId = msg.b;
 				return _Utils_Tuple2(
 					model,
-					A2(author$project$Devs$Utils$deleteTodo, model, todoId));
+					A3(author$project$Devs$Utils$addTodo, model, todo, recipeId));
+			case 'UpdateTodo':
+				var todo = msg.a;
+				return _Utils_Tuple2(
+					model,
+					A2(author$project$Devs$Utils$updateTodo, model, todo));
+			case 'RemoveEmptyTodo':
+				var todoUuid = msg.a;
+				var newRec = function () {
+					var _n35 = model.selectedRecipe;
+					if (_n35.$ === 'Just') {
+						var rec = _n35.a;
+						return elm$core$Maybe$Just(
+							_Utils_update(
+								rec,
+								{
+									todos: A2(
+										elm$core$List$filter,
+										function (item) {
+											return !_Utils_eq(item.uuid, todoUuid);
+										},
+										rec.todos)
+								}));
+					} else {
+						return model.selectedRecipe;
+					}
+				}();
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{selectedRecipe: newRec}),
+					elm$core$Platform$Cmd$none);
+			case 'DeleteTodo':
+				var todo = msg.a;
+				return _Utils_Tuple2(
+					model,
+					A2(author$project$Devs$Utils$deleteTodo, model, todo));
 			case 'UpdateIncredientResp':
 				if (msg.a.$ === 'Ok') {
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
@@ -10113,7 +10234,7 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								alertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
 							}),
 						elm$core$Platform$Cmd$none);
 				}
@@ -10121,9 +10242,9 @@ var author$project$Devs$Update$update = F2(
 				if (msg.b.$ === 'Ok') {
 					var ingredientUuid = msg.a;
 					var newRec = function () {
-						var _n34 = model.selectedRecipe;
-						if (_n34.$ === 'Just') {
-							var rec = _n34.a;
+						var _n36 = model.selectedRecipe;
+						if (_n36.$ === 'Just') {
+							var rec = _n36.a;
 							return elm$core$Maybe$Just(
 								_Utils_update(
 									rec,
@@ -10151,7 +10272,7 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								alertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
 							}),
 						elm$core$Platform$Cmd$none);
 				}
@@ -10159,9 +10280,9 @@ var author$project$Devs$Update$update = F2(
 				if (msg.a.$ === 'Ok') {
 					var ingre = msg.a.a;
 					var newRec = function () {
-						var _n35 = model.selectedRecipe;
-						if (_n35.$ === 'Just') {
-							var rec = _n35.a;
+						var _n37 = model.selectedRecipe;
+						if (_n37.$ === 'Just') {
+							var rec = _n37.a;
 							return elm$core$Maybe$Just(
 								_Utils_update(
 									rec,
@@ -10171,7 +10292,7 @@ var author$project$Devs$Update$update = F2(
 											function (item) {
 												return _Utils_eq(item.uuid, ingre.uuid);
 											},
-											function (_n36) {
+											function (_n38) {
 												return ingre;
 											},
 											rec.ingredients)
@@ -10192,7 +10313,100 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								alertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
+							}),
+						elm$core$Platform$Cmd$none);
+				}
+			case 'UpdateTodoResp':
+				if (msg.a.$ === 'Ok') {
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				} else {
+					var error = msg.a.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								alertMessage: elm$core$Maybe$Just(
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
+							}),
+						elm$core$Platform$Cmd$none);
+				}
+			case 'RemoveTodoFromRecipe':
+				if (msg.b.$ === 'Ok') {
+					var tUuid = msg.a;
+					var newRec = function () {
+						var _n39 = model.selectedRecipe;
+						if (_n39.$ === 'Just') {
+							var rec = _n39.a;
+							return elm$core$Maybe$Just(
+								_Utils_update(
+									rec,
+									{
+										todos: A2(
+											elm$core$List$filter,
+											function (item) {
+												return !_Utils_eq(item.uuid, tUuid);
+											},
+											rec.todos)
+									}));
+						} else {
+							return model.selectedRecipe;
+						}
+					}();
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{selectedRecipe: newRec}),
+						elm$core$Platform$Cmd$none);
+				} else {
+					var error = msg.b.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								alertMessage: elm$core$Maybe$Just(
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
+							}),
+						elm$core$Platform$Cmd$none);
+				}
+			case 'AddTodoToRecipeResp':
+				if (msg.a.$ === 'Ok') {
+					var todo = msg.a.a;
+					var newRec = function () {
+						var _n40 = model.selectedRecipe;
+						if (_n40.$ === 'Just') {
+							var rec = _n40.a;
+							return elm$core$Maybe$Just(
+								_Utils_update(
+									rec,
+									{
+										todos: A3(
+											elm_community$list_extra$List$Extra$updateIf,
+											function (item) {
+												return _Utils_eq(item.uuid, todo.uuid);
+											},
+											function (_n41) {
+												return todo;
+											},
+											rec.todos)
+									}));
+						} else {
+							return model.selectedRecipe;
+						}
+					}();
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{selectedRecipe: newRec}),
+						elm$core$Platform$Cmd$none);
+				} else {
+					var error = msg.a.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								alertMessage: elm$core$Maybe$Just(
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
 							}),
 						elm$core$Platform$Cmd$none);
 				}
@@ -10207,11 +10421,11 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								alertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
 							}),
 						elm$core$Platform$Cmd$none);
 				}
-			case 'DeleteTagResp':
+			default:
 				if (msg.b.$ === 'Ok') {
 					var tagId = msg.a;
 					var isDeleted = msg.b.a;
@@ -10223,23 +10437,7 @@ var author$project$Devs$Update$update = F2(
 							model,
 							{
 								alertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
-							}),
-						elm$core$Platform$Cmd$none);
-				}
-			default:
-				if (msg.b.$ === 'Ok') {
-					var todoId = msg.a;
-					var isDeleted = msg.b.a;
-					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-				} else {
-					var error = msg.b.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								alertMessage: elm$core$Maybe$Just(
-									author$project$Devs$Utils$httpErrorToMessage(error))
+									A2(author$project$Devs$Utils$httpErrorToMessage, error, elm$core$Maybe$Nothing))
 							}),
 						elm$core$Platform$Cmd$none);
 				}
@@ -10311,6 +10509,24 @@ var author$project$Devs$TypeObject$SearchRecipe = {$: 'SearchRecipe'};
 var author$project$Devs$TypeObject$SetSearchInput = function (a) {
 	return {$: 'SetSearchInput', a: a};
 };
+var author$project$Devs$Utils$isLoggedIn = F2(
+	function (session, person) {
+		if (session.$ === 'Just') {
+			var log = session.a;
+			var loggedPerson = A2(elm$core$Maybe$withDefault, author$project$Devs$Objects$getEmptyPerson, log.person);
+			var loggedAccount = A2(elm$core$Maybe$withDefault, author$project$Devs$Objects$getEmptyAccount, log.account);
+			if (person.$ === 'Just') {
+				var pers = person.a;
+				return _Utils_eq(
+					A2(elm$core$Maybe$withDefault, -1, loggedPerson.id),
+					A2(elm$core$Maybe$withDefault, -2, pers.id));
+			} else {
+				return elm$core$String$length(loggedAccount.token) > 0;
+			}
+		} else {
+			return false;
+		}
+	});
 var author$project$Devs$TypeObject$AddTagToRecipe = {$: 'AddTagToRecipe'};
 var author$project$Devs$TypeObject$CancelAddTag = {$: 'CancelAddTag'};
 var author$project$Devs$TypeObject$CloseLoginAlert = {$: 'CloseLoginAlert'};
@@ -10546,6 +10762,8 @@ var author$project$Pages$EditorView$viewAddTagForm = function (model) {
 					]))
 			]));
 };
+var author$project$Devs$Objects$BasicForm = {$: 'BasicForm'};
+var author$project$Devs$TypeObject$SaveRecipe = {$: 'SaveRecipe'};
 var author$project$Devs$TypeObject$ToggleEditForm = function (a) {
 	return {$: 'ToggleEditForm', a: a};
 };
@@ -11683,8 +11901,15 @@ var author$project$Pages$EditorTabs$Tab4$getLabelRow = A2(
 					elm$html$Html$text('Kommentar')
 				]))
 		]));
-var author$project$Devs$TypeObject$RemoveTodoFromRecipe = function (a) {
-	return {$: 'RemoveTodoFromRecipe', a: a};
+var author$project$Devs$TypeObject$AddTodo = F2(
+	function (a, b) {
+		return {$: 'AddTodo', a: a, b: b};
+	});
+var author$project$Devs$TypeObject$DeleteTodo = function (a) {
+	return {$: 'DeleteTodo', a: a};
+};
+var author$project$Devs$TypeObject$RemoveEmptyTodo = function (a) {
+	return {$: 'RemoveEmptyTodo', a: a};
 };
 var author$project$Devs$TypeObject$SetTodoImg = F2(
 	function (a, b) {
@@ -11702,6 +11927,9 @@ var author$project$Devs$TypeObject$SetTodoText = F2(
 	function (a, b) {
 		return {$: 'SetTodoText', a: a, b: b};
 	});
+var author$project$Devs$TypeObject$UpdateTodo = function (a) {
+	return {$: 'UpdateTodo', a: a};
+};
 var elm$html$Html$textarea = _VirtualDom_node('textarea');
 var elm$html$Html$Attributes$cols = function (n) {
 	return A2(
@@ -11715,98 +11943,151 @@ var elm$html$Html$Attributes$rows = function (n) {
 		'rows',
 		elm$core$String$fromInt(n));
 };
-var author$project$Pages$EditorTabs$Tab4$showTodoList = function (todo) {
-	var imgValue = function () {
-		var _n1 = todo.image;
-		if (_n1.$ === 'Just') {
-			var val = _n1.a;
-			return val;
-		} else {
-			return '';
-		}
-	}();
-	var commentValue = function () {
-		var _n0 = todo.image_comment;
-		if (_n0.$ === 'Just') {
-			var val = _n0.a;
-			return val;
-		} else {
-			return '';
-		}
-	}();
-	return A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('todoRow')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				elm$html$Html$input,
+var author$project$Pages$EditorTabs$Tab4$showTodoList = F3(
+	function (sp, recipeId, todo) {
+		var imgValue = function () {
+			var _n3 = todo.image;
+			if (_n3.$ === 'Just') {
+				var val = _n3.a;
+				return val;
+			} else {
+				return '';
+			}
+		}();
+		var commentValue = function () {
+			var _n2 = todo.image_comment;
+			if (_n2.$ === 'Just') {
+				var val = _n2.a;
+				return val;
+			} else {
+				return '';
+			}
+		}();
+		return A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('todoRow')
+				]),
+			elm$core$List$concat(
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$id('number'),
-						elm$html$Html$Events$onInput(
-						author$project$Devs$TypeObject$SetTodoNr(todo.uuid)),
-						elm$html$Html$Attributes$type_('number'),
-						elm$html$Html$Attributes$class('numberInput'),
-						elm$html$Html$Attributes$value(
-						elm$core$String$fromInt(todo.number))
-					]),
-				_List_Nil),
-				A2(
-				elm$html$Html$textarea,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$id('text'),
-						elm$html$Html$Events$onInput(
-						author$project$Devs$TypeObject$SetTodoText(todo.uuid)),
-						elm$html$Html$Attributes$class('textInput'),
-						elm$html$Html$Attributes$cols(50),
-						elm$html$Html$Attributes$rows(4)
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text(todo.text)
-					])),
-				A2(
-				elm$html$Html$input,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$id('image'),
-						elm$html$Html$Events$onInput(
-						author$project$Devs$TypeObject$SetTodoImg(todo.uuid)),
-						elm$html$Html$Attributes$type_('text'),
-						elm$html$Html$Attributes$class('imageInput'),
-						elm$html$Html$Attributes$value(imgValue)
-					]),
-				_List_Nil),
-				A2(
-				elm$html$Html$input,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$id('comment'),
-						elm$html$Html$Events$onInput(
-						author$project$Devs$TypeObject$SetTodoImgComment(todo.uuid)),
-						elm$html$Html$Attributes$type_('text'),
-						elm$html$Html$Attributes$class('imageInput'),
-						elm$html$Html$Attributes$value(commentValue)
-					]),
-				_List_Nil),
-				A2(
-				elm$html$Html$button,
-				_List_fromArray(
-					[
-						elm$html$Html$Events$onClick(
-						author$project$Devs$TypeObject$RemoveTodoFromRecipe(todo.uuid))
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text('-')
-					]))
-			]));
-};
+						_List_fromArray(
+						[
+							A2(
+							elm$html$Html$input,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$id('number'),
+									elm$html$Html$Events$onInput(
+									author$project$Devs$TypeObject$SetTodoNr(todo.uuid)),
+									elm$html$Html$Attributes$type_('number'),
+									elm$html$Html$Attributes$class('numberInput'),
+									elm$html$Html$Attributes$value(
+									elm$core$String$fromInt(todo.number))
+								]),
+							_List_Nil),
+							A2(
+							elm$html$Html$textarea,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$id('text'),
+									elm$html$Html$Events$onInput(
+									author$project$Devs$TypeObject$SetTodoText(todo.uuid)),
+									elm$html$Html$Attributes$class('textInput'),
+									elm$html$Html$Attributes$cols(50),
+									elm$html$Html$Attributes$rows(4)
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text(todo.text)
+								])),
+							A2(
+							elm$html$Html$input,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$id('image'),
+									elm$html$Html$Events$onInput(
+									author$project$Devs$TypeObject$SetTodoImg(todo.uuid)),
+									elm$html$Html$Attributes$type_('text'),
+									elm$html$Html$Attributes$class('imageInput'),
+									elm$html$Html$Attributes$value(imgValue)
+								]),
+							_List_Nil),
+							A2(
+							elm$html$Html$input,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$id('comment'),
+									elm$html$Html$Events$onInput(
+									author$project$Devs$TypeObject$SetTodoImgComment(todo.uuid)),
+									elm$html$Html$Attributes$type_('text'),
+									elm$html$Html$Attributes$class('imageInput'),
+									elm$html$Html$Attributes$value(commentValue)
+								]),
+							_List_Nil)
+						]),
+						function () {
+						var _n0 = todo.id;
+						if (_n0.$ === 'Just') {
+							return _List_fromArray(
+								[
+									A7(
+									author$project$Pages$Utils$getEditButton,
+									sp,
+									elm$core$Maybe$Just(true),
+									'delete.png',
+									elm$core$Maybe$Nothing,
+									author$project$Devs$TypeObject$DeleteTodo(todo),
+									_List_Nil,
+									elm$core$Maybe$Just(15)),
+									A7(
+									author$project$Pages$Utils$getEditButton,
+									sp,
+									elm$core$Maybe$Just(true),
+									'save.png',
+									elm$core$Maybe$Nothing,
+									author$project$Devs$TypeObject$UpdateTodo(todo),
+									_List_Nil,
+									elm$core$Maybe$Just(15))
+								]);
+						} else {
+							if (recipeId.$ === 'Just') {
+								var recId = recipeId.a;
+								return _List_fromArray(
+									[
+										A7(
+										author$project$Pages$Utils$getEditButton,
+										sp,
+										elm$core$Maybe$Just(true),
+										'delete.png',
+										elm$core$Maybe$Nothing,
+										author$project$Devs$TypeObject$RemoveEmptyTodo(todo.uuid),
+										_List_fromArray(
+											[
+												A2(elm$html$Html$Attributes$style, 'margin-top', '10px')
+											]),
+										elm$core$Maybe$Nothing),
+										A7(
+										author$project$Pages$Utils$getEditButton,
+										sp,
+										elm$core$Maybe$Just(true),
+										'save.png',
+										elm$core$Maybe$Nothing,
+										A2(author$project$Devs$TypeObject$AddTodo, todo, recId),
+										_List_fromArray(
+											[
+												A2(elm$html$Html$Attributes$style, 'margin-top', '10px')
+											]),
+										elm$core$Maybe$Nothing)
+									]);
+							} else {
+								return _List_Nil;
+							}
+						}
+					}()
+					])));
+	});
 var author$project$Pages$EditorTabs$Tab4$showTab = function (model) {
 	var recForEdit = function () {
 		var _n0 = model.selectedRecipe;
@@ -11830,7 +12111,7 @@ var author$project$Pages$EditorTabs$Tab4$showTab = function (model) {
 					[author$project$Pages$EditorTabs$Tab4$getLabelRow]),
 					A2(
 					elm$core$List$map,
-					author$project$Pages$EditorTabs$Tab4$showTodoList,
+					A2(author$project$Pages$EditorTabs$Tab4$showTodoList, model.sp, recForEdit.id),
 					A2(
 						elm$core$List$sortBy,
 						function ($) {
@@ -12072,6 +12353,7 @@ var author$project$Pages$EditorTabs$Tab5$showTab = function (model) {
 					]))
 			]));
 };
+var elm_community$html_extra$Html$Extra$nothing = elm$html$Html$text('');
 var author$project$Pages$EditorView$viewEditForm = function (model) {
 	var recipeForEdit = function () {
 		var _n2 = model.selectedRecipe;
@@ -12141,7 +12423,17 @@ var author$project$Pages$EditorView$viewEditForm = function (model) {
 								_List_fromArray(
 									[
 										elm$html$Html$text('schließen')
-									]))
+									])),
+								_Utils_eq(editForm, author$project$Devs$Objects$BasicForm) ? A2(
+								elm$html$Html$button,
+								_List_fromArray(
+									[
+										elm$html$Html$Events$onClick(author$project$Devs$TypeObject$SaveRecipe)
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('speichern')
+									])) : elm_community$html_extra$Html$Extra$nothing
 							]))
 					]))
 			]));
@@ -12538,7 +12830,6 @@ var author$project$Pages$RecipeListView$viewRecipesOfTag = function (model) {
 	}();
 	return A2(author$project$Pages$RecipeListView$showRecipeList, recipeList, selectedTagName);
 };
-var author$project$Devs$Objects$BasicForm = {$: 'BasicForm'};
 var author$project$Devs$Objects$IngredientForm = {$: 'IngredientForm'};
 var author$project$Devs$Objects$TagForm = {$: 'TagForm'};
 var author$project$Devs$Objects$TodoForm = {$: 'TodoForm'};
@@ -12546,26 +12837,9 @@ var author$project$Devs$TypeObject$ConfirmDelete = {$: 'ConfirmDelete'};
 var author$project$Devs$TypeObject$EditRecipe = {$: 'EditRecipe'};
 var author$project$Devs$TypeObject$NoOp = {$: 'NoOp'};
 var author$project$Devs$TypeObject$RemoveSelectedRecipe = {$: 'RemoveSelectedRecipe'};
-var author$project$Devs$TypeObject$SaveRecipe = {$: 'SaveRecipe'};
 var author$project$Devs$TypeObject$SetNumberForDisplay = function (a) {
 	return {$: 'SetNumberForDisplay', a: a};
 };
-var author$project$Devs$Utils$isLoggedIn = F2(
-	function (session, person) {
-		if (session.$ === 'Just') {
-			var log = session.a;
-			if (person.$ === 'Just') {
-				var pers = person.a;
-				return _Utils_eq(
-					A2(elm$core$Maybe$withDefault, -1, log.person.id),
-					A2(elm$core$Maybe$withDefault, -2, pers.id));
-			} else {
-				return elm$core$String$length(log.account.token) > 0;
-			}
-		} else {
-			return false;
-		}
-	});
 var author$project$Pages$RecipeView$getTagName = function (tag) {
 	return tag.name + (' (' + (tag.tagType.name + ')'));
 };
@@ -12653,7 +12927,6 @@ var elm$core$List$tail = function (list) {
 		return elm$core$Maybe$Nothing;
 	}
 };
-var elm$core$Basics$ge = _Utils_ge;
 var elm$core$Basics$not = _Basics_not;
 var elm$core$Basics$isInfinite = _Basics_isInfinite;
 var elm$core$Basics$isNaN = _Basics_isNaN;
@@ -13304,22 +13577,31 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 			}
 		}();
 		var owner = 'Rezept von: ' + (rec.person.firstname + (' ' + rec.person.surname));
-		var number_for_display = function () {
-			var _n5 = rec.number_for_display;
+		var number_comment = function () {
+			var _n5 = rec.number_comment;
 			if (_n5.$ === 'Just') {
-				var n = _n5.a;
+				var comment = _n5.a;
+				return comment;
+			} else {
+				return 'Portionen';
+			}
+		}();
+		var number = function () {
+			var _n4 = rec.number;
+			if (_n4.$ === 'Just') {
+				var n = _n4.a;
 				return n;
 			} else {
 				return 1;
 			}
 		}();
-		var number_comment = function () {
-			var _n4 = rec.number_comment;
-			if (_n4.$ === 'Just') {
-				var comment = _n4.a;
-				return comment;
+		var number_for_display = function () {
+			var _n3 = rec.number_for_display;
+			if (_n3.$ === 'Just') {
+				var n = _n3.a;
+				return n;
 			} else {
-				return 'Portionen';
+				return number;
 			}
 		}();
 		var rec_number = A2(
@@ -13350,15 +13632,6 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 							elm$html$Html$text(number_comment)
 						]))
 				]));
-		var number = function () {
-			var _n3 = rec.number;
-			if (_n3.$ === 'Just') {
-				var n = _n3.a;
-				return n;
-			} else {
-				return 1;
-			}
-		}();
 		var header = function () {
 			var _n2 = rec.translate;
 			if (_n2.$ === 'Just') {
@@ -13467,22 +13740,6 @@ var author$project$Pages$RecipeView$viewRecipe = F3(
 											header,
 											author$project$Devs$TypeObject$ToggleEditForm(author$project$Devs$Objects$BasicForm))
 										])),
-									A7(
-									author$project$Pages$Utils$getEditButton,
-									sp,
-									elm$core$Maybe$Just(
-										A2(
-											author$project$Devs$Utils$isLoggedIn,
-											session,
-											elm$core$Maybe$Just(rec.person))),
-									'save.png',
-									elm$core$Maybe$Nothing,
-									author$project$Devs$TypeObject$SaveRecipe,
-									_List_fromArray(
-										[
-											A2(elm$html$Html$Attributes$style, 'margin-top', '10px')
-										]),
-									elm$core$Maybe$Nothing),
 									A7(
 									author$project$Pages$Utils$getEditButton,
 									sp,
@@ -13817,16 +14074,16 @@ var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProper
 var author$project$Pages$OverViewPage$viewOverview = F2(
 	function (model, alertMsg) {
 		var tagForm = function () {
-			var _n6 = model.addTag;
-			if (_n6.$ === 'Just') {
+			var _n5 = model.addTag;
+			if (_n5.$ === 'Just') {
 				return author$project$Pages$EditorView$viewAddTagForm(model);
 			} else {
 				return elm$html$Html$text('');
 			}
 		}();
 		var sourceForm = function () {
-			var _n5 = model.newSource;
-			if (_n5.$ === 'Just') {
+			var _n4 = model.newSource;
+			if (_n4.$ === 'Just') {
 				return author$project$Pages$EditorView$viewSourceForm(model);
 			} else {
 				return elm$html$Html$text('');
@@ -13834,21 +14091,11 @@ var author$project$Pages$OverViewPage$viewOverview = F2(
 		}();
 		var printBookLink = model.sp.serverProtokoll + (model.sp.serverHost + (model.sp.serverUrlPrefix + (model.sp.apiUrlPrefix + '/printBookDownload')));
 		var loginForm = function () {
-			var _n4 = model.session;
-			if (_n4.$ === 'Just') {
-				var session = _n4.a;
-				return (!elm$core$String$length(session.account.token)) ? author$project$Pages$LoginView$getLoginForm(model) : elm$html$Html$text('');
-			} else {
-				return elm$html$Html$text('');
-			}
-		}();
-		var isLoggedIn = function () {
 			var _n3 = model.session;
 			if (_n3.$ === 'Just') {
-				var session = _n3.a;
-				return elm$core$String$length(session.account.token) > 0;
+				return A2(author$project$Devs$Utils$isLoggedIn, model.session, elm$core$Maybe$Nothing) ? elm$html$Html$text('') : author$project$Pages$LoginView$getLoginForm(model);
 			} else {
-				return false;
+				return elm$html$Html$text('');
 			}
 		}();
 		var editForm = function () {
@@ -13874,7 +14121,7 @@ var author$project$Pages$OverViewPage$viewOverview = F2(
 			}
 		}();
 		var confirmDeleteForm = model.deleteRecipe ? A3(author$project$Pages$Utils$getConfirmForm, author$project$Devs$TypeObject$DeleteRecipe, author$project$Devs$TypeObject$CancelDelete, 'Soll das Rezept wirklich gelöscht werden?') : elm$html$Html$text('');
-		var actionButton = isLoggedIn ? A2(
+		var actionButton = A2(author$project$Devs$Utils$isLoggedIn, model.session, elm$core$Maybe$Nothing) ? A2(
 			elm$html$Html$button,
 			_List_fromArray(
 				[
@@ -17500,4 +17747,4 @@ var author$project$RecipeServer$main = elm$browser$Browser$element(
 		view: author$project$RecipeServer$view
 	});
 _Platform_export({'RecipeServer':{'init':author$project$RecipeServer$main(
-	elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.0"},"types":{"message":"Devs.TypeObject.Msg","aliases":{"Devs.Objects.Account":{"args":[],"type":"{ id : Basics.Int, username : String.String, passwordhash : String.String, token : String.String, accountType : Devs.Objects.AccountType, expirationdate : String.String, uuid : String.String }"},"Devs.Objects.ImagePortData":{"args":[],"type":"{ contents : String.String, filename : String.String }"},"Devs.Objects.Ingredient":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, comment : Maybe.Maybe String.String, part : Maybe.Maybe Devs.Objects.PartLight, quantity : Maybe.Maybe Basics.Float, sortorder : Basics.Int, unit : Maybe.Maybe Devs.Objects.Unit, uuid : String.String }"},"Devs.Objects.InitData":{"args":[],"type":"{ random : Basics.Int, protocol : String.String, serverName : String.String, serverPort : Basics.Int }"},"Devs.Objects.Part":{"args":[],"type":"{ id : Basics.Int, name : String.String, ingredients : List.List Devs.Objects.Ingredient, uuid : String.String }"},"Devs.Objects.PartLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Person":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, firstname : String.String, surname : String.String, role : Devs.Objects.Role, uuid : String.String }"},"Devs.Objects.Recipe":{"args":[],"type":"{ aikz : Basics.Int, id : Maybe.Maybe Basics.Int, image : Maybe.Maybe String.String, ingredients : List.List Devs.Objects.Ingredient, parts : List.List Devs.Objects.Part, name : String.String, translate : Maybe.Maybe String.String, number : Maybe.Maybe Basics.Int, number_for_display : Maybe.Maybe Basics.Float, number_comment : Maybe.Maybe String.String, nv_carbohydrates : Maybe.Maybe Basics.Float, nv_energy : Maybe.Maybe Basics.Float, nv_fat : Maybe.Maybe Basics.Float, nv_protein : Maybe.Maybe Basics.Float, nv_size : Maybe.Maybe Basics.Int, source : Maybe.Maybe Devs.Objects.Source, source_page : Maybe.Maybe Basics.Int, person : Devs.Objects.Person, tags : List.List Devs.Objects.Tag, todos : List.List Devs.Objects.Todo, uuid : String.String }"},"Devs.Objects.RecipeLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Session":{"args":[],"type":"{ person : Devs.Objects.Person, account : Devs.Objects.Account }"},"Devs.Objects.Source":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, isbn : Maybe.Maybe String.String, name : String.String, year : Maybe.Maybe String.String, uuid : String.String }"},"Devs.Objects.Tag":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, tagType : Devs.Objects.TagtypeShort, uuid : String.String }"},"Devs.Objects.Tagtype":{"args":[],"type":"{ id : Basics.Int, name : String.String, tagList : List.List Devs.Objects.Tag, uuid : String.String }"},"Devs.Objects.TagtypeShort":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Todo":{"args":[],"type":"{ id : Basics.Int, image : Maybe.Maybe String.String, image_comment : Maybe.Maybe String.String, number : Basics.Int, text : String.String, uuid : String.String }"},"Devs.Objects.Unit":{"args":[],"type":"{ id : Basics.Int, name : String.String, unitCategory : Devs.Objects.UnitCategory, uuid : String.String }"},"Devs.Objects.UnitCategory":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"}},"unions":{"Devs.TypeObject.Msg":{"args":[],"tags":{"NoOp":[],"Initialize":["Devs.Objects.InitData"],"ImageSelected":[],"ImageRead":["Devs.Objects.ImagePortData"],"ShowOverView":[],"ToggleEditForm":["Devs.Objects.EditForm"],"GetLoginForm":[],"SetUsernameForCheck":["String.String"],"SetPasswortForCheck":["String.String"],"Login":[],"HandleLogin":["Result.Result Http.Error Devs.Objects.Session"],"ShowRecipesOfTag":["Maybe.Maybe Devs.Objects.Tag"],"ShowRecipe":["Maybe.Maybe Devs.Objects.RecipeLight"],"SetNumberForDisplay":["String.String"],"EditRecipe":[],"InsertRecipe":[],"SaveRecipe":[],"SavedRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"DeleteRecipe":[],"SetAikz":["Basics.Int"],"SetName":["String.String"],"SetTranslate":["String.String"],"SetNumber":["String.String"],"SetNumberComment":["String.String"],"SetRecImage":["String.String"],"RemoveImageFromRecipe":[],"SetCarbo":["String.String"],"SetEnergy":["String.String"],"SetFat":["String.String"],"SetProt":["String.String"],"SetSize":["String.String"],"SetSourcePage":["String.String"],"SetSource":["String.String"],"AddNewSource":[],"SetSrcName":["String.String"],"SetSrcIsbn":["String.String"],"SetSrcYear":["String.String"],"CancelSourceEdit":[],"SaveNewSource":[],"SavedSource":["Result.Result Http.Error Devs.Objects.Source"],"ChooseNewTag":[],"SetChoosenTag":["String.String"],"RemoveTagFromRec":["String.String"],"CancelAddTag":[],"AddTagToRecipe":[],"AddIngreToRecipe":[],"SetIngreOrder":["String.String","String.String"],"SetIngreName":["String.String","String.String"],"SetIngrePart":["String.String","String.String"],"SetIngreUnit":["String.String","String.String"],"SetIngreQuant":["String.String","String.String"],"SetIngreComment":["String.String","String.String"],"AddTodoToRecipe":[],"SetTodoNr":["String.String","String.String"],"SetTodoText":["String.String","String.String"],"SetTodoImg":["String.String","String.String"],"SetTodoImgComment":["String.String","String.String"],"RemoveTodoFromRecipe":["String.String"],"CancelRecipeEdit":[],"ConfirmDelete":[],"CancelDelete":[],"CancelLogin":[],"CloseAlert":[],"CloseLoginAlert":[],"CloseRecipeAlert":[],"RemoveSelectedTag":[],"RemoveSelectedRecipe":[],"ListTagtypes":["Result.Result Http.Error (List.List Devs.Objects.Tagtype)"],"ListRecipesForTag":["Result.Result Http.Error (List.List Devs.Objects.RecipeLight)"],"SetRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"SetUnitList":["Result.Result Http.Error (List.List Devs.Objects.Unit)"],"SetSourceList":["Result.Result Http.Error (List.List Devs.Objects.Source)"],"SetTagList":["Result.Result Http.Error (List.List Devs.Objects.Tag)"],"SetPartList":["Result.Result Http.Error (List.List Devs.Objects.PartLight)"],"SetSearchInput":["String.String"],"SearchRecipe":[],"UploadImage":["Result.Result Http.Error Basics.Bool"],"AddIncredient":["Devs.Objects.Ingredient","Basics.Int"],"UpdateIncredient":["Devs.Objects.Ingredient"],"RemoveEmptyIngretient":["String.String"],"DeleteIncredient":["Devs.Objects.Ingredient"],"DeleteSource":["Basics.Int"],"DeleteTag":["Basics.Int"],"DeleteTodo":["Basics.Int"],"UpdateIncredientResp":["Result.Result Http.Error Basics.Bool"],"RemoveIngreFromRecipe":["String.String","Result.Result Http.Error Basics.Bool"],"AddIngreToRecipeResp":["Result.Result Http.Error Devs.Objects.Ingredient"],"DeleteSourceResp":["Basics.Int","Result.Result Http.Error Basics.Bool"],"DeleteTagResp":["Basics.Int","Result.Result Http.Error Basics.Bool"],"DeleteTodoResp":["Basics.Int","Result.Result Http.Error Basics.Bool"]}},"Devs.Objects.AccountType":{"args":[],"tags":{"HASH":[],"INIT":[]}},"Devs.Objects.EditForm":{"args":[],"tags":{"BasicForm":[],"TagForm":[],"IngredientForm":[],"TodoForm":[],"FootValueForm":[],"None":[]}},"Devs.Objects.Role":{"args":[],"tags":{"ADMIN":[],"USER":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}}}}})}});}(this));
+	elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.0"},"types":{"message":"Devs.TypeObject.Msg","aliases":{"Devs.Objects.Account":{"args":[],"type":"{ id : Basics.Int, username : String.String, passwordhash : String.String, token : String.String, accountType : Devs.Objects.AccountType, expirationdate : String.String, uuid : String.String }"},"Devs.Objects.ImagePortData":{"args":[],"type":"{ contents : String.String, filename : String.String }"},"Devs.Objects.Ingredient":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, comment : Maybe.Maybe String.String, part : Maybe.Maybe Devs.Objects.PartLight, quantity : Maybe.Maybe Basics.Float, sortorder : Basics.Int, unit : Maybe.Maybe Devs.Objects.Unit, uuid : String.String }"},"Devs.Objects.InitData":{"args":[],"type":"{ random : Basics.Int, protocol : String.String, serverName : String.String, serverPort : Basics.Int }"},"Devs.Objects.Part":{"args":[],"type":"{ id : Basics.Int, name : String.String, ingredients : List.List Devs.Objects.Ingredient, uuid : String.String }"},"Devs.Objects.PartLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Person":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, firstname : String.String, surname : String.String, role : Devs.Objects.Role, uuid : String.String }"},"Devs.Objects.Recipe":{"args":[],"type":"{ aikz : Basics.Int, id : Maybe.Maybe Basics.Int, image : Maybe.Maybe String.String, ingredients : List.List Devs.Objects.Ingredient, parts : List.List Devs.Objects.Part, name : String.String, translate : Maybe.Maybe String.String, number : Maybe.Maybe Basics.Int, number_for_display : Maybe.Maybe Basics.Float, number_comment : Maybe.Maybe String.String, nv_carbohydrates : Maybe.Maybe Basics.Float, nv_energy : Maybe.Maybe Basics.Float, nv_fat : Maybe.Maybe Basics.Float, nv_protein : Maybe.Maybe Basics.Float, nv_size : Maybe.Maybe Basics.Int, source : Maybe.Maybe Devs.Objects.Source, source_page : Maybe.Maybe Basics.Int, person : Devs.Objects.Person, tags : List.List Devs.Objects.Tag, todos : List.List Devs.Objects.Todo, uuid : String.String }"},"Devs.Objects.RecipeLight":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Session":{"args":[],"type":"{ person : Maybe.Maybe Devs.Objects.Person, account : Maybe.Maybe Devs.Objects.Account, stateCode : Maybe.Maybe Http.Error, msg : Maybe.Maybe String.String }"},"Devs.Objects.Source":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, isbn : Maybe.Maybe String.String, name : String.String, year : Maybe.Maybe String.String, uuid : String.String }"},"Devs.Objects.Tag":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, tagType : Devs.Objects.TagtypeShort, uuid : String.String }"},"Devs.Objects.Tagtype":{"args":[],"type":"{ id : Basics.Int, name : String.String, tagList : List.List Devs.Objects.Tag, uuid : String.String }"},"Devs.Objects.TagtypeShort":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, name : String.String, uuid : String.String }"},"Devs.Objects.Todo":{"args":[],"type":"{ id : Maybe.Maybe Basics.Int, image : Maybe.Maybe String.String, image_comment : Maybe.Maybe String.String, number : Basics.Int, text : String.String, uuid : String.String }"},"Devs.Objects.Unit":{"args":[],"type":"{ id : Basics.Int, name : String.String, unitCategory : Devs.Objects.UnitCategory, uuid : String.String }"},"Devs.Objects.UnitCategory":{"args":[],"type":"{ id : Basics.Int, name : String.String, uuid : String.String }"}},"unions":{"Devs.TypeObject.Msg":{"args":[],"tags":{"NoOp":[],"Initialize":["Devs.Objects.InitData"],"ImageSelected":[],"ImageRead":["Devs.Objects.ImagePortData"],"ShowOverView":[],"ToggleEditForm":["Devs.Objects.EditForm"],"GetLoginForm":[],"SetUsernameForCheck":["String.String"],"SetPasswortForCheck":["String.String"],"Login":[],"HandleLogin":["Result.Result Http.Error Devs.Objects.Session"],"ShowRecipesOfTag":["Maybe.Maybe Devs.Objects.Tag"],"ShowRecipe":["Maybe.Maybe Devs.Objects.RecipeLight"],"SetNumberForDisplay":["String.String"],"EditRecipe":[],"InsertRecipe":[],"SaveRecipe":[],"SavedRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"DeleteRecipe":[],"SetAikz":["Basics.Int"],"SetName":["String.String"],"SetTranslate":["String.String"],"SetNumber":["String.String"],"SetNumberComment":["String.String"],"SetRecImage":["String.String"],"RemoveImageFromRecipe":[],"SetCarbo":["String.String"],"SetEnergy":["String.String"],"SetFat":["String.String"],"SetProt":["String.String"],"SetSize":["String.String"],"SetSourcePage":["String.String"],"SetSource":["String.String"],"AddNewSource":[],"SetSrcName":["String.String"],"SetSrcIsbn":["String.String"],"SetSrcYear":["String.String"],"CancelSourceEdit":[],"SaveNewSource":[],"SavedSource":["Result.Result Http.Error Devs.Objects.Source"],"ChooseNewTag":[],"SetChoosenTag":["String.String"],"RemoveTagFromRec":["String.String"],"CancelAddTag":[],"AddTagToRecipe":[],"AddIngreToRecipe":[],"SetIngreOrder":["String.String","String.String"],"SetIngreName":["String.String","String.String"],"SetIngrePart":["String.String","String.String"],"SetIngreUnit":["String.String","String.String"],"SetIngreQuant":["String.String","String.String"],"SetIngreComment":["String.String","String.String"],"AddTodoToRecipe":[],"SetTodoNr":["String.String","String.String"],"SetTodoText":["String.String","String.String"],"SetTodoImg":["String.String","String.String"],"SetTodoImgComment":["String.String","String.String"],"CancelRecipeEdit":[],"ConfirmDelete":[],"CancelDelete":[],"CancelLogin":[],"CloseAlert":[],"CloseLoginAlert":[],"CloseRecipeAlert":[],"RemoveSelectedTag":[],"RemoveSelectedRecipe":[],"ListTagtypes":["Result.Result Http.Error (List.List Devs.Objects.Tagtype)"],"ListRecipesForTag":["Result.Result Http.Error (List.List Devs.Objects.RecipeLight)"],"SetRecipe":["Result.Result Http.Error Devs.Objects.Recipe"],"SetUnitList":["Result.Result Http.Error (List.List Devs.Objects.Unit)"],"SetSourceList":["Result.Result Http.Error (List.List Devs.Objects.Source)"],"SetTagList":["Result.Result Http.Error (List.List Devs.Objects.Tag)"],"SetPartList":["Result.Result Http.Error (List.List Devs.Objects.PartLight)"],"SetSearchInput":["String.String"],"SearchRecipe":[],"UploadImage":["Result.Result Http.Error Basics.Bool"],"AddIncredient":["Devs.Objects.Ingredient","Basics.Int"],"UpdateIncredient":["Devs.Objects.Ingredient"],"RemoveEmptyIngretient":["String.String"],"DeleteIncredient":["Devs.Objects.Ingredient"],"DeleteSource":["Basics.Int"],"DeleteTag":["Basics.Int"],"AddTodo":["Devs.Objects.Todo","Basics.Int"],"UpdateTodo":["Devs.Objects.Todo"],"RemoveEmptyTodo":["String.String"],"DeleteTodo":["Devs.Objects.Todo"],"UpdateIncredientResp":["Result.Result Http.Error Basics.Bool"],"RemoveIngreFromRecipe":["String.String","Result.Result Http.Error Basics.Bool"],"AddIngreToRecipeResp":["Result.Result Http.Error Devs.Objects.Ingredient"],"UpdateTodoResp":["Result.Result Http.Error Basics.Bool"],"RemoveTodoFromRecipe":["String.String","Result.Result Http.Error Basics.Bool"],"AddTodoToRecipeResp":["Result.Result Http.Error Devs.Objects.Todo"],"DeleteSourceResp":["Basics.Int","Result.Result Http.Error Basics.Bool"],"DeleteTagResp":["Basics.Int","Result.Result Http.Error Basics.Bool"]}},"Devs.Objects.AccountType":{"args":[],"tags":{"HASH":[],"INIT":[]}},"Devs.Objects.EditForm":{"args":[],"tags":{"BasicForm":[],"TagForm":[],"IngredientForm":[],"TodoForm":[],"FootValueForm":[],"None":[]}},"Devs.Objects.Role":{"args":[],"tags":{"ADMIN":[],"USER":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}}}}})}});}(this));

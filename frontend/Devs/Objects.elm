@@ -2,6 +2,7 @@ module Devs.Objects exposing (..)
 
 import UUID
 import Random
+import Http
 
 --import Video as VideoObj
 
@@ -28,10 +29,10 @@ type alias Unit = {id: Int, name: String, unitCategory: UnitCategory, uuid: Stri
 type alias Source = {id: Maybe Int, isbn: Maybe String, name: String, year: Maybe String, uuid: String}
 type alias Person = {id: Maybe Int, firstname: String, surname: String, role: Role, uuid: String}
 type alias Account = {id: Int, username: String, passwordhash: String, token: String, accountType: AccountType, expirationdate: String, uuid: String}
-type alias Session = { person: Person, account: Account }
+type alias Session = { person: Maybe Person, account: Maybe Account, stateCode: Maybe Http.Error, msg: Maybe String }
 
 type alias Todo = {
-  id: Int
+  id: Maybe Int
   , image: Maybe String
   , image_comment: Maybe String
   , number: Int
@@ -149,7 +150,7 @@ initialModel = {
 
 getEmptyTodo: Int -> Todo
 getEmptyTodo newNumber = {
-  id=0
+  id=Nothing
   , image=Nothing
   , image_comment=Nothing
   , number=newNumber
@@ -205,7 +206,7 @@ getEmptyPerson: Person
 getEmptyPerson = Person Nothing "" "" USER (UUID.toString UUID.nil)
 
 getEmptySession: Session
-getEmptySession = Session getEmptyPerson getEmptyAccount
+getEmptySession = Session Nothing Nothing Nothing Nothing
 
 getEmptyRecipe: Recipe
 getEmptyRecipe = {

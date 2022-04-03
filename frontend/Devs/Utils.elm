@@ -120,8 +120,18 @@ deleteSource: O.Model -> Int -> Cmd TO.Msg
 deleteSource model sourceId = Api.deleteValue (TO.DeleteSourceResp sourceId) model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/deleteSource?sourceId=" ++ (String.fromInt sourceId))
 deleteTag: O.Model -> Int -> Cmd TO.Msg
 deleteTag model tagId = Api.deleteValue (TO.DeleteTagResp tagId) model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/deleteTag?tagId=" ++ (String.fromInt tagId))
-deleteTodo: O.Model -> Int -> Cmd TO.Msg
-deleteTodo model todoId = Api.deleteValue (TO.DeleteTodoResp todoId) model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/deleteTodo?todoId=" ++ (String.fromInt todoId))
+
+
+addTodo: O.Model -> O.Todo -> Int -> Cmd TO.Msg
+addTodo model todo recipeId = Api.addTodo TO.AddTodoToRecipeResp model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/addTodo") (RE.addTodoEncoder recipeId todo)
+
+updateTodo: O.Model -> O.Todo -> Cmd TO.Msg
+updateTodo model todo = Api.updateValue TO.UpdateTodoResp model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/updateTodo") (RE.todoEncoder todo)
+
+deleteTodo: O.Model -> O.Todo -> Cmd TO.Msg
+deleteTodo model todo = case todo.id of
+  Just todoId -> Api.deleteValue (TO.RemoveTodoFromRecipe todo.uuid) model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/deleteTodo?todoId=" ++ (String.fromInt todoId))
+  Nothing -> Cmd.none
 
 getTagtypeListForOverview : O.Model -> Cmd TO.Msg
 getTagtypeListForOverview model = Api.getTagtypeListForOverview TO.ListTagtypes model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllTagTypes")
@@ -153,22 +163,31 @@ getRecipeListForTag model selectedTag =
   in
     Api.getRecipeListForTag TO.ListRecipesForTag model.session (model.sp.serverProtokoll ++ model.sp.serverHost ++ model.sp.serverUrlPrefix ++ model.sp.apiUrlPrefix ++ "/getAllRecipeByTagWithoutMeta/?id=" ++ (String.fromInt tagId))
 
-httpErrorToMessage: Http.Error -> String
-httpErrorToMessage error =
-  case error of
-    Http.NetworkError -> "Is the server running?"
-    Http.BadStatus response -> String.fromInt response
-    Http.BadBody response -> response
---    Http.BadPayload message _ -> "Decoding Failed: " ++ message
-    Http.BadUrl url -> "You defindes a wrong URL! " ++ url
-    Http.Timeout -> "The time for request is out!"
+httpErrorToMessage: Http.Error -> Maybe String -> String
+httpErrorToMessage error msg =
+    case error of
+      Http.NetworkError -> "Is the server running?"
+      Http.BadStatus response -> String.fromInt response ++ case msg of
+        Just m -> " (" ++ m ++ ")"
+        Nothing -> ""
+      Http.BadBody response -> response ++ case msg of
+        Just m -> " (" ++ m ++ ")"
+        Nothing -> ""
+  --    Http.BadPayload message _ -> "Decoding Failed: " ++ message
+      Http.BadUrl url -> "You defindes a wrong URL! " ++ url
+      Http.Timeout -> "The time for request is out!"
 
 isLoggedIn: Maybe O.Session -> Maybe O.Person -> Bool
 isLoggedIn session person =
   case session of
-    Just log -> case person of
-      Just pers -> (Maybe.withDefault -1 log.person.id) == (Maybe.withDefault -2 pers.id)
-      Nothing -> String.length log.account.token > 0
+    Just log -> 
+      let
+        loggedPerson = Maybe.withDefault O.getEmptyPerson log.person
+        loggedAccount = Maybe.withDefault O.getEmptyAccount log.account
+      in
+        case person of
+          Just pers -> (Maybe.withDefault -1 loggedPerson.id) == (Maybe.withDefault -2 pers.id)
+          Nothing -> String.length loggedAccount.token > 0
     Nothing -> False
 
 --isOwnerOfRecipe

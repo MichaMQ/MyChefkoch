@@ -54,7 +54,7 @@ viewRecipe session rec sp =
       Nothing -> 1
     number_for_display = case rec.number_for_display of
       Just n -> n
-      Nothing -> 1
+      Nothing -> toFloat number
 
     --rec_number = Html.text ((String.fromInt number_for_display) ++ " " ++ number_comment)
     rec_number = Html.span [][
@@ -74,7 +74,7 @@ viewRecipe session rec sp =
           Html.h2 [ Attr.style "float" "left", Attr.style "margin-right" "5px" ][
             PU.getEditHeader (DU.isLoggedIn session (Just rec.person)) header (TO.ToggleEditForm O.BasicForm)
           ]
-          , PU.getEditButton sp (Just (DU.isLoggedIn session (Just rec.person))) "save.png" Nothing TO.SaveRecipe [Attr.style "margin-top" "10px"] Nothing
+          --, PU.getEditButton sp (Just (DU.isLoggedIn session (Just rec.person))) "save.png" Nothing TO.SaveRecipe [Attr.style "margin-top" "10px"] Nothing
           , PU.getEditButton sp (Just (DU.isLoggedIn session (Just rec.person))) "delete.png" Nothing TO.ConfirmDelete [Attr.style "margin-top" "10px"] Nothing
         ]
         , Html.div [ Attr.id "recipeSource", Attr.style "clear" "both" ][ Html.text (rec_source ++ sourcePage ++ sourceYear ++ sourceIsbn), amazonLink ]

@@ -51,10 +51,13 @@ update msg model =
               else
                 ( model, DU.login model )
         HandleLogin (Ok session) ->
-            if String.length session.account.token > 0 then
-              ( { model | alertMessage = Nothing, session = Just session } , Cmd.none )
-            else ( { model | alertMessage = Just "Mindestens eine der eingegeben Daten ist falsch!" }, Cmd.none )
-        HandleLogin (Err error) -> ( { model | recAlertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+          case session.account of
+            Just account -> if String.length account.token > 0 then ( { model | alertMessage = Nothing, session = Just session } , Cmd.none )
+              else ( { model | alertMessage = Just "Mindestens eine der eingegeben Daten ist falsch!" }, Cmd.none )
+            Nothing -> case session.stateCode of
+              Just error -> ( { model | recAlertMessage = Just (DU.httpErrorToMessage error session.msg), session = Nothing }, Cmd.none)
+              Nothing -> (model, Cmd.none)
+        HandleLogin (Err error) -> ( { model | recAlertMessage = Just (DU.httpErrorToMessage error Nothing), session = Nothing }, Cmd.none)
         ShowOverView -> ( { model | selectedRecipe = Nothing, selectedTag = Nothing }, Cmd.none )
         ToggleEditForm formEnum ->
           let
@@ -92,7 +95,7 @@ update msg model =
           let
             _ = Debug.log "error: " error
           in
-            ( { model | recAlertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+            ( { model | recAlertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         DeleteRecipe -> ( { model | deleteRecipe = False, selectedTag = Nothing, recipesOfSelectedTag = Nothing, selectedRecipe = Nothing, newSource = Nothing }, Cmd.none )
         CloseRecipeAlert -> ( { model | recAlertMessage = Nothing }, Cmd.none )
         SetAikz val ->           ( { model | selectedRecipe = (RecipeObj.setAikz model.selectedRecipe val) } , Cmd.none)
@@ -144,7 +147,7 @@ update msg model =
               Nothing -> [savedSource]
           in
             ( { model | newSource = Nothing, kl = (DU.setInitialSource model.kl newSourceList) } , Cmd.none)
-        SavedSource (Err error) -> ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+        SavedSource (Err error) -> ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         ChooseNewTag -> ( { model | addTag = Just O.getEmptyTag } , Cmd.none)
         SetChoosenTag tUuid ->
           let
@@ -259,13 +262,6 @@ update msg model =
               Nothing -> []
           in
             ( { model | selectedRecipe = (RecipeObj.setTodos model.selectedRecipe newTodoList) } , Cmd.none)
-        RemoveTodoFromRecipe tUuid ->
-          let
-            newRec = case model.selectedRecipe of
-              Just rec -> Just { rec | todos = (List.filter (\item -> (item.uuid /= tUuid)) rec.todos) }
-              Nothing -> model.selectedRecipe
-          in
-            ( { model | selectedRecipe = newRec } , Cmd.none)
         CancelRecipeEdit ->
           ( { model | newSource = Nothing, recAlertMessage = Nothing }, Cmd.none )
         ConfirmDelete ->
@@ -287,11 +283,11 @@ update msg model =
         ListTagtypes (Ok tagtypeList) ->
           ( { model | tagtypeList = Just tagtypeList } , Cmd.none)
         ListTagtypes (Err error) ->
-          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         ListRecipesForTag (Ok recipeList) ->
           ( { model | recipesOfSelectedTag = Just recipeList } , Cmd.none)
         ListRecipesForTag (Err error) ->
-          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         SetSearchInput value ->
           ( { model | searchValue = value }, Cmd.none )
         SearchRecipe ->
@@ -307,27 +303,27 @@ update msg model =
           in
             ( { model | selectedRecipe = Just {recipe|number_for_display=Just number_for_display} } , Cmd.none)
         SetRecipe (Err error) ->
-          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         SetUnitList (Ok list) ->
           ( { model | kl = (DU.setInitialUnit model.kl list) } , Cmd.none)
         SetUnitList (Err error) ->
-          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         SetSourceList (Ok list) ->
           ( { model | kl = (DU.setInitialSource model.kl list) } , Cmd.none)
         SetSourceList (Err error) ->
-          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         SetTagList (Ok list) ->
           ( { model | kl = (DU.setInitialTag model.kl list) } , Cmd.none)
         SetTagList (Err error) ->
-          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         SetPartList (Ok list) ->
           ( { model | kl = (DU.setInitialPart model.kl list) } , Cmd.none)
         SetPartList (Err error) ->
-          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         UploadImage (Ok _) ->
           ( model, Cmd.none)
         UploadImage (Err error) ->
-          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         AddIncredient ingredient recipeId -> (model, DU.addIngredient model ingredient recipeId)
         UpdateIncredient ingredient -> (model, DU.updateIncredient model ingredient)
         RemoveEmptyIngretient ingredientUuid ->
@@ -340,10 +336,19 @@ update msg model =
         DeleteIncredient ingredient -> (model, DU.deleteIngredient model ingredient)
         DeleteSource sourceId -> (model, DU.deleteSource model sourceId)
         DeleteTag tagId -> (model, DU.deleteTag model tagId)
-        DeleteTodo todoId -> (model, DU.deleteTodo model todoId)
+        AddTodo todo recipeId -> (model, DU.addTodo model todo recipeId)
+        UpdateTodo todo -> (model, DU.updateTodo model todo)
+        RemoveEmptyTodo todoUuid ->
+          let
+            newRec = case model.selectedRecipe of
+              Just rec -> Just { rec | todos = (List.filter (\item -> (item.uuid /= todoUuid)) rec.todos) }
+              Nothing -> model.selectedRecipe
+          in
+            ( { model | selectedRecipe = newRec } , Cmd.none)
+        DeleteTodo todo -> (model, DU.deleteTodo model todo)
         UpdateIncredientResp (Ok _) -> ( model , Cmd.none)
         UpdateIncredientResp (Err error) ->
-          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         RemoveIngreFromRecipe ingredientUuid (Ok _) ->
           let
             newRec = case model.selectedRecipe of
@@ -352,7 +357,7 @@ update msg model =
           in
             ( { model | selectedRecipe = newRec } , Cmd.none)
         RemoveIngreFromRecipe _ (Err error) ->
-          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         AddIngreToRecipeResp (Ok ingre) ->
           let
             newRec = case model.selectedRecipe of
@@ -361,17 +366,34 @@ update msg model =
           in
             ( { model | selectedRecipe = newRec } , Cmd.none)
         AddIngreToRecipeResp (Err error) ->
-          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
+        UpdateTodoResp (Ok _) -> ( model , Cmd.none)
+        UpdateTodoResp (Err error) ->
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
+        RemoveTodoFromRecipe tUuid (Ok _) ->
+          let
+            newRec = case model.selectedRecipe of
+              Just rec -> Just { rec | todos = (List.filter (\item -> (item.uuid /= tUuid)) rec.todos) }
+              Nothing -> model.selectedRecipe
+          in
+            ( { model | selectedRecipe = newRec } , Cmd.none)
+        RemoveTodoFromRecipe _ (Err error) ->
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
+        AddTodoToRecipeResp (Ok todo) ->
+          let
+            newRec = case model.selectedRecipe of
+              Just rec -> Just { rec | todos = List.updateIf (\item -> item.uuid == todo.uuid) (\_ -> todo) rec.todos }
+              Nothing -> model.selectedRecipe
+          in
+            ( { model | selectedRecipe = newRec } , Cmd.none)
+        AddTodoToRecipeResp (Err error) ->
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         DeleteSourceResp sourceId (Ok _) ->
           ( model , Cmd.none)
         DeleteSourceResp _ (Err error) ->
-          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         DeleteTagResp tagId (Ok isDeleted) ->
           ( model , Cmd.none)
         DeleteTagResp _ (Err error) ->
-          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
-        DeleteTodoResp todoId (Ok isDeleted) ->
-          ( model , Cmd.none)
-        DeleteTodoResp _ (Err error) ->
-          ( { model | alertMessage = Just (DU.httpErrorToMessage error) }, Cmd.none)
+          ( { model | alertMessage = Just (DU.httpErrorToMessage error Nothing) }, Cmd.none)
         
