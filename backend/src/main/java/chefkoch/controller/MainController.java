@@ -47,7 +47,7 @@ public class MainController {
 	
 	private final String timeoutMsg = "Timeout der Authentifizierung!";
 	private final String successMsg = "Request processed successful!";
-	private final Boolean isLocalTest = Boolean.TRUE;
+	private final Boolean isLocalTest = Boolean.FALSE;
 	
 	@RequestMapping(value = "/saveSource",
 			method = RequestMethod.POST,
